@@ -24,7 +24,7 @@ export default router;
 
 /**
  * @swagger
- * /auth/registersss:
+ * /auth/register:
  *   post:
  *     summary: Register as user
  *     tags: [Auth]
