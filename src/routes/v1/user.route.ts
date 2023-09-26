@@ -1,9 +1,10 @@
 import type { Router } from 'express';
 import express from 'express';
+import { userController } from 'modules/user';
 
 const router: Router = express.Router();
 
-router.route('/').get();
+router.route('/').post(userController.createUser).get();
 
 export default router;
 
@@ -86,4 +87,14 @@ export default router;
  *         $ref: '#/components/responses/Unauthorized'
  *       "403":
  *         $ref: '#/components/responses/Forbidden'
+ */
+
+/**
+ * @swagger
+ * /users:
+ *   post:
+ *     summary: Create new user
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
  */

@@ -33,7 +33,9 @@
         "react/jsx-filename-extension": "off",
         "consistent-return": "off",
         "no-restricted-globals": "off",
+        "no-underscore-dangle": "off",
         "import/no-cycle": "off",
+        "func-names": "off",
         "prettier/prettier": [
           "error",
           {

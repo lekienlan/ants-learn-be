@@ -1,10 +1,12 @@
 import { CORS_OPTION } from 'configs/cors';
+import { connectMongodb } from 'configs/mongodb';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import type { Express, NextFunction, Request, Response } from 'express';
+import type { Express, Request, Response } from 'express';
 import express from 'express';
 import mongoSanitize from 'express-mongo-sanitize';
 import helmet from 'helmet';
+import { errorHandler } from 'middlewares/error';
 import v1Router from 'routes/v1';
 
 dotenv.config();
@@ -26,27 +28,22 @@ app.use(express.urlencoded({ extended: true }));
 // sanitize request data
 app.use(mongoSanitize());
 
-app.get('/v1', (_: Request, res: Response) => {
-  res.json({ ksjskjd: 'aksjlakjs' });
+app.get('/', (_: Request, res: Response) => {
+  res.send('Go to /v1/docs to see more');
 });
 
 // v1 api routes
 app.use('/v1', v1Router);
 
 // Error handling middleware for CORS
-app.use((err: Error, _: Request, res: Response, next: NextFunction) => {
-  if (err.message === 'CORS_NOT_ALLOWED') {
-    res.status(403).json({ error: 'Cross-Origin Request Blocked' });
-  } else {
-    next(err);
-  }
-});
+app.use(errorHandler);
 
 // 404
 app.get('*', function (_, res) {
   res.status(404).send('Not found');
 });
 
+connectMongodb();
 app.listen(port, () => {
   console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
 });
