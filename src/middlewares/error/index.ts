@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
+import logger from 'middlewares/logger';
 
 import type ApiError from './ApiError';
 
@@ -10,6 +11,8 @@ export const errorHandler = (
   _next: NextFunction
 ) => {
   let { statusCode, message } = err;
+
+  logger.debug(err.statusCode);
 
   if (!err.isOperational) {
     statusCode = StatusCodes.INTERNAL_SERVER_ERROR;
