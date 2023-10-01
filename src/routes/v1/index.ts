@@ -1,6 +1,7 @@
 import type { Router } from 'express';
 import express from 'express';
 
+import authRoute from './auth.route';
 import docsRoute from './swagger.route';
 import userRoute from './user.route';
 // import userRoute from './user.route';
@@ -13,6 +14,10 @@ interface IRoute {
 }
 
 const defaultIRoute: IRoute[] = [
+  {
+    path: '/auth',
+    route: authRoute
+  },
   {
     path: '/users',
     route: userRoute
