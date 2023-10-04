@@ -1,45 +1,34 @@
+import 'dotenv/config';
+import 'types';
+
 import { CORS_OPTION } from 'configs/cors';
 import { connectMongodb } from 'configs/mongodb';
+import configPassport from 'configs/passport';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import type { Express, Request, Response } from 'express';
 import express from 'express';
 import mongoSanitize from 'express-mongo-sanitize';
 import helmet from 'helmet';
 import { errorHandler } from 'middlewares/error';
 import passport from 'passport';
-import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import v1Router from 'routes/v1';
-
-dotenv.config();
-
-passport.use(
-  new GoogleStrategy(
-    {
-      clientID: process.env.GOOGLE_CLIENT_ID || '',
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
-      callbackURL: 'http://localhost:3000/google/callback'
-    },
-    function (_accessToken, _refreshToken, profile, done) {
-      // User.findOrCreate({ googleId: profile.id }, function (err, user) {
-      //   return cb(err, user);
-      // });
-      return done(null, profile);
-    }
-  )
-);
-
-passport.serializeUser(function (user, done) {
-  done(null, user);
-});
 
 const app: Express = express();
 const port = process.env.PORT;
 
+// app.use(session({ secret: 'cats' }));
+
+// use passport
+app.use(passport.initialize());
+
+// app.use(passport.session());
+
+// Sign in with Google
+
+configPassport.google();
+
 // enabling the Helmet middleware
 app.use(helmet());
-
-app.use(passport.initialize());
 
 app.use(cors(CORS_OPTION));
 
@@ -63,9 +52,9 @@ app.use('/v1', v1Router);
 app.use(errorHandler);
 
 // 404
-app.get('*', function (_, res) {
-  res.status(404).send('Not found');
-});
+// app.get('*', function (_, res) {
+//   res.status(404).send('Not found');
+// });
 
 connectMongodb();
 app.listen(port, () => {

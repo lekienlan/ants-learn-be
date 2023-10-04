@@ -1,3 +1,4 @@
 import * as authController from './auth.controller';
+import auth from './auth.middleware';
 
-export { authController };
+export { auth, authController };

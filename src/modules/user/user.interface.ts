@@ -5,8 +5,9 @@ export interface IUser {
   firstName: string;
   lastName: string;
   email: string;
-  password: string;
-  phone: string;
+  googleId?: string;
+  password?: string;
+  phone?: string;
 }
 
 export interface IUserModel extends Model<IUser> {
@@ -14,4 +15,5 @@ export interface IUserModel extends Model<IUser> {
     email: string,
     excludeUserId?: mongoose.Types.ObjectId
   ): Promise<boolean>;
+  findOrCreate(user: IUser): Promise<void>;
 }

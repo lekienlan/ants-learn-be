@@ -9,6 +9,10 @@ const userSchema = new Schema<IUser, IUserModel>({
     required: true,
     trim: true
   },
+  googleId: {
+    type: String,
+    trim: true
+  },
   lastName: {
     type: String,
     required: true,
@@ -26,6 +30,10 @@ const userSchema = new Schema<IUser, IUserModel>({
       }
     }
   }
+});
+
+userSchema.virtual('id').get(function () {
+  return this._id.toHexString();
 });
 
 userSchema.set('toJSON', {
@@ -46,6 +54,18 @@ userSchema.static(
     return !!user;
   }
 );
+
+// Implement the findOrCreate function
+userSchema.static('findOrCreate', async function (user: IUser): Promise<IUser> {
+  const existingUser = await this.findOne({ googleId: user.googleId });
+
+  if (!existingUser) {
+    const newUser = await this.create(user);
+    return newUser;
+  }
+
+  return existingUser;
+});
 
 const User = mongoose.model<IUser, IUserModel>('User', userSchema);
 

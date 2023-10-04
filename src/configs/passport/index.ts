@@ -1,3 +1,3 @@
-import * as passportGoogle from './google';
+import google from './google';
 
-export default passportGoogle;
+export default { google };
