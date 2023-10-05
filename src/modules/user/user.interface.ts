@@ -19,7 +19,7 @@ export interface IUserModel extends Model<IUserDoc> {
   paginate(
     filter: Record<string, any>,
     options: Record<string, any>
-  ): Promise<IPaginateResult>;
+  ): Promise<IPaginateResult<IUser>>;
 }
 
 export interface IUserWithTokens {

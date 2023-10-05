@@ -16,7 +16,7 @@ export const createUser = catchAsync(async (req: Request, res: Response) => {
 
 export const getUsers = catchAsync(async (req: Request, res: Response) => {
   const filter = omit(req.query, PAGINATE_OPTIONS);
-  const options: IPaginateOptions = pick<Record<string, any>>(
+  const options: IPaginateOptions = pick<IPaginateOptions>(
     req.query,
     PAGINATE_OPTIONS
   );

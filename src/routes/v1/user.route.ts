@@ -8,7 +8,7 @@ const router: Router = express.Router();
 
 router
   .route('/')
-  .get(auth, validate(userValidation.getUsers), userController.getUsers);
+  .get(auth, validate(userValidation.userParams), userController.getUsers);
 
 export default router;
 

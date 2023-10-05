@@ -1,5 +1,6 @@
 import configs from 'configs';
 import { StatusCodes } from 'http-status-codes';
+import type { JwtPayload } from 'jsonwebtoken';
 import jwt from 'jsonwebtoken';
 import ApiError from 'middlewares/error/ApiError';
 import type { IUserDoc } from 'modules/user/user.interface';
@@ -14,7 +15,6 @@ import Token from './token.model';
  * Generate token
  * @param {mongoose.Types.ObjectId} userId
  * @param {Moment} expires
- * @param {string} type
  * @param {string} [secret]
  * @returns {string}
  */
@@ -29,6 +29,14 @@ export const generateToken = (
     exp: expires.unix()
   };
   return jwt.sign(payload, secret);
+};
+/**
+ * Decode token
+ * @param {token} string
+ * @returns {string | JwtPayload}
+ */
+export const decodeToken = (token: string): string | JwtPayload => {
+  return jwt.verify(token, configs.jwt.accessSecretKey);
 };
 
 /**
@@ -62,7 +70,7 @@ export const saveToken = async (
  * @returns {Promise<ITokenDoc>}
  */
 export const verifyToken = async (token: string): Promise<ITokenDoc> => {
-  const payload = jwt.verify(token, configs.jwt.accessSecretKey);
+  const payload = decodeToken(token);
   if (typeof payload.sub !== 'string') {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'bad user');
   }
@@ -71,8 +79,9 @@ export const verifyToken = async (token: string): Promise<ITokenDoc> => {
     userId: payload.sub,
     blacklisted: false
   });
+
   if (!tokenDoc) {
-    throw new Error('Token not found');
+    throw new Error('Invalid token');
   }
   return tokenDoc;
 };

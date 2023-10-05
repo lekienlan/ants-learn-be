@@ -1,6 +1,6 @@
 import Joi from 'joi';
 
-export const getUsers = {
+export const userParams = {
   query: Joi.object().keys({
     firstName: Joi.string(),
     lastName: Joi.string(),

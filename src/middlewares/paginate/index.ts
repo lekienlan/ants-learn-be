@@ -1,7 +1,7 @@
 import type { Document, Model, Schema } from 'mongoose';
 
-export interface IPaginateResult {
-  results: Document[];
+export interface IPaginateResult<T = Document> {
+  results: T[];
   page: number;
   limit: number;
   totalPages: number;
@@ -11,6 +11,7 @@ export interface IPaginateResult {
 export interface IPaginateOptions {
   sortBy?: string; // email:desc
   limit?: number;
+  pickFields?: string; // Ex: id amount
   page?: number;
 }
 
@@ -40,7 +41,7 @@ const paginate = <T extends Document, U extends Model<U>>(
       filter: Record<string, any>,
       options: IPaginateOptions
     ): Promise<IPaginateResult> {
-      const { sortBy, limit = 10, page = 1 } = options;
+      const { sortBy, limit = 10, page = 1, pickFields } = options;
       const skip = (page - 1) * limit;
       let sort = '';
       if (sortBy) {
@@ -55,7 +56,12 @@ const paginate = <T extends Document, U extends Model<U>>(
 
       const [totalResults, results] = await Promise.all([
         this.countDocuments(filter).exec(),
-        this.find(filter).sort(sort).skip(skip).limit(limit).exec()
+        this.find(filter)
+          .sort(sort)
+          .skip(skip)
+          .limit(limit)
+          .select(pickFields)
+          .exec()
       ]);
 
       const totalPages = Math.ceil(totalResults / limit);

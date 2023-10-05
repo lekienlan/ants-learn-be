@@ -34,10 +34,6 @@ const userSchema = new Schema<IUserDoc, IUserModel>(
   }
 );
 
-// userSchema.virtual('id').get(function () {
-//   return this._id.toHexString();
-// });
-
 userSchema.set('toJSON', {
   virtuals: true,
   versionKey: false,

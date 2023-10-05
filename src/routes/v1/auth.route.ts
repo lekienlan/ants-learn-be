@@ -9,14 +9,14 @@ router.route('/google').get(authController.loginWithGoogle);
 
 router.get(
   '/google/callback',
-  validate(authValidation.loginSocial),
+  validate(authValidation.socialUser),
   authController.callbackGoogle,
   authController.login
 );
 
 router.post(
   '/refresh-tokens',
-  validate(authValidation.refreshTokens),
+  validate(authValidation.refreshPayload),
   authController.refreshTokens
 );
 
