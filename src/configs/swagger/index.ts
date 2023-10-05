@@ -1,6 +1,4 @@
-import dotenv from 'dotenv';
-
-dotenv.config();
+import configs from 'configs';
 
 const SWAGGER_DEFINITION = {
   openapi: '3.0.0',
@@ -11,7 +9,7 @@ const SWAGGER_DEFINITION = {
   },
   servers: [
     {
-      url: `http://localhost:${process.env.PORT}/v1`,
+      url: `http://localhost:${configs.port}/v1`,
       description: 'Development Server'
     }
   ],

@@ -1,14 +1,23 @@
 import type { Router } from 'express';
 import express from 'express';
-import { auth, authController } from 'modules/auth';
+import validate from 'middlewares/validate';
+import { authController, authValidation } from 'modules/auth';
 
 const router: Router = express.Router();
 
 router.route('/google').get(authController.loginWithGoogle);
-router
-  .route('/google/callback')
-  .get(authController.callbackGoogle, authController.authenticate);
-router.route('/protected').get(auth, authController.loginSuccess);
-router.route('/logout').get(authController.logout);
+
+router.get(
+  '/google/callback',
+  validate(authValidation.loginSocial),
+  authController.callbackGoogle,
+  authController.login
+);
+
+router.post(
+  '/refresh-tokens',
+  validate(authValidation.refreshTokens),
+  authController.refreshTokens
+);
 
 export default router;

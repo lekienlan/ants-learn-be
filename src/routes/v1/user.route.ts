@@ -1,10 +1,14 @@
 import type { Router } from 'express';
 import express from 'express';
-import { userController } from 'modules/user';
+import validate from 'middlewares/validate';
+import { auth } from 'modules/auth';
+import { userController, userValidation } from 'modules/user';
 
 const router: Router = express.Router();
 
-router.route('/').post(userController.createUser);
+router
+  .route('/')
+  .get(auth, validate(userValidation.getUsers), userController.getUsers);
 
 export default router;
 

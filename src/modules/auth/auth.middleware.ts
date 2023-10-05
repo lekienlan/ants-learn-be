@@ -1,3 +1,4 @@
+import configs from 'configs';
 import type { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import jwt from 'jsonwebtoken';
@@ -19,7 +20,7 @@ const authMiddleware = async (
     );
   }
   try {
-    jwt.verify(token.replace('Bearer ', ''), process.env.SECRET_KEY!);
+    jwt.verify(token.replace('Bearer ', ''), configs.jwt.accessSecretKey);
   } catch (err: any) {
     next(
       new ApiError(StatusCodes.UNAUTHORIZED, err?.message || 'Invalid token')

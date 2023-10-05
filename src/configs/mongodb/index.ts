@@ -1,8 +1,9 @@
+import configs from 'configs';
 import type { ConnectOptions } from 'mongoose';
 import mongoose from 'mongoose';
 
 export async function connectMongodb() {
-  const mongodbUrl = process.env.MONGODB_URL || '';
+  const mongodbUrl = configs.mongoose.url || '';
 
   try {
     await mongoose.connect(`${mongodbUrl}/piggies?retryWrites=true`, {

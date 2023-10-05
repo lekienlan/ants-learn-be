@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import 'types';
 
+import configs from 'configs';
 import { CORS_OPTION } from 'configs/cors';
 import { connectMongodb } from 'configs/mongodb';
 import configPassport from 'configs/passport';
@@ -14,7 +15,6 @@ import passport from 'passport';
 import v1Router from 'routes/v1';
 
 const app: Express = express();
-const port = process.env.PORT;
 
 // app.use(session({ secret: 'cats' }));
 
@@ -57,6 +57,8 @@ app.use(errorHandler);
 // });
 
 connectMongodb();
-app.listen(port, () => {
-  console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
+app.listen(configs.port, () => {
+  console.log(
+    `⚡️[server]: Server is running at http://localhost:${configs.port}`
+  );
 });

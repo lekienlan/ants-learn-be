@@ -1,6 +1,6 @@
 import type { Document, Model, Schema } from 'mongoose';
 
-export interface QueryResult {
+export interface IPaginateResult {
   results: Document[];
   page: number;
   limit: number;
@@ -8,9 +8,8 @@ export interface QueryResult {
   totalResults: number;
 }
 
-export interface IOptions {
-  sortBy?: string;
-  sortDirection?: 'asc' | 'desc';
+export interface IPaginateOptions {
+  sortBy?: string; // email:desc
   limit?: number;
   page?: number;
 }
@@ -19,7 +18,7 @@ const paginate = <T extends Document, U extends Model<U>>(
   schema: Schema<T>
 ): void => {
   /**
-   * @typedef {Object} QueryResult
+   * @typedef {Object} IPaginateResult
    * @property {Document[]} results - Results found
    * @property {number} page - Current page
    * @property {number} limit - Maximum number of results per page
@@ -33,53 +32,41 @@ const paginate = <T extends Document, U extends Model<U>>(
    * @param {string} [options.sortBy] - Sorting criteria using the format: sortField:(desc|asc). Multiple sorting criteria should be separated by commas (,)
    * @param {number} [options.limit] - Maximum number of results per page (default = 10)
    * @param {number} [options.page] - Current page (default = 1)
-   * @returns {Promise<QueryResult>}
+   * @returns {Promise<IPaginateResult>}
    */
   schema.static(
     'paginate',
     async function (
       filter: Record<string, any>,
-      options: IOptions
-    ): Promise<QueryResult> {
-      let sort: string = '';
-      if (options.sortBy) {
-        const sortingCriteria: any = [];
-        options.sortBy.split(',').forEach((sortOption: string) => {
-          const [key, order] = sortOption.split(':');
-          sortingCriteria.push((order === 'desc' ? '-' : '') + key);
+      options: IPaginateOptions
+    ): Promise<IPaginateResult> {
+      const { sortBy, limit = 10, page = 1 } = options;
+      const skip = (page - 1) * limit;
+      let sort = '';
+      if (sortBy) {
+        const sortingList = sortBy.split(',').map((sortOption: string) => {
+          const [key, order = 'asc'] = sortOption.split(':');
+          return `${order === 'desc' ? '-' : ''}${key}`;
         });
-        sort = sortingCriteria.join(' ');
+        sort = sortingList.join('');
       } else {
-        sort = 'createdAt';
+        sort = '-updatedAt';
       }
 
-      const limit =
-        options.limit && parseInt(options.limit.toString(), 10) > 0
-          ? parseInt(options.limit.toString(), 10)
-          : 10;
-      const page =
-        options.page && parseInt(options.page.toString(), 10) > 0
-          ? parseInt(options.page.toString(), 10)
-          : 1;
-      const skip = (page - 1) * limit;
+      const [totalResults, results] = await Promise.all([
+        this.countDocuments(filter).exec(),
+        this.find(filter).sort(sort).skip(skip).limit(limit).exec()
+      ]);
 
-      const countPromise = this.countDocuments(filter).exec();
-      let docsPromise = this.find(filter).sort(sort).skip(skip).limit(limit);
+      const totalPages = Math.ceil(totalResults / limit);
 
-      docsPromise = docsPromise.exec();
-
-      return Promise.all([countPromise, docsPromise]).then((values) => {
-        const [totalResults, results] = values;
-        const totalPages = Math.ceil(totalResults / limit);
-        const result = {
-          results,
-          page,
-          limit,
-          totalPages,
-          totalResults
-        };
-        return Promise.resolve(result);
-      });
+      return {
+        results,
+        page: parseInt(page.toString(), 10),
+        limit: parseInt(limit.toString(), 10),
+        totalPages,
+        totalResults
+      };
     }
   );
 };

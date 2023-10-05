@@ -1,3 +1,4 @@
+import configs from 'configs';
 import type { Router } from 'express';
 import express from 'express';
 
@@ -38,7 +39,7 @@ defaultIRoute.forEach((route) => {
 
 /* istanbul ignore next */
 
-if (process.env.NODE_ENV === 'staging') {
+if (configs.env === 'staging') {
   devIRoute.forEach((route) => {
     v1Router.use(route.path, route.route);
   });
