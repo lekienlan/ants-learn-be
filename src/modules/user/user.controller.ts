@@ -1,8 +1,8 @@
 import type { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { omit, pick } from 'lodash';
-import type { IPaginateOptions } from 'middlewares/paginate';
-import { PAGINATE_OPTIONS } from 'middlewares/paginate/constants';
+import { PAGINATE_OPTIONS } from 'middlewares/paginate/paginate.constant';
+import type { IPaginateOptions } from 'middlewares/paginate/paginate.interface';
 import catchAsync from 'utils/catchAsync';
 
 import { userService } from '.';

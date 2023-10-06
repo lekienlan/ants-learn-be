@@ -1,8 +1,8 @@
 import type { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { omit, pick } from 'lodash';
-import type { IPaginateOptions } from 'middlewares/paginate';
-import { PAGINATE_OPTIONS } from 'middlewares/paginate/constants';
+import { PAGINATE_OPTIONS } from 'middlewares/paginate/paginate.constant';
+import type { IPaginateOptions } from 'middlewares/paginate/paginate.interface';
 import { userService } from 'modules/user';
 import catchAsync from 'utils/catchAsync';
 
@@ -15,8 +15,14 @@ export const getUserIncomes = catchAsync(
       req.headers?.authorization?.replace('Bearer ', '') || '';
 
     const user = await userService.getUserByAccessToken(accessToken);
-
-    const filter = omit({ ...req.query, userId: user?.id }, PAGINATE_OPTIONS);
+    const filter = omit(
+      {
+        ...req.query,
+        ...req.body,
+        userId: user?.id
+      },
+      PAGINATE_OPTIONS
+    );
     const options: IPaginateOptions = pick<Record<string, any>>(
       req.query,
       PAGINATE_OPTIONS
@@ -37,7 +43,7 @@ export const getUserTotalIncome = catchAsync(
 
     const filter = omit({ ...req.query, userId: user?.id }, PAGINATE_OPTIONS);
     const options: IPaginateOptions = pick<IPaginateOptions>(
-      { ...req.query, pickFields: 'amount userId' },
+      req.query,
       PAGINATE_OPTIONS
     );
 

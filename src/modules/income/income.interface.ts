@@ -1,4 +1,7 @@
-import type { IPaginateResult } from 'middlewares/paginate';
+import type {
+  IPaginateOptions,
+  IPaginateResult
+} from 'middlewares/paginate/paginate.interface';
 import type { IUser } from 'modules/user/user.interface';
 import type { Document, Model } from 'mongoose';
 
@@ -22,6 +25,6 @@ export interface IIncomeDoc extends IIncome, Document {}
 export interface IIncomeModel extends Model<IIncomeDoc> {
   paginate(
     filter: Record<string, any>,
-    options: Record<string, any>
+    options: IPaginateOptions
   ): Promise<IPaginateResult<IIncome>>;
 }

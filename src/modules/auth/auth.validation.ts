@@ -1,12 +1,12 @@
 import Joi from 'joi';
 
-export const socialUser = {
+export const joiSocial = {
   user: Joi.object().keys({
     email: Joi.string().required()
   })
 };
 
-export const refreshPayload = {
+export const joiRefresh = {
   body: Joi.object().keys({
     refreshToken: Joi.string().required()
   })

@@ -1,18 +1,21 @@
 import Joi from 'joi';
+import { joiPaginate } from 'middlewares/paginate/paginate.validation';
 
-export const incomePayload = {
-  body: Joi.object().keys({
-    amount: Joi.number().required()
-    // categoryId: Joi.string().required(),
-    // date: Joi.date()
-  })
+export const joiIncome = {
+  amount: Joi.number()
 };
 
-export const incomeParams = {
+export const joiIncomePayload = {
+  body: Joi.object()
+    .keys({
+      ...joiIncome
+    })
+    .required()
+};
+
+export const joiIncomeParams = {
   query: Joi.object().keys({
-    userId: Joi.string(),
-    sortBy: Joi.string(),
-    limit: Joi.number().integer(),
-    page: Joi.number().integer()
+    ...joiPaginate,
+    amount: Joi.array().items(Joi.number())
   })
 };

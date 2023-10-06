@@ -10,12 +10,12 @@ router
   .route('/')
   .get(
     auth,
-    validate(incomeValidation.incomeParams),
+    validate(incomeValidation.joiIncomeParams),
     incomeController.getUserIncomes
   )
   .post(
     auth,
-    validate(incomeValidation.incomePayload),
+    validate(incomeValidation.joiIncomePayload),
     incomeController.addIncome
   );
 
@@ -23,7 +23,7 @@ router
   .route('/total')
   .get(
     auth,
-    validate(incomeValidation.incomeParams),
+    validate(incomeValidation.joiIncomeParams),
     incomeController.getUserTotalIncome
   );
 

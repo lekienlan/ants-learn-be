@@ -1,6 +1,9 @@
 import { StatusCodes } from 'http-status-codes';
 import ApiError from 'middlewares/error/ApiError';
-import type { IPaginateOptions, IPaginateResult } from 'middlewares/paginate';
+import type {
+  IPaginateOptions,
+  IPaginateResult
+} from 'middlewares/paginate/paginate.interface';
 import { tokenService } from 'modules/token';
 
 import { User } from '.';

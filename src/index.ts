@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import 'types';
 
+import bodyParser from 'body-parser';
 import configs from 'configs';
 import { CORS_OPTION } from 'configs/cors';
 import { connectMongodb } from 'configs/mongodb';
@@ -33,10 +34,10 @@ app.use(helmet());
 app.use(cors(CORS_OPTION));
 
 // parse json request body
-app.use(express.json());
+app.use(bodyParser.json());
 
 // parse urlencoded request body
-app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // sanitize request data
 app.use(mongoSanitize());
