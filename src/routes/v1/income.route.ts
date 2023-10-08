@@ -11,12 +11,12 @@ router
   .get(
     auth,
     validate(incomeValidation.joiIncomeParams),
-    incomeController.getUserIncomes
+    incomeController.getAll
   )
   .post(
     auth,
     validate(incomeValidation.joiIncomePayload),
-    incomeController.addIncome
+    incomeController.add
   );
 
 export default router;

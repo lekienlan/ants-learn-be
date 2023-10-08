@@ -12,7 +12,7 @@ import type {
 } from './category.interface';
 import Category from './category.model';
 
-export const queryCategories = async (
+export const findAll = async (
   filter: Record<string, any>,
   options: IPaginateOptions
 ): Promise<IPaginateResult<ICategory>> => {
@@ -20,9 +20,7 @@ export const queryCategories = async (
   return categories;
 };
 
-export const addCategory = async (
-  body: ICategoryPayload
-): Promise<ICategoryDoc> => {
+export const create = async (body: ICategoryPayload): Promise<ICategoryDoc> => {
   const category = await Category.create({
     ...body,
     code: snakeCase(removeDiacritics(body.name))

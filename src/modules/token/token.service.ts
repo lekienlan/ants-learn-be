@@ -12,14 +12,7 @@ import type mongoose from 'mongoose';
 import type { AccessAndRefreshTokens, ITokenDoc } from './token.interface';
 import Token from './token.model';
 
-/**
- * Generate token
- * @param {mongoose.Types.ObjectId} userId
- * @param {Moment} expires
- * @param {string} [secret]
- * @returns {string}
- */
-export const generateToken = (
+export const generate = (
   userId: mongoose.Types.ObjectId,
   expires: Moment,
   secret: string = configs.jwt.accessSecretKey
@@ -31,25 +24,12 @@ export const generateToken = (
   };
   return jwt.sign(payload, secret);
 };
-/**
- * Decode token
- * @param {token} string
- * @returns {string | JwtPayload}
- */
-export const decodeToken = (token: string): string | JwtPayload => {
+
+export const decode = (token: string): string | JwtPayload => {
   return jwt.verify(token, configs.jwt.accessSecretKey);
 };
 
-/**
- * Save a token
- * @param {string} token
- * @param {mongoose.Types.ObjectId} userId
- * @param {Moment} expires
- * @param {string} type
- * @param {boolean} [blacklisted]
- * @returns {Promise<ITokenDoc>}
- */
-export const saveToken = async (
+export const create = async (
   token: string,
   userId: mongoose.Types.ObjectId,
   expires: Moment,
@@ -64,14 +44,8 @@ export const saveToken = async (
   return tokenDoc;
 };
 
-/**
- * Verify token and return token doc (or throw an error if it is not valid)
- * @param {string} token
- * @param {string} type
- * @returns {Promise<ITokenDoc>}
- */
-export const verifyToken = async (token: string): Promise<ITokenDoc> => {
-  const payload = decodeToken(token);
+export const verify = async (token: string): Promise<ITokenDoc> => {
+  const payload = decode(token);
   if (typeof payload.sub !== 'string') {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'bad user');
   }
@@ -87,26 +61,21 @@ export const verifyToken = async (token: string): Promise<ITokenDoc> => {
   return tokenDoc;
 };
 
-/**
- * Generate auth tokens
- * @param {IUserDoc} user
- * @returns {Promise<AccessAndRefreshTokens>}
- */
-export const generateAuthTokens = async (
+export const generateTokens = async (
   user: IUserDoc
 ): Promise<AccessAndRefreshTokens> => {
   const accessTokenExpires = moment().add(
     configs.jwt.accessExpirationMinutes,
     'minutes'
   );
-  const accessToken = generateToken(user.id, accessTokenExpires);
+  const accessToken = generate(user.id, accessTokenExpires);
 
   const refreshTokenExpires = moment().add(
     configs.jwt.refreshExpirationDays,
     'days'
   );
-  const refreshToken = generateToken(user.id, refreshTokenExpires);
-  await saveToken(refreshToken, user.id, refreshTokenExpires);
+  const refreshToken = generate(user.id, refreshTokenExpires);
+  await create(refreshToken, user.id, refreshTokenExpires);
 
   return {
     access: {

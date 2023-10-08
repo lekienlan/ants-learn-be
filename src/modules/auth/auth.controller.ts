@@ -19,7 +19,7 @@ export const callbackGoogle = catchAsync(
 
 export const login = catchAsync(async (req: Request, res: Response) => {
   const user = await authService.loginUserWithEmail(req?.user?.email || '');
-  const tokens = await tokenService.generateAuthTokens(user);
+  const tokens = await tokenService.generateTokens(user);
   res.status(StatusCodes.ACCEPTED).send({ user, tokens });
 });
 

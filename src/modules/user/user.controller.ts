@@ -7,20 +7,18 @@ import catchAsync from 'utils/catchAsync';
 
 import { userService } from '.';
 
-export const createUser = catchAsync(async (req: Request, res: Response) => {
-  const user = await userService.createUser(req.body);
+export const create = catchAsync(async (req: Request, res: Response) => {
+  const user = await userService.create(req.body);
   res.status(StatusCodes.CREATED).send(user);
-
-  // res.status(StatusCodes.BAD_REQUEST).send(err);
 });
 
-export const getUsers = catchAsync(async (req: Request, res: Response) => {
+export const getAll = catchAsync(async (req: Request, res: Response) => {
   const filter = omit(req.query, PAGINATE_OPTIONS);
   const options: IPaginateOptions = pick<IPaginateOptions>(
     req.query,
     PAGINATE_OPTIONS
   );
-  const users = await userService.queryUsers(filter, options);
+  const users = await userService.findAll(filter, options);
 
   res.send(users);
 });

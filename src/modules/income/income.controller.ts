@@ -10,41 +10,39 @@ import catchAsync from 'utils/catchAsync';
 import { incomeService } from '.';
 import type { IIncomePayload } from './income.interface';
 
-export const getUserIncomes = catchAsync(
-  async (req: Request, res: Response) => {
-    const accessToken = tokenService.getAccessTokenFromRequest(req);
+export const getAll = catchAsync(async (req: Request, res: Response) => {
+  const accessToken = tokenService.getAccessTokenFromRequest(req);
 
-    const user = await userService.getUserByAccessToken(accessToken);
-    const filter = omit(
-      {
-        ...req.query,
-        userId: user?.id
-      },
-      PAGINATE_OPTIONS
-    );
-    const options: IPaginateOptions = pick<Record<string, any>>(
-      req.query,
-      PAGINATE_OPTIONS
-    );
+  const user = await userService.findByAccessToken(accessToken);
+  const filter = omit(
+    {
+      ...req.query,
+      userId: user?.id
+    },
+    PAGINATE_OPTIONS
+  );
+  const options: IPaginateOptions = pick<Record<string, any>>(
+    req.query,
+    PAGINATE_OPTIONS
+  );
 
-    const incomes = await incomeService.queryIncomes(filter, options);
+  const incomes = await incomeService.findAll(filter, options);
 
-    const totalAmount = incomes.results.reduce((prev, current) => {
-      return prev + current.amount;
-    }, 0);
+  const totalAmount = incomes.results.reduce((prev, current) => {
+    return prev + current.amount;
+  }, 0);
 
-    res.send({ ...incomes, totalAmount });
-  }
-);
+  res.send({ ...incomes, totalAmount });
+});
 
-export const addIncome = catchAsync(
+export const add = catchAsync(
   async (req: Request<{}, {}, IIncomePayload>, res: Response) => {
     const accessToken = tokenService.getAccessTokenFromRequest(req);
 
-    const user = await userService.getUserByAccessToken(accessToken);
+    const user = await userService.findByAccessToken(accessToken);
 
     const { amount, categoryId, date, note } = req.body;
-    const income = await incomeService.addIncome({
+    const income = await incomeService.create({
       userId: user?.id,
       amount,
       categoryId,

@@ -6,7 +6,7 @@ import type {
 import type { IIncome, IIncomeDoc, IIncomePayload } from './income.interface';
 import Income from './income.model';
 
-export const queryIncomes = async (
+export const findAll = async (
   filter: Record<string, any>,
   options: IPaginateOptions
 ): Promise<IPaginateResult<IIncome>> => {
@@ -14,7 +14,7 @@ export const queryIncomes = async (
   return incomes;
 };
 
-export const addIncome = async (body: IIncomePayload): Promise<IIncomeDoc> => {
+export const create = async (body: IIncomePayload): Promise<IIncomeDoc> => {
   const income = await Income.create(body);
 
   return income.populate([

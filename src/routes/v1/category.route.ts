@@ -11,12 +11,12 @@ router
   .get(
     auth,
     validate(categoryValidation.joiCategoryParams),
-    categoryController.getCategories
+    categoryController.getAll
   )
   .post(
     auth,
     validate(categoryValidation.joiCategoryPayload),
-    categoryController.addCategory
+    categoryController.add
   );
 
 export default router;

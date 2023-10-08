@@ -8,22 +8,22 @@ import catchAsync from 'utils/catchAsync';
 import { categoryService } from '.';
 import type { ICategoryPayload } from './category.interface';
 
-export const getCategories = catchAsync(async (req: Request, res: Response) => {
+export const getAll = catchAsync(async (req: Request, res: Response) => {
   const filter = omit(req.query, PAGINATE_OPTIONS);
   const options: IPaginateOptions = pick<Record<string, any>>(
     req.query,
     PAGINATE_OPTIONS
   );
 
-  const categories = await categoryService.queryCategories(filter, options);
+  const categories = await categoryService.findAll(filter, options);
 
   res.send(categories);
 });
 
-export const addCategory = catchAsync(
+export const add = catchAsync(
   async (req: Request<{}, {}, ICategoryPayload>, res: Response) => {
     const { name, type, color, icon, userId } = req.body;
-    const category = await categoryService.addCategory({
+    const category = await categoryService.create({
       name,
       type,
       color,
