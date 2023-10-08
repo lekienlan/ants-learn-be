@@ -18,12 +18,12 @@ export const callbackGoogle = catchAsync(
 );
 
 export const login = catchAsync(async (req: Request, res: Response) => {
-  const user = await authService.loginUserWithEmail(req?.user?.email || '');
+  const user = await authService.loginWithEmail(req?.user?.email || '');
   const tokens = await tokenService.generateTokens(user);
   res.status(StatusCodes.ACCEPTED).send({ user, tokens });
 });
 
 export const refreshTokens = catchAsync(async (req: Request, res: Response) => {
-  const userWithTokens = await authService.refreshAuth(req.body.refreshToken);
+  const userWithTokens = await authService.refresh(req.body.refreshToken);
   res.send({ ...userWithTokens });
 });

@@ -4,12 +4,7 @@ import { generateTokens, verify } from 'modules/token/token.service';
 import { userService } from 'modules/user';
 import type { IUserDoc, IUserWithTokens } from 'modules/user/user.interface';
 
-/**
- * Login with email
- * @param {string} email
- * @returns {Promise<IUserDoc>}
- */
-export const loginUserWithEmail = async (email: string): Promise<IUserDoc> => {
+export const loginWithEmail = async (email: string): Promise<IUserDoc> => {
   const user = await userService.findByEmail(email);
 
   if (!user) {
@@ -19,12 +14,7 @@ export const loginUserWithEmail = async (email: string): Promise<IUserDoc> => {
   return user;
 };
 
-/**
- * Refresh auth tokens
- * @param {string} refreshToken
- * @returns {Promise<IUserWithTokens>}
- */
-export const refreshAuth = async (
+export const refresh = async (
   refreshToken: string
 ): Promise<IUserWithTokens> => {
   try {
