@@ -11,8 +11,8 @@ const paginate = <T extends Document, U extends Model<U>>(
       filter: Record<string, any>,
       options: IPaginateOptions
     ): Promise<IPaginateResult> {
-      const { sortBy, limit = 10, page = 1, pickFields } = options;
-      const skip = (page - 1) * limit;
+      const { sortBy, limit, page = 1, pickFields } = options;
+      const skip = (page - 1) * (limit || 0);
       let sort = '';
       if (sortBy) {
         const sortingList = sortBy.split(',').map((sortOption: string) => {
@@ -39,6 +39,8 @@ const paginate = <T extends Document, U extends Model<U>>(
         }
       });
 
+      console.log(filter);
+
       const [totalResults, results] = await Promise.all([
         this.countDocuments(filter).exec(),
         this.find(filter)
@@ -49,12 +51,12 @@ const paginate = <T extends Document, U extends Model<U>>(
           .exec()
       ]);
 
-      const totalPages = Math.ceil(totalResults / limit);
+      const totalPages = Math.ceil(totalResults / (limit || 1));
 
       return {
         results,
         page: parseInt(page.toString(), 10),
-        limit: parseInt(limit.toString(), 10),
+        limit: limit ? parseInt(limit.toString(), 10) : undefined,
         totalPages,
         totalResults
       };

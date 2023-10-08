@@ -13,12 +13,21 @@ const incomeSchema = new Schema<IIncomeDoc, IIncomeModel>(
     userId: {
       type: String,
       required: true,
-      trim: true,
       ref: 'User'
     },
     unit: {
       type: String,
       default: 'vnd'
+    },
+    date: {
+      type: Date
+    },
+    note: {
+      type: String
+    },
+    categoryId: {
+      type: String,
+      ref: 'Category'
     }
   },
   {
@@ -36,6 +45,12 @@ const incomeSchema = new Schema<IIncomeDoc, IIncomeModel>(
 incomeSchema.virtual('user', {
   ref: 'User',
   localField: 'userId',
+  foreignField: '_id',
+  justOne: true
+});
+incomeSchema.virtual('category', {
+  ref: 'Category',
+  localField: 'categoryId',
   foreignField: '_id',
   justOne: true
 });

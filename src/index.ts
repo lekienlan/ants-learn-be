@@ -7,7 +7,7 @@ import { CORS_OPTION } from 'configs/cors';
 import { connectMongodb } from 'configs/mongodb';
 import configPassport from 'configs/passport';
 import cors from 'cors';
-import type { Express, Request, Response } from 'express';
+import type { Express } from 'express';
 import express from 'express';
 import mongoSanitize from 'express-mongo-sanitize';
 import helmet from 'helmet';
@@ -41,10 +41,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // sanitize request data
 app.use(mongoSanitize());
-
-app.get('/', (_: Request, res: Response) => {
-  res.send('<a href="v1/auth/google">Auth with Google</a>');
-});
 
 // v1 api routes
 app.use('/v1', v1Router);

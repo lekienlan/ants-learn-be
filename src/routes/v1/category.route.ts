@@ -2,7 +2,7 @@ import type { Router } from 'express';
 import express from 'express';
 import validate from 'middlewares/validate';
 import { auth } from 'modules/auth';
-import { incomeController, incomeValidation } from 'modules/income';
+import { categoryController, categoryValidation } from 'modules/category';
 
 const router: Router = express.Router();
 
@@ -10,13 +10,13 @@ router
   .route('/')
   .get(
     auth,
-    validate(incomeValidation.joiIncomeParams),
-    incomeController.getUserIncomes
+    validate(categoryValidation.joiCategoryParams),
+    categoryController.getCategories
   )
   .post(
     auth,
-    validate(incomeValidation.joiIncomePayload),
-    incomeController.addIncome
+    validate(categoryValidation.joiCategoryPayload),
+    categoryController.addCategory
   );
 
 export default router;

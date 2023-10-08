@@ -3,6 +3,7 @@ import type { Router } from 'express';
 import express from 'express';
 
 import authRoute from './auth.route';
+import categoryRoute from './category.route';
 import incomeRoute from './income.route';
 import docsRoute from './swagger.route';
 import userRoute from './user.route';
@@ -26,6 +27,10 @@ const defaultIRoute: IRoute[] = [
   {
     path: '/incomes',
     route: incomeRoute
+  },
+  {
+    path: '/categories',
+    route: categoryRoute
   }
 ];
 

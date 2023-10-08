@@ -3,7 +3,7 @@ import type { Document } from 'mongoose';
 export interface IPaginateResult<T = Document> {
   results: T[];
   page: number;
-  limit: number;
+  limit?: number;
   totalPages: number;
   totalResults: number;
 }

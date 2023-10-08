@@ -1,4 +1,5 @@
 import configs from 'configs';
+import type { Request } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import type { JwtPayload } from 'jsonwebtoken';
 import jwt from 'jsonwebtoken';
@@ -117,4 +118,11 @@ export const generateAuthTokens = async (
       expires: refreshTokenExpires.toDate()
     }
   };
+};
+
+export const getAccessTokenFromRequest = (header: Request) => {
+  const accessToken =
+    header.headers?.authorization?.replace('Bearer ', '') || '';
+
+  return accessToken;
 };
