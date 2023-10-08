@@ -8,15 +8,7 @@ const router: Router = express.Router();
 
 router
   .route('/')
-  .get(
-    auth,
-    validate(categoryValidation.joiCategoryParams),
-    categoryController.getAll
-  )
-  .post(
-    auth,
-    validate(categoryValidation.joiCategoryPayload),
-    categoryController.add
-  );
+  .get(auth, validate(categoryValidation.params), categoryController.getAll)
+  .post(auth, validate(categoryValidation.payload), categoryController.create);
 
 export default router;

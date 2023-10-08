@@ -8,15 +8,7 @@ const router: Router = express.Router();
 
 router
   .route('/')
-  .get(
-    auth,
-    validate(incomeValidation.joiIncomeParams),
-    incomeController.getAll
-  )
-  .post(
-    auth,
-    validate(incomeValidation.joiIncomePayload),
-    incomeController.add
-  );
+  .get(auth, validate(incomeValidation.params), incomeController.getAll)
+  .post(auth, validate(incomeValidation.payload), incomeController.add);
 
 export default router;

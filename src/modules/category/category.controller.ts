@@ -20,7 +20,7 @@ export const getAll = catchAsync(async (req: Request, res: Response) => {
   res.send(categories);
 });
 
-export const add = catchAsync(
+export const create = catchAsync(
   async (req: Request<{}, {}, ICategoryPayload>, res: Response) => {
     const { name, type, color, icon, userId } = req.body;
     const category = await categoryService.create({
