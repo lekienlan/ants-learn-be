@@ -12,12 +12,15 @@ export interface IIncome {
   categoryId?: string;
   date?: Date;
   note?: string;
-  unit?: string;
+  currency?: string;
   user: IUser;
   category: ICategory;
 }
 
 export interface IIncomePayload extends Omit<IIncome, 'user' | 'category'> {}
+export interface IIncomeUpdatePayload extends Omit<IIncomePayload, 'userId'> {
+  id: string;
+}
 
 export interface IIncomeTotalAmount {
   user?: IUser;
@@ -29,5 +32,5 @@ export interface IIncomeModel extends Model<IIncomeDoc> {
   paginate(
     filter: Record<string, any>,
     options: IPaginateOptions
-  ): Promise<IPaginateResult<IIncome>>;
+  ): Promise<IPaginateResult<IIncomeDoc>>;
 }

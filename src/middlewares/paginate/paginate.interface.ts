@@ -11,6 +11,7 @@ export interface IPaginateResult<T = Document> {
 export interface IPaginateOptions {
   sortBy?: string; // email:desc
   limit?: number;
-  pickFields?: string; // Ex: id amount
+  pick?: string; // Ex: id amount
   page?: number;
+  populate?: string;
 }

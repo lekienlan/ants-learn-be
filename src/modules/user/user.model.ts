@@ -1,5 +1,6 @@
 import paginate from 'middlewares/paginate';
 import mongoose, { Schema } from 'mongoose';
+import { sortWithIdOnTop } from 'utils';
 import validator from 'validator';
 
 import type { IUser, IUserDoc, IUserModel } from './user.interface';
@@ -30,17 +31,17 @@ const userSchema = new Schema<IUserDoc, IUserModel>(
     }
   },
   {
-    timestamps: true
+    timestamps: true,
+    toJSON: {
+      virtuals: true,
+      versionKey: false,
+      transform(_, ret) {
+        delete ret?._id;
+        return sortWithIdOnTop(ret);
+      }
+    }
   }
 );
-
-userSchema.set('toJSON', {
-  virtuals: true,
-  versionKey: false,
-  transform(_, ret) {
-    delete ret?._id;
-  }
-});
 
 userSchema.plugin(paginate);
 

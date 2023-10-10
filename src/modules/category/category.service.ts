@@ -1,4 +1,6 @@
+import { StatusCodes } from 'http-status-codes';
 import { snakeCase } from 'lodash';
+import ApiError from 'middlewares/error/ApiError';
 import type {
   IPaginateOptions,
   IPaginateResult
@@ -8,11 +10,12 @@ import { removeDiacritics } from 'utils';
 import type {
   ICategory,
   ICategoryDoc,
-  ICategoryPayload
+  ICategoryPayload,
+  ICategoryUpdatePayload
 } from './category.interface';
 import Category from './category.model';
 
-export const findAll = async (
+export const findMany = async (
   filter: Record<string, any>,
   options: IPaginateOptions
 ): Promise<IPaginateResult<ICategory>> => {
@@ -20,15 +23,52 @@ export const findAll = async (
   return categories;
 };
 
-export const create = async (body: ICategoryPayload): Promise<ICategoryDoc> => {
+export const create = async (data: ICategoryPayload): Promise<ICategoryDoc> => {
   const category = await Category.create({
-    ...body,
-    code: snakeCase(removeDiacritics(body.name))
+    ...data,
+    code: snakeCase(removeDiacritics(data.name))
   });
 
-  if (body.userId) {
+  if (data.userId) {
     return category.populate('user');
   }
+
+  return category;
+};
+
+export const update = async (
+  data: ICategoryUpdatePayload
+): Promise<ICategoryDoc | null> => {
+  const { id, ...payload } = data;
+
+  const category = await Category.findByIdAndUpdate(
+    id,
+    {
+      ...payload,
+      ...(data?.name
+        ? { code: snakeCase(removeDiacritics(data.name)) }
+        : undefined)
+    },
+    {
+      returnDocument: 'after'
+    }
+  );
+
+  if (!category)
+    throw new ApiError(StatusCodes.NOT_FOUND, 'Category not found');
+
+  return category;
+};
+
+export const remove = async ({
+  id
+}: {
+  id: string;
+}): Promise<ICategoryDoc | null> => {
+  const category = await Category.findByIdAndRemove(id);
+
+  if (!category)
+    throw new ApiError(StatusCodes.NOT_FOUND, 'Category not found');
 
   return category;
 };

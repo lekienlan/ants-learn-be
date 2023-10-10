@@ -8,7 +8,20 @@ const router: Router = express.Router();
 
 router
   .route('/')
-  .get(auth, validate(categoryValidation.params), categoryController.getAll)
-  .post(auth, validate(categoryValidation.payload), categoryController.create);
+  .get(auth, validate(categoryValidation.params), categoryController.findMany)
+  .post(
+    auth,
+    validate(categoryValidation.createPayload),
+    categoryController.create
+  );
+
+router
+  .route('/:id')
+  .put(
+    auth,
+    validate(categoryValidation.updatePayload),
+    categoryController.update
+  )
+  .delete(auth, categoryController.remove);
 
 export default router;

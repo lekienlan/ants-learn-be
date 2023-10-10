@@ -5,7 +5,7 @@ import type {
 import type { IUser } from 'modules/user/user.interface';
 import type { Document, Model } from 'mongoose';
 
-export interface ICategory {
+export interface IPig {
   name: string;
   code: string;
   type: 'expense' | 'income';
@@ -17,17 +17,16 @@ export interface ICategory {
   };
 }
 
-export interface ICategoryPayload extends Omit<ICategory, 'user' | 'code'> {}
-export interface ICategoryUpdatePayload
-  extends Omit<ICategory, 'user' | 'code'> {
+export interface IPigPayload extends Omit<IPig, 'user' | 'code'> {}
+export interface IPigUpdatePayload extends Omit<IPig, 'user' | 'code'> {
   id: string;
 }
 
-export interface ICategoryDoc extends ICategory, Document {}
+export interface IPigDoc extends IPig, Document {}
 
-export interface ICategoryModel extends Model<ICategoryDoc> {
+export interface IPigModel extends Model<IPigDoc> {
   paginate(
     filter: Record<string, any>,
     options: IPaginateOptions
-  ): Promise<IPaginateResult<ICategory>>;
+  ): Promise<IPaginateResult<IPig>>;
 }

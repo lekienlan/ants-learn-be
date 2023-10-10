@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { isValidObjectId } from 'mongoose';
 
 import type { ITokenDoc, ITokenModel } from './token.interface';
 
@@ -12,7 +12,12 @@ const tokenSchema = new mongoose.Schema<ITokenDoc, ITokenModel>(
     userId: {
       type: String,
       ref: 'User',
-      required: true
+      required: true,
+      validate(value: string) {
+        if (!isValidObjectId(value)) {
+          throw new Error('Not valid');
+        }
+      }
     },
 
     expires: {

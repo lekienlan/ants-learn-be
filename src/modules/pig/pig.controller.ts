@@ -3,13 +3,12 @@ import { StatusCodes } from 'http-status-codes';
 import { omit, pick } from 'lodash';
 import { PAGINATE_OPTIONS } from 'middlewares/paginate/paginate.constant';
 import type { IPaginateOptions } from 'middlewares/paginate/paginate.interface';
+import { tokenService } from 'modules/token';
+import { userService } from 'modules/user';
 import catchAsync from 'utils/catchAsync';
 
-import { categoryService } from '.';
-import type {
-  ICategoryPayload,
-  ICategoryUpdatePayload
-} from './category.interface';
+import { pigService } from '.';
+import type { IPigPayload, IPigUpdatePayload } from './pig.interface';
 
 export const findMany = catchAsync(async (req: Request, res: Response) => {
   const filter = omit(req.query, PAGINATE_OPTIONS);
@@ -18,49 +17,53 @@ export const findMany = catchAsync(async (req: Request, res: Response) => {
     PAGINATE_OPTIONS
   );
 
-  const categories = await categoryService.findMany(filter, options);
+  const piggies = await pigService.findMany(filter, options);
 
-  res.send(categories);
+  res.send(piggies);
 });
 
 export const create = catchAsync(
-  async (req: Request<{}, {}, ICategoryPayload>, res: Response) => {
-    const { name, type, style, userId } = req.body;
-    const category = await categoryService.create({
+  async (req: Request<{}, {}, IPigPayload>, res: Response) => {
+    const { name, type, style } = req.body;
+
+    const user = await userService.findByAccessToken(
+      tokenService.getAccessTokenFromRequest(req)
+    );
+    const pig = await pigService.create({
       name,
       type,
       style,
-      userId
+      userId: user?.id
     });
 
-    res.status(StatusCodes.CREATED).send(category);
+    res.status(StatusCodes.CREATED).send(pig);
   }
 );
 
 export const update = catchAsync(
   async (
-    req: Request<{ id: string }, {}, ICategoryUpdatePayload>,
+    req: Request<{ id: string }, {}, IPigUpdatePayload>,
     res: Response
   ) => {
     const { name, type, style } = req.body;
 
-    const category = await categoryService.update({
+    const pig = await pigService.update({
       id: req.params.id,
       name,
       type,
       style
     });
 
-    res.send(category);
+    res.send(pig);
   }
 );
 
 export const remove = catchAsync(
   async (req: Request<{ id: string }>, res: Response) => {
-    const category = await categoryService.remove({
+    const pig = await pigService.remove({
       id: req.params.id
     });
 
-    res.send(category);
+    res.send(pig);
   }
 );

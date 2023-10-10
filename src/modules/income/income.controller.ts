@@ -8,9 +8,9 @@ import { userService } from 'modules/user';
 import catchAsync from 'utils/catchAsync';
 
 import { incomeService } from '.';
-import type { IIncomePayload } from './income.interface';
+import type { IIncomePayload, IIncomeUpdatePayload } from './income.interface';
 
-export const getAll = catchAsync(async (req: Request, res: Response) => {
+export const findMany = catchAsync(async (req: Request, res: Response) => {
   const accessToken = tokenService.getAccessTokenFromRequest(req);
 
   const user = await userService.findByAccessToken(accessToken);
@@ -26,7 +26,7 @@ export const getAll = catchAsync(async (req: Request, res: Response) => {
     PAGINATE_OPTIONS
   );
 
-  const incomes = await incomeService.findAll(filter, options);
+  const incomes = await incomeService.findMany(filter, options);
 
   const totalAmount = incomes.results.reduce((prev, current) => {
     return prev + current.amount;
@@ -35,7 +35,17 @@ export const getAll = catchAsync(async (req: Request, res: Response) => {
   res.send({ ...incomes, totalAmount });
 });
 
-export const add = catchAsync(
+export const findOne = catchAsync(
+  async (req: Request<{ id: string }, {}, IIncomePayload>, res: Response) => {
+    const income = await incomeService.findOne({
+      id: req.params.id
+    });
+
+    res.send(income);
+  }
+);
+
+export const create = catchAsync(
   async (req: Request<{}, {}, IIncomePayload>, res: Response) => {
     const accessToken = tokenService.getAccessTokenFromRequest(req);
 
@@ -51,5 +61,34 @@ export const add = catchAsync(
     });
 
     res.status(StatusCodes.CREATED).send(income);
+  }
+);
+
+export const update = catchAsync(
+  async (
+    req: Request<{ id: string }, {}, IIncomeUpdatePayload>,
+    res: Response
+  ) => {
+    const { amount, categoryId, date, note } = req.body;
+
+    const income = await incomeService.update({
+      id: req.params.id,
+      amount,
+      categoryId,
+      date,
+      note
+    });
+
+    res.send(income);
+  }
+);
+
+export const remove = catchAsync(
+  async (req: Request<{ id: string }>, res: Response) => {
+    const income = await incomeService.remove({
+      id: req.params.id
+    });
+
+    res.send(income);
   }
 );

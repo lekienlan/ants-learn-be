@@ -5,6 +5,7 @@ import express from 'express';
 import authRoute from './auth.route';
 import categoryRoute from './category.route';
 import incomeRoute from './income.route';
+import pigRoute from './pig.route';
 import docsRoute from './swagger.route';
 import userRoute from './user.route';
 
@@ -31,6 +32,10 @@ const defaultIRoute: IRoute[] = [
   {
     path: '/categories',
     route: categoryRoute
+  },
+  {
+    path: '/piggies',
+    route: pigRoute
   }
 ];
 

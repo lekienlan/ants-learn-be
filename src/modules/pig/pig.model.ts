@@ -2,24 +2,14 @@ import paginate from 'middlewares/paginate';
 import mongoose, { isValidObjectId, Schema } from 'mongoose';
 import { sortWithIdOnTop } from 'utils';
 
-import type { ICategoryDoc, ICategoryModel } from './category.interface';
+import type { IPigDoc, IPigModel } from './pig.interface';
 
-const categorySchema = new Schema<ICategoryDoc, ICategoryModel>(
+const pigSchema = new Schema<IPigDoc, IPigModel>(
   {
     name: {
       type: String,
       required: true,
       trim: true
-    },
-    code: {
-      type: String,
-      required: true,
-      trim: true
-    },
-    type: {
-      type: String,
-      required: true,
-      ref: 'User'
     },
     style: {
       color: String,
@@ -49,18 +39,15 @@ const categorySchema = new Schema<ICategoryDoc, ICategoryModel>(
   }
 );
 
-categorySchema.virtual('user', {
+pigSchema.virtual('user', {
   ref: 'User',
   localField: 'userId',
   foreignField: '_id',
   justOne: true
 });
 
-categorySchema.plugin(paginate);
+pigSchema.plugin(paginate);
 
-const Category = mongoose.model<ICategoryDoc, ICategoryModel>(
-  'Category',
-  categorySchema
-);
+const Pig = mongoose.model<IPigDoc, IPigModel>('pig', pigSchema);
 
-export default Category;
+export default Pig;

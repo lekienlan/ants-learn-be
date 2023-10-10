@@ -1,3 +1,4 @@
+import { startCase } from 'lodash';
 import type { Document, Model, Schema } from 'mongoose';
 
 import type { IPaginateOptions, IPaginateResult } from './paginate.interface';
@@ -11,7 +12,7 @@ const paginate = <T extends Document, U extends Model<U>>(
       filter: Record<string, any>,
       options: IPaginateOptions
     ): Promise<IPaginateResult> {
-      const { sortBy, limit, page = 1, pickFields } = options;
+      const { sortBy, limit, page = 1, pick, populate } = options;
       const skip = (page - 1) * (limit || 0);
       let sort = '';
       if (sortBy) {
@@ -39,19 +40,23 @@ const paginate = <T extends Document, U extends Model<U>>(
         }
       });
 
-      console.log(filter);
-
       const [totalResults, results] = await Promise.all([
         this.countDocuments(filter).exec(),
         this.find(filter)
           .sort(sort)
           .skip(skip)
           .limit(limit)
-          .select(pickFields)
+          .select(pick?.replace(',', ' '))
+          .populate(
+            populate?.split(',').map((populateOption: string) => ({
+              path: populateOption,
+              model: startCase(populateOption)
+            }))
+          )
           .exec()
       ]);
 
-      const totalPages = Math.ceil(totalResults / (limit || 1));
+      const totalPages = limit ? Math.ceil(totalResults / limit) : 1;
 
       return {
         results,

@@ -15,3 +15,21 @@ export function removeDiacritics(string: string) {
 
   return string;
 }
+
+export const sortWithIdOnTop = (object: Record<string, any>) => {
+  const keys = Object.keys(object);
+  keys.sort((a, b) => {
+    if (a === 'id') {
+      return -1;
+    }
+    if (b === 'id') {
+      return 1;
+    }
+    return a.localeCompare(b);
+  });
+  const sortedObject: Record<string, any> = {};
+  keys.forEach((key) => {
+    sortedObject[key] = object[key];
+  });
+  return sortedObject;
+};
