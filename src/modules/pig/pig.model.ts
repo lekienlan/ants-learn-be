@@ -45,6 +45,11 @@ pigSchema.virtual('user', {
   foreignField: '_id',
   justOne: true
 });
+pigSchema.virtual('period', {
+  ref: 'Period',
+  localField: '_id',
+  foreignField: 'pigId'
+});
 
 pigSchema.plugin(paginate);
 

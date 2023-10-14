@@ -21,7 +21,7 @@ export const findMany = async (
 ): Promise<IPaginateResult<IPig>> => {
   const piggies = await Pig.paginate(filter, {
     ...options,
-    populate: 'user'
+    populate: 'user,period'
   });
   return piggies;
 };
