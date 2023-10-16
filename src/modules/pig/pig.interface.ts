@@ -9,7 +9,7 @@ import type { Document, Model } from 'mongoose';
 export interface IPig {
   name?: string;
   code?: string;
-  type?: 'expense' | 'income';
+  type?: 'expense' | 'transaction';
   user: IUser;
   userId?: string;
   periodId: string;

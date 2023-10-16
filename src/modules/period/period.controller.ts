@@ -22,6 +22,16 @@ export const findMany = catchAsync(async (req: Request, res: Response) => {
   res.send(periods);
 });
 
+export const findOne = catchAsync(
+  async (req: Request<{ id: string }, {}, IPeriodPayload>, res: Response) => {
+    const transaction = await periodService.findOne({
+      id: req.params.id
+    });
+
+    res.send(transaction);
+  }
+);
+
 export const create = catchAsync(
   async (req: Request<{}, {}, IPeriodPayload>, res: Response) => {
     const accessToken = tokenService.getAccessTokenFromRequest(req);

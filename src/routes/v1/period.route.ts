@@ -17,6 +17,7 @@ router
 
 router
   .route('/:id')
+  .get(auth, periodController.findOne)
   .put(auth, validate(periodValidation.updatePayload), periodController.update)
   .delete(auth, periodController.remove);
 

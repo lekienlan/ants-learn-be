@@ -45,6 +45,7 @@ pigSchema.virtual('user', {
   foreignField: '_id',
   justOne: true
 });
+
 pigSchema.virtual('period', {
   ref: 'Period',
   localField: '_id',
@@ -53,6 +54,6 @@ pigSchema.virtual('period', {
 
 pigSchema.plugin(paginate);
 
-const Pig = mongoose.model<IPigDoc, IPigModel>('pig', pigSchema);
+const Pig = mongoose.model<IPigDoc, IPigModel>('Pig', pigSchema);
 
 export default Pig;

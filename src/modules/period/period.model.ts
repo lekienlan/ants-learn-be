@@ -8,7 +8,6 @@ const periodSchema = new Schema<IPeriodDoc, IPeriodModel>(
   {
     startDate: Date,
     endDate: Date,
-    expenses: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Expense' }],
     members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Member' }],
     budget: {
       type: Number,
@@ -33,6 +32,12 @@ const periodSchema = new Schema<IPeriodDoc, IPeriodModel>(
 
 periodSchema.plugin(paginate);
 
-const Pig = mongoose.model<IPeriodDoc, IPeriodModel>('Period', periodSchema);
+periodSchema.virtual('expenses', {
+  ref: 'Transaction',
+  localField: '_id',
+  foreignField: 'periodId'
+});
 
-export default Pig;
+const Period = mongoose.model<IPeriodDoc, IPeriodModel>('Period', periodSchema);
+
+export default Period;

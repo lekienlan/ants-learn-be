@@ -5,8 +5,23 @@ const amountSchema = Joi.number().required();
 const dateSchema = Joi.date();
 const noteSchema = Joi.string().max(50);
 const categoryIdSchema = Joi.string();
+const periodIdSchema = Joi.string();
 
-const basePayload = {
+export const createPayload = {
+  body: Joi.object().keys({
+    amount: amountSchema,
+    date: dateSchema,
+    note: noteSchema,
+    categoryId: categoryIdSchema,
+    periodId: Joi.when('amount', {
+      is: Joi.number().less(0),
+      then: periodIdSchema.required(),
+      otherwise: periodIdSchema
+    })
+  })
+};
+
+export const updatePayload = {
   body: Joi.object().keys({
     amount: amountSchema,
     date: dateSchema,
@@ -14,12 +29,6 @@ const basePayload = {
     categoryId: categoryIdSchema
   })
 };
-
-export const createPayload = basePayload;
-
-export const updatePayload = basePayload.body.keys({
-  amount: amountSchema.optional()
-});
 
 export const params = Joi.object().keys({
   query: Joi.object().keys({

@@ -7,8 +7,11 @@ import { tokenService } from 'modules/token';
 import { userService } from 'modules/user';
 import catchAsync from 'utils/catchAsync';
 
-import { incomeService } from '.';
-import type { IIncomePayload, IIncomeUpdatePayload } from './income.interface';
+import { transactionService } from '.';
+import type {
+  ITransactionPayload,
+  ITransactionUpdatePayload
+} from './transaction.interface';
 
 export const findMany = catchAsync(async (req: Request, res: Response) => {
   const accessToken = tokenService.getAccessTokenFromRequest(req);
@@ -26,52 +29,56 @@ export const findMany = catchAsync(async (req: Request, res: Response) => {
     PAGINATE_OPTIONS
   );
 
-  const incomes = await incomeService.findMany(filter, options);
+  const transactions = await transactionService.findMany(filter, options);
 
-  const totalAmount = incomes.results.reduce((prev, current) => {
+  const totalAmount = transactions.results.reduce((prev, current) => {
     return prev + current.amount;
   }, 0);
 
-  res.send({ ...incomes, totalAmount });
+  res.send({ ...transactions, totalAmount });
 });
 
 export const findOne = catchAsync(
-  async (req: Request<{ id: string }, {}, IIncomePayload>, res: Response) => {
-    const income = await incomeService.findOne({
+  async (
+    req: Request<{ id: string }, {}, ITransactionPayload>,
+    res: Response
+  ) => {
+    const transaction = await transactionService.findOne({
       id: req.params.id
     });
 
-    res.send(income);
+    res.send(transaction);
   }
 );
 
 export const create = catchAsync(
-  async (req: Request<{}, {}, IIncomePayload>, res: Response) => {
+  async (req: Request<{}, {}, ITransactionPayload>, res: Response) => {
     const accessToken = tokenService.getAccessTokenFromRequest(req);
 
     const user = await userService.findByAccessToken(accessToken);
 
-    const { amount, categoryId, date, note } = req.body;
-    const income = await incomeService.create({
+    const { amount, categoryId, date, note, periodId } = req.body;
+    const transaction = await transactionService.create({
       userId: user?.id,
       amount,
       categoryId,
       date,
-      note
+      note,
+      periodId
     });
 
-    res.status(StatusCodes.CREATED).send(income);
+    res.status(StatusCodes.CREATED).send(transaction);
   }
 );
 
 export const update = catchAsync(
   async (
-    req: Request<{ id: string }, {}, IIncomeUpdatePayload>,
+    req: Request<{ id: string }, {}, ITransactionUpdatePayload>,
     res: Response
   ) => {
     const { amount, categoryId, date, note } = req.body;
 
-    const income = await incomeService.update({
+    const transaction = await transactionService.update({
       id: req.params.id,
       amount,
       categoryId,
@@ -79,16 +86,16 @@ export const update = catchAsync(
       note
     });
 
-    res.send(income);
+    res.send(transaction);
   }
 );
 
 export const remove = catchAsync(
   async (req: Request<{ id: string }>, res: Response) => {
-    const income = await incomeService.remove({
+    const transaction = await transactionService.remove({
       id: req.params.id
     });
 
-    res.send(income);
+    res.send(transaction);
   }
 );

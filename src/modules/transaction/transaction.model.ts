@@ -2,25 +2,19 @@ import paginate from 'middlewares/paginate';
 import mongoose, { isValidObjectId, Schema } from 'mongoose';
 import { sortWithIdOnTop } from 'utils';
 
-import type { IIncomeDoc, IIncomeModel } from './income.interface';
+import type {
+  ITransactionDoc,
+  ITransactionModel
+} from './transaction.interface';
 
-const incomeSchema = new Schema<IIncomeDoc, IIncomeModel>(
+const transactionSchema = new Schema<ITransactionDoc, ITransactionModel>(
   {
     amount: {
       type: Number,
       required: true,
       trim: true
     },
-    userId: {
-      type: String,
-      required: true,
-      ref: 'User',
-      validate(value: string) {
-        if (!isValidObjectId(value)) {
-          throw new Error('Not valid');
-        }
-      }
-    },
+
     currency: {
       type: String,
       default: 'vnd'
@@ -33,7 +27,23 @@ const incomeSchema = new Schema<IIncomeDoc, IIncomeModel>(
     },
     categoryId: {
       type: String,
-      ref: 'Category',
+      validate(value: string) {
+        if (!isValidObjectId(value)) {
+          throw new Error('Not valid');
+        }
+      }
+    },
+    periodId: {
+      type: String,
+      validate(value: string) {
+        if (!isValidObjectId(value)) {
+          throw new Error('Not valid');
+        }
+      }
+    },
+    userId: {
+      type: String,
+      required: true,
       validate(value: string) {
         if (!isValidObjectId(value)) {
           throw new Error('Not valid');
@@ -54,22 +64,32 @@ const incomeSchema = new Schema<IIncomeDoc, IIncomeModel>(
   }
 );
 
-incomeSchema.virtual('user', {
+transactionSchema.virtual('user', {
   ref: 'User',
   localField: 'userId',
   foreignField: '_id',
   justOne: true
 });
 
-incomeSchema.virtual('category', {
+transactionSchema.virtual('category', {
   ref: 'Category',
   localField: 'categoryId',
   foreignField: '_id',
   justOne: true
 });
 
-incomeSchema.plugin(paginate);
+transactionSchema.virtual('period', {
+  ref: 'Period',
+  localField: 'periodId',
+  foreignField: '_id',
+  justOne: true
+});
 
-const Income = mongoose.model<IIncomeDoc, IIncomeModel>('Income', incomeSchema);
+transactionSchema.plugin(paginate);
 
-export default Income;
+const Transaction = mongoose.model<ITransactionDoc, ITransactionModel>(
+  'Transaction',
+  transactionSchema
+);
+
+export default Transaction;

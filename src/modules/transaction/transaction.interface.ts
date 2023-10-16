@@ -6,31 +6,34 @@ import type { ICategory } from 'modules/category/category.interface';
 import type { IUser } from 'modules/user/user.interface';
 import type { Document, Model } from 'mongoose';
 
-export interface IIncome {
+export interface ITransaction {
   amount: number;
   userId: string;
   categoryId?: string;
+  user: IUser;
+  category: ICategory;
   date?: Date;
   note?: string;
   currency?: string;
-  user: IUser;
-  category: ICategory;
+  periodId?: string;
 }
 
-export interface IIncomePayload extends Omit<IIncome, 'user' | 'category'> {}
-export interface IIncomeUpdatePayload extends Omit<IIncomePayload, 'userId'> {
+export interface ITransactionPayload
+  extends Omit<ITransaction, 'user' | 'category'> {}
+export interface ITransactionUpdatePayload
+  extends Omit<ITransactionPayload, 'userId'> {
   id: string;
 }
 
-export interface IIncomeTotalAmount {
+export interface ITransactionTotalAmount {
   user?: IUser;
   totalAmount: number;
 }
 
-export interface IIncomeDoc extends IIncome, Document {}
-export interface IIncomeModel extends Model<IIncomeDoc> {
+export interface ITransactionDoc extends ITransaction, Document {}
+export interface ITransactionModel extends Model<ITransactionDoc> {
   paginate(
     filter: Record<string, any>,
     options: IPaginateOptions
-  ): Promise<IPaginateResult<IIncomeDoc>>;
+  ): Promise<IPaginateResult<ITransactionDoc>>;
 }
