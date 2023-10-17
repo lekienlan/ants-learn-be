@@ -4,6 +4,7 @@ import express from 'express';
 
 import authRoute from './auth.route';
 import categoryRoute from './category.route';
+import historyRoute from './history.route';
 import periodRoute from './period.route';
 import pigRoute from './pig.route';
 import docsRoute from './swagger.route';
@@ -41,6 +42,10 @@ const defaultIRoute: IRoute[] = [
   {
     path: '/periods',
     route: periodRoute
+  },
+  {
+    path: '/histories',
+    route: historyRoute
   }
 ];
 

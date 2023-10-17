@@ -28,7 +28,7 @@ export const findOne = async ({
   id
 }: {
   id: string;
-}): Promise<ITransactionDoc | undefined> => {
+}): Promise<ITransactionDoc> => {
   const transaction = await Transaction.findById(id);
 
   if (!transaction)
@@ -55,7 +55,7 @@ export const create = async (
 
 export const update = async (
   data: ITransactionUpdatePayload
-): Promise<ITransactionDoc | null> => {
+): Promise<ITransactionDoc> => {
   const { id, ...payload } = data;
 
   const transaction = await Transaction.findByIdAndUpdate(id, payload, {
@@ -72,7 +72,7 @@ export const remove = async ({
   id
 }: {
   id: string;
-}): Promise<ITransactionDoc | null> => {
+}): Promise<ITransactionDoc> => {
   const transaction = await Transaction.findByIdAndRemove(id);
 
   if (!transaction)

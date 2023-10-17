@@ -3,6 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import { omit, pick } from 'lodash';
 import { PAGINATE_OPTIONS } from 'middlewares/paginate/paginate.constant';
 import type { IPaginateOptions } from 'middlewares/paginate/paginate.interface';
+import { historyService } from 'modules/history';
 import { tokenService } from 'modules/token';
 import { userService } from 'modules/user';
 import catchAsync from 'utils/catchAsync';
@@ -39,10 +40,7 @@ export const findMany = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const findOne = catchAsync(
-  async (
-    req: Request<{ id: string }, {}, ITransactionPayload>,
-    res: Response
-  ) => {
+  async (req: Request<{ id: string }>, res: Response) => {
     const transaction = await transactionService.findOne({
       id: req.params.id
     });
@@ -66,6 +64,11 @@ export const create = catchAsync(
       note,
       periodId
     });
+    await historyService.create({
+      transactionId: transaction.id,
+      data: transaction,
+      state: 'original'
+    });
 
     res.status(StatusCodes.CREATED).send(transaction);
   }
@@ -86,6 +89,12 @@ export const update = catchAsync(
       note
     });
 
+    await historyService.create({
+      transactionId: transaction.id,
+      data: transaction,
+      state: 'modified'
+    });
+
     res.send(transaction);
   }
 );
@@ -94,6 +103,12 @@ export const remove = catchAsync(
   async (req: Request<{ id: string }>, res: Response) => {
     const transaction = await transactionService.remove({
       id: req.params.id
+    });
+
+    await historyService.create({
+      transactionId: transaction.id,
+      data: transaction,
+      state: 'deleted'
     });
 
     res.send(transaction);
