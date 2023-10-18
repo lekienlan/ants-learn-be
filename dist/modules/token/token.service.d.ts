@@ -1,0 +1,12 @@
+import type { Request } from 'express';
+import type { JwtPayload } from 'jsonwebtoken';
+import type { IUserDoc } from 'modules/user/user.interface';
+import type { Moment } from 'moment';
+import type mongoose from 'mongoose';
+import type { AccessAndRefreshTokens, ITokenDoc } from './token.interface';
+export declare const generate: (userId: mongoose.Types.ObjectId, expires: Moment, secret?: string) => string;
+export declare const decode: (token: string) => string | JwtPayload;
+export declare const create: (token: string, userId: mongoose.Types.ObjectId, expires: Moment, blacklisted?: boolean) => Promise<ITokenDoc>;
+export declare const verify: (token: string) => Promise<ITokenDoc>;
+export declare const generateTokens: (user: IUserDoc) => Promise<AccessAndRefreshTokens>;
+export declare const getAccessTokenFromRequest: (header: Request) => string;
