@@ -16,7 +16,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.params = void 0;
 var joi_1 = __importDefault(require("joi"));
-var paginate_validation_1 = require("middlewares/paginate/paginate.validation");
+var paginate_validation_1 = require("../../middlewares/paginate/paginate.validation");
 exports.params = {
     query: joi_1.default.object().keys(__assign({ firstName: joi_1.default.string(), lastName: joi_1.default.string(), email: joi_1.default.string() }, paginate_validation_1.joiPaginate))
 };

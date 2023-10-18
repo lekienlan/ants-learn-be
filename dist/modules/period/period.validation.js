@@ -16,7 +16,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.params = exports.updatePayload = exports.createPayload = void 0;
 var joi_1 = __importDefault(require("joi"));
-var paginate_validation_1 = require("middlewares/paginate/paginate.validation");
+var paginate_validation_1 = require("../../middlewares/paginate/paginate.validation");
 var startDate = joi_1.default.date();
 var endDate = joi_1.default.date();
 var budget = joi_1.default.number();

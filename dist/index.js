@@ -5,21 +5,21 @@ const __importDefault =
   };
 Object.defineProperty(exports, '__esModule', { value: true });
 require('dotenv/config');
-require('types');
+require('./types');
 const body_parser_1 = __importDefault(require('body-parser'));
-const configs_1 = __importDefault(require('configs'));
-const cors_1 = require('configs/cors');
-const mongodb_1 = require('configs/mongodb');
-const passport_1 = __importDefault(require('configs/passport'));
+const configs_1 = __importDefault(require('./configs'));
+const cors_1 = require('./configs/cors');
+const mongodb_1 = require('./configs/mongodb');
+const passport_1 = __importDefault(require('./configs/passport'));
 const cors_2 = __importDefault(require('cors'));
 const express_1 = __importDefault(require('express'));
 const express_mongo_sanitize_1 = __importDefault(
   require('express-mongo-sanitize')
 );
 const helmet_1 = __importDefault(require('helmet'));
-const error_1 = require('middlewares/error');
+const error_1 = require('./middlewares/error');
 const passport_2 = __importDefault(require('passport'));
-const v1_1 = __importDefault(require('routes/v1'));
+const v1_1 = __importDefault(require('./routes/v1'));
 
 const app = (0, express_1.default)();
 app.use(passport_2.default.initialize());

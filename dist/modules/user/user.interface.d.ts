@@ -1,5 +1,5 @@
-import type { IPaginateResult } from 'middlewares/paginate/paginate.interface';
-import type { AccessAndRefreshTokens } from 'modules/token/token.interface';
+import type { IPaginateResult } from '../../middlewares/paginate/paginate.interface';
+import type { AccessAndRefreshTokens } from '../../modules/token/token.interface';
 import type { Document, Model } from 'mongoose';
 import type mongoose from 'mongoose';
 export interface IUser {

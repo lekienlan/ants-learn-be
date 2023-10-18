@@ -41,9 +41,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.refresh = exports.loginWithEmail = void 0;
 var http_status_codes_1 = require("http-status-codes");
-var ApiError_1 = __importDefault(require("middlewares/error/ApiError"));
-var token_service_1 = require("modules/token/token.service");
-var user_1 = require("modules/user");
+var ApiError_1 = __importDefault(require("../../middlewares/error/ApiError"));
+var token_service_1 = require("../../modules/token/token.service");
+var user_1 = require("../../modules/user");
 var loginWithEmail = function (email) { return __awaiter(void 0, void 0, void 0, function () {
     var user;
     return __generator(this, function (_a) {

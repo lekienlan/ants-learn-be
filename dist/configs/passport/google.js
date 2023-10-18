@@ -39,8 +39,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var configs_1 = __importDefault(require("configs"));
-var user_1 = require("modules/user");
+var configs_1 = __importDefault(require("../../configs"));
+var user_1 = require("../../modules/user");
 var passport_1 = __importDefault(require("passport"));
 var passport_google_oauth20_1 = require("passport-google-oauth20");
 function google() {

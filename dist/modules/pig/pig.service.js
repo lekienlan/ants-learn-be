@@ -64,8 +64,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.remove = exports.update = exports.create = exports.findMany = void 0;
 var http_status_codes_1 = require("http-status-codes");
 var lodash_1 = require("lodash");
-var ApiError_1 = __importDefault(require("middlewares/error/ApiError"));
-var utils_1 = require("utils");
+var ApiError_1 = __importDefault(require("../../middlewares/error/ApiError"));
+var utils_1 = require("../../utils");
 var pig_model_1 = __importDefault(require("./pig.model"));
 var findMany = function (filter, options) { return __awaiter(void 0, void 0, void 0, function () {
     var piggies;

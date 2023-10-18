@@ -41,7 +41,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.remove = exports.create = exports.findTransHistories = exports.findMany = void 0;
 var http_status_codes_1 = require("http-status-codes");
-var ApiError_1 = __importDefault(require("middlewares/error/ApiError"));
+var ApiError_1 = __importDefault(require("../../middlewares/error/ApiError"));
 var history_model_1 = __importDefault(require("./history.model"));
 var findMany = function (filter, options) { return __awaiter(void 0, void 0, void 0, function () {
     var categories;

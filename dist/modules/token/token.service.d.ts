@@ -1,6 +1,6 @@
 import type { Request } from 'express';
 import type { JwtPayload } from 'jsonwebtoken';
-import type { IUserDoc } from 'modules/user/user.interface';
+import type { IUserDoc } from '../../modules/user/user.interface';
 import type { Moment } from 'moment';
 import type mongoose from 'mongoose';
 import type { AccessAndRefreshTokens, ITokenDoc } from './token.interface';

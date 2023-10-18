@@ -5,9 +5,9 @@
   "author": "@lanle98 <lekienlan98@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "build": "npx tsc",
+    "build": "npx tsc && tsc-alias",
     "check-types": "tsc --noEmit --pretty",
-    "start": "NODE_ENV=staging node -r tsconfig-paths/register -r ts-node/register dist/index.js",
+    "start": "NODE_ENV=staging node dist/index.js",
     "dev": "NODE_ENV=staging nodemon"
   },
   "devDependencies": {
@@ -43,6 +43,7 @@
     "nodemon": "^3.0.1",
     "prettier": "^3.0.3",
     "ts-node": "^10.9.1",
+    "tsc-alias": "^1.8.8",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.2.2"
   },

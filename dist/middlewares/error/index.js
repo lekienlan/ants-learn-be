@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.errorHandler = void 0;
 var http_status_codes_1 = require("http-status-codes");
-var logger_1 = __importDefault(require("middlewares/logger"));
+var logger_1 = __importDefault(require("../../middlewares/logger"));
 var errorHandler = function (err, _, res, _next) {
     var statusCode = err.statusCode, message = err.message;
     logger_1.default.debug(err.statusCode);

@@ -1,5 +1,5 @@
-import type { IPaginateOptions, IPaginateResult } from 'middlewares/paginate/paginate.interface';
-import type { ITransaction } from 'modules/transaction/transaction.interface';
+import type { IPaginateOptions, IPaginateResult } from '../../middlewares/paginate/paginate.interface';
+import type { ITransaction } from '../../modules/transaction/transaction.interface';
 import type { Document, Model } from 'mongoose';
 export interface IHistory {
     transactionId: string;

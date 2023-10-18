@@ -1,4 +1,4 @@
-import type { IPaginateOptions, IPaginateResult } from 'middlewares/paginate/paginate.interface';
+import type { IPaginateOptions, IPaginateResult } from '../../middlewares/paginate/paginate.interface';
 import type { IPeriod, IPeriodDoc, IPeriodPayload, IPeriodUpdatePayload } from './period.interface';
 export declare const findMany: (filter: Record<string, any>, options: IPaginateOptions) => Promise<IPaginateResult<IPeriod>>;
 export declare const findOne: ({ id }: {

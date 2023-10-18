@@ -1,4 +1,4 @@
-import type { IPaginateOptions, IPaginateResult } from 'middlewares/paginate/paginate.interface';
+import type { IPaginateOptions, IPaginateResult } from '../../middlewares/paginate/paginate.interface';
 import type { ITransactionDoc, ITransactionPayload, ITransactionUpdatePayload } from './transaction.interface';
 export declare const findMany: (filter: Record<string, any>, options: IPaginateOptions) => Promise<IPaginateResult<ITransactionDoc>>;
 export declare const findOne: ({ id }: {

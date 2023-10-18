@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CORS_OPTION = exports.WHITE_LISTS = void 0;
 var http_status_codes_1 = require("http-status-codes");
-var ApiError_1 = __importDefault(require("middlewares/error/ApiError"));
+var ApiError_1 = __importDefault(require("../../middlewares/error/ApiError"));
 exports.WHITE_LISTS = ['https://example.com', 'https://yourdomain.com'];
 exports.CORS_OPTION = {
     origin: function (origin, callback) {

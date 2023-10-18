@@ -42,8 +42,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.remove = exports.update = exports.create = exports.findMany = void 0;
 var http_status_codes_1 = require("http-status-codes");
 var lodash_1 = require("lodash");
-var paginate_constant_1 = require("middlewares/paginate/paginate.constant");
-var catchAsync_1 = __importDefault(require("utils/catchAsync"));
+var paginate_constant_1 = require("../../middlewares/paginate/paginate.constant");
+var catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
 var _1 = require(".");
 exports.findMany = (0, catchAsync_1.default)(function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var filter, options, categories;

@@ -1,6 +1,6 @@
-import type { IPaginateOptions, IPaginateResult } from 'middlewares/paginate/paginate.interface';
-import type { IPeriod } from 'modules/period/period.interface';
-import type { IUser } from 'modules/user/user.interface';
+import type { IPaginateOptions, IPaginateResult } from '../../middlewares/paginate/paginate.interface';
+import type { IPeriod } from '../../modules/period/period.interface';
+import type { IUser } from '../../modules/user/user.interface';
 import type { Document, Model } from 'mongoose';
 export interface IPig {
     name?: string;

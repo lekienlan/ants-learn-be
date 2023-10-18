@@ -1,6 +1,6 @@
-import type { IPaginateOptions, IPaginateResult } from 'middlewares/paginate/paginate.interface';
-import type { ICategory } from 'modules/category/category.interface';
-import type { IUser } from 'modules/user/user.interface';
+import type { IPaginateOptions, IPaginateResult } from '../../middlewares/paginate/paginate.interface';
+import type { ICategory } from '../../modules/category/category.interface';
+import type { IUser } from '../../modules/user/user.interface';
 import type { Document, Model } from 'mongoose';
 export interface ITransaction {
     amount: number;

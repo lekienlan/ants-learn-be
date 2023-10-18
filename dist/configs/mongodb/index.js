@@ -40,7 +40,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.connectMongodb = void 0;
-var configs_1 = __importDefault(require("configs"));
+var configs_1 = __importDefault(require("../../configs"));
 var mongoose_1 = __importDefault(require("mongoose"));
 function connectMongodb() {
     return __awaiter(this, void 0, void 0, function () {

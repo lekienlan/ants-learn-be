@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var configs_1 = __importDefault(require("configs"));
+var configs_1 = __importDefault(require("../../configs"));
 var SWAGGER_DEFINITION = {
     openapi: '3.0.0',
     info: {

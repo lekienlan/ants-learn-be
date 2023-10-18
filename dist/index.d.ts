@@ -1,2 +1,2 @@
 import 'dotenv/config';
-import 'types';
+import './types';

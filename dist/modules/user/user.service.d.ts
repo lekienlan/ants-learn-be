@@ -1,4 +1,4 @@
-import type { IPaginateOptions, IPaginateResult } from 'middlewares/paginate/paginate.interface';
+import type { IPaginateOptions, IPaginateResult } from '../../middlewares/paginate/paginate.interface';
 import type { IUser, IUserDoc } from './user.interface';
 export declare const create: (userBody: IUser) => Promise<IUser>;
 export declare const findByEmail: (email: string) => Promise<IUserDoc | null>;

@@ -1,4 +1,4 @@
-import type { IPaginateOptions, IPaginateResult } from 'middlewares/paginate/paginate.interface';
+import type { IPaginateOptions, IPaginateResult } from '../../middlewares/paginate/paginate.interface';
 import type { Document, Model } from 'mongoose';
 export interface IPeriod {
     pigId?: string;

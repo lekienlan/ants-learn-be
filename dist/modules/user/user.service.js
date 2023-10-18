@@ -41,8 +41,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.findAll = exports.findByAccessToken = exports.findById = exports.findByEmail = exports.create = void 0;
 var http_status_codes_1 = require("http-status-codes");
-var ApiError_1 = __importDefault(require("middlewares/error/ApiError"));
-var token_1 = require("modules/token");
+var ApiError_1 = __importDefault(require("../../middlewares/error/ApiError"));
+var token_1 = require("../../modules/token");
 var _1 = require(".");
 var create = function (userBody) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
