@@ -5,7 +5,6 @@ const startDate = Joi.date();
 const endDate = Joi.date();
 const budget = Joi.number();
 const members = Joi.array().items(Joi.string());
-const expenses = Joi.array().items(Joi.string());
 const repeat = Joi.boolean();
 const status = Joi.string();
 const pigId = Joi.string();
@@ -17,8 +16,7 @@ export const createPayload = {
     budget: budget.required(),
     pigId: pigId.required(),
     members,
-    repeat,
-    expenses
+    repeat
   })
 };
 
@@ -28,7 +26,6 @@ export const updatePayload = {
     endDate,
     budget,
     members,
-    expenses,
     repeat,
     status,
     pigId

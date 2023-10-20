@@ -55,14 +55,15 @@ export const create = catchAsync(
 
     const user = await userService.findByAccessToken(accessToken);
 
-    const { amount, categoryId, date, note, periodId } = req.body;
+    const { amount, categoryId, date, note, periodId, type } = req.body;
     const transaction = await transactionService.create({
       userId: user?.id,
       amount,
       categoryId,
       date,
       note,
-      periodId
+      periodId,
+      type: type || amount > 0 ? 'income' : 'expense'
     });
     await historyService.create({
       transactionId: transaction.id,
@@ -79,14 +80,16 @@ export const update = catchAsync(
     req: Request<{ id: string }, {}, ITransactionUpdatePayload>,
     res: Response
   ) => {
-    const { amount, categoryId, date, note } = req.body;
+    const { amount, categoryId, date, note, periodId, type } = req.body;
 
     const transaction = await transactionService.update({
       id: req.params.id,
       amount,
       categoryId,
       date,
-      note
+      note,
+      periodId,
+      type
     });
 
     await historyService.create({

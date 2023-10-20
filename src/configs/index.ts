@@ -2,7 +2,10 @@ import Joi from 'joi';
 
 const envVarsSchema = Joi.object()
   .keys({
-    NODE_ENV: Joi.string().valid('production', 'staging').required(),
+    NODE_ENV: Joi.string()
+      .valid('production', 'staging')
+      .required()
+      .default('staging'),
     PORT: Joi.number().default(3000),
     MONGODB_URL: Joi.string().required().description('Mongo DB url'),
     ACCESS_TOKEN_SECRET_KEY: Joi.string()

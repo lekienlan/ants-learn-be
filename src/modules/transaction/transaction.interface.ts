@@ -16,6 +16,7 @@ export interface ITransaction {
   note?: string;
   currency?: string;
   periodId?: string;
+  type?: 'income' | 'expense' | 'budget';
 }
 
 export interface ITransactionPayload

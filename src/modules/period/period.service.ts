@@ -17,10 +17,7 @@ export const findMany = async (
   filter: Record<string, any>,
   options: IPaginateOptions
 ): Promise<IPaginateResult<IPeriod>> => {
-  const periods = await Period.paginate(filter, {
-    ...options,
-    populate: 'expenses'
-  });
+  const periods = await Period.paginate(filter, options);
   return periods;
 };
 
@@ -29,12 +26,11 @@ export const findOne = async ({
 }: {
   id: string;
 }): Promise<IPeriodDoc | undefined> => {
-  const transaction = await Period.findById(id);
+  const period = await Period.findById(id);
 
-  if (!transaction)
-    throw new ApiError(StatusCodes.NOT_FOUND, 'Period not found');
+  if (!period) throw new ApiError(StatusCodes.NOT_FOUND, 'Period not found');
 
-  return transaction?.populate([{ path: 'expenses', model: 'Transaction' }]);
+  return period;
 };
 
 export const create = async (data: IPeriodPayload): Promise<IPeriodDoc> => {

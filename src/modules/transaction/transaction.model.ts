@@ -1,4 +1,5 @@
 import paginate from 'middlewares/paginate';
+import Period from 'modules/period/period.model';
 import mongoose, { isValidObjectId, Schema } from 'mongoose';
 import { sortWithIdOnTop } from 'utils';
 
@@ -32,6 +33,10 @@ const transactionSchema = new Schema<ITransactionDoc, ITransactionModel>(
           throw new Error('Not valid');
         }
       }
+    },
+    type: {
+      type: String,
+      enum: ['income', 'budget', 'expense']
     },
     periodId: {
       type: String,
@@ -87,9 +92,35 @@ transactionSchema.virtual('period', {
 
 transactionSchema.plugin(paginate);
 
+transactionSchema.post('save', async function (doc) {
+  const period = await Period.findById(doc.periodId);
+
+  if (period) {
+    // Calculate the new total expenses by summing all expenses in the period
+    const totalExpenses = await Transaction.aggregate([
+      {
+        $match: {
+          periodId: doc.periodId,
+          type: 'expense'
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          totalAmount: { $sum: '$amount' }
+        }
+      }
+    ]);
+    // Update the totalExpenses field in the associated Period
+    await Period.updateOne(
+      { _id: '653256176ee2eaaa9a263e9d' },
+      { expense: totalExpenses[0].totalAmount }
+    );
+  }
+});
+
 const Transaction = mongoose.model<ITransactionDoc, ITransactionModel>(
   'Transaction',
   transactionSchema
 );
-
 export default Transaction;

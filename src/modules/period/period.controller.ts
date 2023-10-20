@@ -24,11 +24,11 @@ export const findMany = catchAsync(async (req: Request, res: Response) => {
 
 export const findOne = catchAsync(
   async (req: Request<{ id: string }, {}, IPeriodPayload>, res: Response) => {
-    const transaction = await periodService.findOne({
+    const period = await periodService.findOne({
       id: req.params.id
     });
 
-    res.send(transaction);
+    res.send(period);
   }
 );
 
@@ -42,7 +42,8 @@ export const create = catchAsync(
     const period = await periodService.create({
       ...req.body,
       members: [user?.id, ...(req.body.members || [])],
-      repeat: req.body.repeat ?? true
+      repeat: req.body.repeat ?? true,
+      expense: 0
     });
 
     res.status(StatusCodes.CREATED).send(period);

@@ -10,9 +10,9 @@ export interface IPeriod {
   endDate?: Date;
   budget?: number;
   members?: string[];
-  expenses?: string[];
   repeat?: boolean;
   status?: string;
+  expense?: number;
 }
 
 export interface IPeriodPayload extends Omit<IPeriod, 'user' | 'code'> {}

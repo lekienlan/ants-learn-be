@@ -15,7 +15,8 @@ const periodSchema = new Schema<IPeriodDoc, IPeriodModel>(
     },
     repeat: Boolean,
     status: String,
-    pigId: mongoose.Schema.Types.ObjectId
+    pigId: mongoose.Schema.Types.ObjectId,
+    expense: Number
   },
   {
     timestamps: true,
@@ -32,11 +33,16 @@ const periodSchema = new Schema<IPeriodDoc, IPeriodModel>(
 
 periodSchema.plugin(paginate);
 
-periodSchema.virtual('expenses', {
-  ref: 'Transaction',
-  localField: '_id',
-  foreignField: 'periodId'
-});
+// periodSchema.virtual('expenses', {
+//   ref: 'Transaction',
+//   localField: '_id',
+//   foreignField: 'periodId',
+//   options: {
+//     match: {
+//       type: 'expense'
+//     }
+//   }
+// });
 
 const Period = mongoose.model<IPeriodDoc, IPeriodModel>('Period', periodSchema);
 

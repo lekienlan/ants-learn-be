@@ -57,10 +57,18 @@
         "unused-imports/no-unused-vars": ["off", { "argsIgnorePattern": "^_" }]
       }
     },
+
     // Configuration for testing
     {
       "files": ["**/*.test.ts", "**/*.test.tsx"],
       "plugins": ["jest", "jest-formatting", "testing-library", "jest-dom"]
+    },
+    // for mongoose model
+    {
+      "files": ["**/*.model.ts"],
+      "rules": {
+        "@typescript-eslint/no-use-before-define": "off"
+      }
     }
   ]
 }

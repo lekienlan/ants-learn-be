@@ -20,7 +20,7 @@ export const findTransHistories = async ({
 }: {
   transactionId: string;
 }): Promise<IHistoryDoc[]> => {
-  const histories = await History.find({ transactionId });
+  const histories = await History.find({ transactionId }).sort('-createdAt');
 
   if (!histories)
     throw new ApiError(StatusCodes.NOT_FOUND, 'Transaction not found');
