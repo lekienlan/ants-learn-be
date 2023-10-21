@@ -63,7 +63,7 @@ export const create = catchAsync(
       date,
       note,
       periodId,
-      type: type || amount > 0 ? 'income' : 'expense'
+      type: type || (amount > 0 ? 'income' : 'expense')
     });
     await historyService.create({
       transactionId: transaction.id,

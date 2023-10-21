@@ -113,11 +113,26 @@ transactionSchema.post('save', async function (doc) {
     ]);
     // Update the totalExpenses field in the associated Period
     await Period.updateOne(
-      { _id: '653256176ee2eaaa9a263e9d' },
-      { expense: totalExpenses[0].totalAmount }
+      { _id: doc.periodId },
+      { expense: totalExpenses?.[0]?.totalAmount || 0 }
     );
   }
 });
+
+// transactionSchema.post('save', async function (doc) {
+//   if (doc.type !== 'budget') return;
+
+//   const period = await Period.findById(doc.periodId);
+
+//   if (period) {
+//     // Calculate the new total expenses by summing all expenses in the period
+//     // Update the totalExpenses field in the associated Period
+//     await Period.updateOne(
+//       { _id: '653256176ee2eaaa9a263e9d' },
+//       { budget: doc.amount }
+//     );
+//   }
+// });
 
 const Transaction = mongoose.model<ITransactionDoc, ITransactionModel>(
   'Transaction',

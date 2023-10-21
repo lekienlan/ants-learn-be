@@ -4,6 +4,7 @@ import 'types';
 import bodyParser from 'body-parser';
 import configs from 'configs';
 import { CORS_OPTION } from 'configs/cors';
+import logger from 'configs/logger';
 import { connectMongodb } from 'configs/mongodb';
 import configPassport from 'configs/passport';
 import cors from 'cors';
@@ -55,7 +56,7 @@ app.use(errorHandler);
 
 connectMongodb();
 app.listen(configs.port, () => {
-  console.log(
+  logger.info(
     `⚡️[server]: Server is running at http://localhost:${configs.port}`
   );
 });

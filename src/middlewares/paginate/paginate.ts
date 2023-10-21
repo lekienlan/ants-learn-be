@@ -37,6 +37,8 @@ const paginate = <T extends Document, U extends Model<U>>(
           } else {
             delete filter[key];
           }
+        } else {
+          filter[key] = { $in: filter[key].split(',') };
         }
       });
 

@@ -1,6 +1,6 @@
+import logger from 'configs/logger';
 import type { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import logger from 'middlewares/logger';
 
 import type ApiError from './ApiError';
 
