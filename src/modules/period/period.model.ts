@@ -1,5 +1,4 @@
 import paginate from 'middlewares/paginate';
-import { transactionService } from 'modules/transaction';
 import mongoose, { Schema } from 'mongoose';
 import { sortWithIdOnTop } from 'utils';
 
@@ -33,27 +32,6 @@ const periodSchema = new Schema<IPeriodDoc, IPeriodModel>(
 );
 
 periodSchema.plugin(paginate);
-
-// periodSchema.virtual('expenses', {
-//   ref: 'Transaction',
-//   localField: '_id',
-//   foreignField: 'periodId',
-//   options: {
-//     match: {
-//       type: 'expense'
-//     }
-//   }
-// });
-
-periodSchema.post('save', async function (doc) {
-  console.log(doc._id.toString(), doc.members?.[0]?.toString());
-  await transactionService.create({
-    periodId: doc._id.toString(),
-    amount: (doc.budget || 0) * -1,
-    type: 'budget',
-    userId: doc.members?.[0]?.toString() || ''
-  });
-});
 
 const Period = mongoose.model<IPeriodDoc, IPeriodModel>('Period', periodSchema);
 

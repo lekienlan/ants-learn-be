@@ -3,7 +3,10 @@ import { StatusCodes } from 'http-status-codes';
 import { omit, pick } from 'lodash';
 import { PAGINATE_OPTIONS } from 'middlewares/paginate/paginate.constant';
 import type { IPaginateOptions } from 'middlewares/paginate/paginate.interface';
+import { historyService } from 'modules/history';
 import { tokenService } from 'modules/token';
+import { transactionService } from 'modules/transaction';
+import Transaction from 'modules/transaction/transaction.model';
 import { userService } from 'modules/user';
 import catchAsync from 'utils/catchAsync';
 
@@ -46,6 +49,19 @@ export const create = catchAsync(
       expense: 0
     });
 
+    const transaction = await transactionService.create({
+      periodId: period.id,
+      amount: (period.budget || 0) * -1,
+      type: 'budget',
+      userId: user?.id
+    });
+
+    await historyService.create({
+      transactionId: transaction.id,
+      data: transaction,
+      state: 'original'
+    });
+
     res.status(StatusCodes.CREATED).send(period);
   }
 );
@@ -59,6 +75,26 @@ export const update = catchAsync(
       ...req.body,
       id: req.params.id
     });
+
+    if (req.body.budget) {
+      const currentTransaction = await Transaction.findOne({
+        periodId: period?.id,
+        type: 'budget'
+      });
+
+      if (!currentTransaction) throw Error('Transaction not found');
+
+      const updatedTransaction = await transactionService.update({
+        id: currentTransaction._id,
+        amount: (req.body.budget || 0) * -1
+      });
+
+      await historyService.create({
+        transactionId: updatedTransaction.id,
+        data: updatedTransaction,
+        state: 'modified'
+      });
+    }
 
     res.send(period);
   }
