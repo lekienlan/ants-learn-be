@@ -1,0 +1,114 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+type CategoriesStyle {
+  color String
+  icon  String
+}
+
+enum CategoryType {
+  expense
+  income
+}
+
+type HistoriesData {
+  amount     Int
+  categoryId String?
+  currency   String?
+  date       DateTime? @db.Date
+  note       String?
+  periodId   String?
+  userId     String
+}
+
+model categories {
+  id           String           @id @default(auto()) @map("_id") @db.ObjectId
+  code         String
+  name         String
+  style        CategoriesStyle?
+  type         CategoryType
+  updatedAt    DateTime?        @default(now()) @db.Date
+  createdAt    DateTime?        @default(now()) @db.Date
+  transactions transactions[]
+}
+
+model histories {
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  v             Int           @map("__v")
+  createdAt     DateTime      @db.Date
+  data          HistoriesData
+  state         String
+  transactionId String
+  updatedAt     DateTime      @db.Date
+}
+
+model periods {
+  id           String         @id @default(auto()) @map("_id") @db.ObjectId
+  v            Int            @map("__v")
+  budget       Int
+  createdAt    DateTime       @db.Date
+  endDate      DateTime       @db.Date
+  expense      Int
+  members      String[]
+  pigId        String         @db.ObjectId
+  repeat       Boolean
+  startDate    DateTime       @db.Date
+  updatedAt    DateTime       @db.Date
+  transactions transactions[]
+}
+
+model pigs {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  v         Int      @map("__v")
+  createdAt DateTime @db.Date
+  name      String
+  updatedAt DateTime @db.Date
+  userId    String
+}
+
+model tokens {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  v           Int      @map("__v")
+  blacklisted Boolean
+  createdAt   DateTime @db.Date
+  expires     DateTime @db.Date
+  token       String
+  updatedAt   DateTime @db.Date
+  userId      String
+
+  @@index([token], map: "token_1")
+}
+
+model transactions {
+  id         String      @id @default(auto()) @map("_id") @db.ObjectId
+  amount     Int
+  currency   String?
+  date       DateTime?   @db.Date
+  note       String?
+  periodId   String?     @db.ObjectId
+  period     periods?    @relation(fields: [periodId], references: [id])
+  type       String?
+  userId     String      @db.ObjectId
+  user       users       @relation(fields: [userId], references: [id])
+  categoryId String?     @db.ObjectId
+  category   categories? @relation(fields: [categoryId], references: [id])
+  updatedAt  DateTime?   @default(now()) @db.Date
+  createdAt  DateTime?   @default(now()) @db.Date
+}
+
+model users {
+  id           String         @id @default(auto()) @map("_id") @db.ObjectId
+  v            Int            @map("__v")
+  createdAt    DateTime       @db.Date
+  email        String         @unique(map: "email_1")
+  firstName    String
+  lastName     String
+  updatedAt    DateTime       @db.Date
+  transactions transactions[]
+}

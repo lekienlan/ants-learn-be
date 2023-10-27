@@ -1,42 +1,25 @@
+import type { Prisma } from '@prisma/client';
 import type { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { omit, pick } from 'lodash';
-import { PAGINATE_OPTIONS } from 'middlewares/paginate/paginate.constant';
-import type { IPaginateOptions } from 'middlewares/paginate/paginate.interface';
 import { historyService } from 'modules/history';
 import { tokenService } from 'modules/token';
 import { userService } from 'modules/user';
+import type prisma from 'prisma';
 import catchAsync from 'utils/catchAsync';
 
 import { transactionService } from '.';
-import type {
-  ITransactionPayload,
-  ITransactionUpdatePayload
-} from './transaction.interface';
 
 export const findMany = catchAsync(async (req: Request, res: Response) => {
   const accessToken = tokenService.getAccessTokenFromRequest(req);
 
   const user = await userService.findByAccessToken(accessToken);
-  const filter = omit(
-    {
-      ...req.query,
-      userId: user?.id
-    },
-    PAGINATE_OPTIONS
-  );
-  const options: IPaginateOptions = pick<Record<string, any>>(
-    req.query,
-    PAGINATE_OPTIONS
-  );
 
-  const transactions = await transactionService.findMany(filter, options);
+  const transactions = await transactionService.prismaFindMany({
+    userId: user?.id,
+    ...req.query
+  });
 
-  const totalAmount = transactions.results.reduce((prev, current) => {
-    return prev + current.amount;
-  }, 0);
-
-  res.send({ ...transactions, totalAmount });
+  res.send(transactions);
 });
 
 export const findOne = catchAsync(
@@ -50,14 +33,21 @@ export const findOne = catchAsync(
 );
 
 export const create = catchAsync(
-  async (req: Request<{}, {}, ITransactionPayload>, res: Response) => {
+  async (
+    req: Request<
+      {},
+      {},
+      Prisma.Args<typeof prisma.transactions, 'create'>['data']
+    >,
+    res: Response
+  ) => {
     const accessToken = tokenService.getAccessTokenFromRequest(req);
 
     const user = await userService.findByAccessToken(accessToken);
 
     const { amount, categoryId, date, note, periodId, type } = req.body;
     const transaction = await transactionService.create({
-      userId: user?.id,
+      userId: user?.id || '',
       amount,
       categoryId,
       date,
@@ -65,11 +55,13 @@ export const create = catchAsync(
       periodId,
       type: type || (amount > 0 ? 'income' : 'expense')
     });
-    await historyService.create({
-      transactionId: transaction.id,
-      data: transaction,
-      state: 'original'
-    });
+
+    console.log(transaction);
+    // await historyService.create({
+    //   transactionId: transaction.id,
+    //   data: transaction,
+    //   state: 'original'
+    // });
 
     res.status(StatusCodes.CREATED).send(transaction);
   }
@@ -77,13 +69,16 @@ export const create = catchAsync(
 
 export const update = catchAsync(
   async (
-    req: Request<{ id: string }, {}, ITransactionUpdatePayload>,
+    req: Request<
+      { id: string },
+      {},
+      Prisma.Args<typeof prisma.transactions, 'update'>['data']
+    >,
     res: Response
   ) => {
     const { amount, categoryId, date, note, periodId, type } = req.body;
 
-    const transaction = await transactionService.update({
-      id: req.params.id,
+    const transaction = await transactionService.update(req.params.id, {
       amount,
       categoryId,
       date,
@@ -94,7 +89,15 @@ export const update = catchAsync(
 
     await historyService.create({
       transactionId: transaction.id,
-      data: transaction,
+      data: {
+        amount: transaction.amount,
+        categoryId: transaction.categoryId,
+        currency: transaction.currency,
+        date: transaction.date,
+        note: transaction.note,
+        periodId: transaction.periodId,
+        userId: transaction.userId
+      },
       state: 'modified'
     });
 
@@ -110,7 +113,15 @@ export const remove = catchAsync(
 
     await historyService.create({
       transactionId: transaction.id,
-      data: transaction,
+      data: {
+        amount: transaction.amount,
+        categoryId: transaction.categoryId,
+        currency: transaction.currency,
+        date: transaction.date,
+        note: transaction.note,
+        periodId: transaction.periodId,
+        userId: transaction.userId
+      },
       state: 'deleted'
     });
 

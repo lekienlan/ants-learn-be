@@ -1,9 +1,11 @@
+import type { Prisma } from '@prisma/client';
 import { StatusCodes } from 'http-status-codes';
 import ApiError from 'middlewares/error/ApiError';
 import type {
   IPaginateOptions,
   IPaginateResult
 } from 'middlewares/paginate/paginate.interface';
+import type prisma from 'prisma';
 
 import type { IHistory, IHistoryDoc } from './history.interface';
 import History from './history.model';
@@ -28,7 +30,9 @@ export const findTransHistories = async ({
   return histories;
 };
 
-export const create = async (data: IHistory): Promise<IHistoryDoc> => {
+export const create = async (
+  data: Prisma.Args<typeof prisma.histories, 'update'>['data']
+) => {
   const history = await History.create(data);
 
   return history;

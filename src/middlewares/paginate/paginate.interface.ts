@@ -15,3 +15,17 @@ export interface IPaginateOptions {
   page?: number;
   populate?: string;
 }
+export type PaginateOptions = {
+  sortBy?: string; // email:desc
+  limit?: string;
+  pick?: string; // Ex: id amount
+  page?: string;
+};
+
+export type QueryResults<T> = {
+  results: T[];
+  page: number;
+  limit: number;
+  totalPages: number;
+  totalResults: number;
+};

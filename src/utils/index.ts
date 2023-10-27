@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 export function removeDiacritics(string: string) {
   const from =
     'àáãảạăằắẳẵặâầấẩẫậèéẻẽẹêềếểễệđùúủũụưừứửữựòóỏõọôồốổỗộơờớởỡợìíỉĩịäëïîöüûñçýỳỹỵỷ';
@@ -33,3 +35,28 @@ export const sortWithIdOnTop = (object: Record<string, any>) => {
   });
   return sortedObject;
 };
+
+export function convertStringToType(
+  value: string
+): number | string | Date | boolean {
+  if (!value) return '';
+
+  if (moment(value, 'YYYY-MM-DD', true).isValid()) {
+    return new Date(value);
+  }
+
+  if (!isNaN(parseInt(value, 10))) {
+    return parseInt(value, 10);
+  }
+  if (value === 'true') {
+    return true;
+  }
+  if (value === 'false') {
+    return false;
+  }
+  if (JSON.parse(value)) {
+    return JSON.parse(value);
+  }
+
+  return value;
+}

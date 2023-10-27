@@ -58,7 +58,15 @@ export const create = catchAsync(
 
     await historyService.create({
       transactionId: transaction.id,
-      data: transaction,
+      data: {
+        amount: transaction.amount,
+        categoryId: transaction.categoryId,
+        currency: transaction.currency,
+        date: transaction.date,
+        note: transaction.note,
+        periodId: transaction.periodId,
+        userId: transaction.userId
+      },
       state: 'original'
     });
 
@@ -84,14 +92,24 @@ export const update = catchAsync(
 
       if (!currentTransaction) throw Error('Transaction not found');
 
-      const updatedTransaction = await transactionService.update({
-        id: currentTransaction._id,
-        amount: (req.body.budget || 0) * -1
-      });
+      const updatedTransaction = await transactionService.update(
+        currentTransaction._id,
+        {
+          amount: (req.body.budget || 0) * -1
+        }
+      );
 
       await historyService.create({
         transactionId: updatedTransaction.id,
-        data: updatedTransaction,
+        data: {
+          amount: updatedTransaction.amount,
+          categoryId: updatedTransaction.categoryId,
+          currency: updatedTransaction.currency,
+          date: updatedTransaction.date,
+          note: updatedTransaction.note,
+          periodId: updatedTransaction.periodId,
+          userId: updatedTransaction.userId
+        },
         state: 'modified'
       });
     }

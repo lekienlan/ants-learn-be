@@ -9,12 +9,12 @@ export interface ICategory {
   name: string;
   code: string;
   type: 'expense' | 'income';
-  user: IUser;
+  user?: IUser;
   userId?: string;
   style?: {
-    icon?: string;
-    color?: string;
-  };
+    icon?: string | null;
+    color?: string | null;
+  } | null;
 }
 
 export interface ICategoryPayload extends Omit<ICategory, 'user' | 'code'> {}

@@ -48,6 +48,7 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
+    "@prisma/client": "^5.4.2",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
@@ -64,6 +65,7 @@
     "mongoose": "^7.5.2",
     "passport": "^0.6.0",
     "passport-google-oauth20": "^2.0.0",
+    "prisma": "^5.4.2",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0",
     "util": "^0.12.5",

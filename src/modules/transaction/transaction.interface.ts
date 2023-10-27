@@ -9,14 +9,16 @@ import type { Document, Model } from 'mongoose';
 export interface ITransaction {
   amount: number;
   userId: string;
-  categoryId?: string;
+  categoryId?: string | null;
   user: IUser;
-  category: ICategory;
+  category: ICategory | null;
   date?: Date;
   note?: string;
   currency?: string;
   periodId?: string;
   type?: 'income' | 'expense' | 'budget';
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface ITransactionPayload

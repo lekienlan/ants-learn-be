@@ -1,15 +1,15 @@
+import type { Prisma } from '@prisma/client';
 import { StatusCodes } from 'http-status-codes';
 import ApiError from 'middlewares/error/ApiError';
 import type {
   IPaginateOptions,
-  IPaginateResult
+  IPaginateResult,
+  PaginateOptions
 } from 'middlewares/paginate/paginate.interface';
+import paginatePrisma from 'middlewares/paginate/paginate.prisma';
+import prisma from 'prisma';
 
-import type {
-  ITransactionDoc,
-  ITransactionPayload,
-  ITransactionUpdatePayload
-} from './transaction.interface';
+import type { ITransactionDoc } from './transaction.interface';
 import Transaction from './transaction.model';
 
 export const findMany = async (
@@ -20,6 +20,16 @@ export const findMany = async (
     ...options,
     populate: 'category,user,period'
   });
+
+  return transactions;
+};
+export const prismaFindMany = async (
+  params: PaginateOptions & Prisma.transactionsWhereInput
+) => {
+  const transactions = await paginatePrisma<Prisma.transactionsWhereInput>(
+    prisma.transactions,
+    params
+  );
 
   return transactions;
 };
@@ -42,23 +52,33 @@ export const findOne = async ({
 };
 
 export const create = async (
-  data: ITransactionPayload
-): Promise<ITransactionDoc> => {
-  const transaction = await Transaction.create(data);
+  data: Prisma.Args<typeof prisma.transactions, 'create'>['data']
+) => {
+  // const transaction = await Transaction.create(data);
 
-  return transaction.populate([
-    { path: 'user', model: 'User' },
-    { path: 'category', model: 'Category' },
-    { path: 'period', model: 'Period' }
-  ]);
+  // return transaction.populate([
+  //   { path: 'user', model: 'User' },
+  //   { path: 'category', model: 'Category' },
+  //   { path: 'period', model: 'Period' }
+  // ]);
+
+  const transaction = await prisma.transactions.create({
+    data,
+    include: {
+      user: true,
+      category: true,
+      period: true
+    }
+  });
+
+  return transaction;
 };
 
 export const update = async (
-  data: ITransactionUpdatePayload
-): Promise<ITransactionDoc> => {
-  const { id, ...payload } = data;
-
-  const transaction = await Transaction.findByIdAndUpdate(id, payload, {
+  id: string,
+  data: Prisma.Args<typeof prisma.transactions, 'update'>['data']
+) => {
+  const transaction = await Transaction.findByIdAndUpdate(id, data, {
     returnDocument: 'after'
   });
 
