@@ -1,4 +1,3 @@
-import paginate from 'middlewares/paginate';
 import mongoose, { Schema } from 'mongoose';
 import { sortWithIdOnTop } from 'utils';
 import validator from 'validator';
@@ -42,8 +41,6 @@ const userSchema = new Schema<IUserDoc, IUserModel>(
     }
   }
 );
-
-userSchema.plugin(paginate);
 
 /**
  * Check if email is taken

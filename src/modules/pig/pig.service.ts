@@ -1,28 +1,19 @@
+import type { Prisma } from '@prisma/client';
 import { StatusCodes } from 'http-status-codes';
 import { snakeCase } from 'lodash';
 import ApiError from 'middlewares/error/ApiError';
-import type {
-  IPaginateOptions,
-  IPaginateResult
-} from 'middlewares/paginate/paginate.interface';
+import paginate from 'middlewares/paginate';
+import type { PaginateOptions } from 'middlewares/paginate/paginate.interface';
+import prisma from 'prisma';
 import { removeDiacritics } from 'utils';
 
-import type {
-  IPig,
-  IPigDoc,
-  IPigPayload,
-  IPigUpdatePayload
-} from './pig.interface';
+import type { IPigDoc, IPigPayload, IPigUpdatePayload } from './pig.interface';
 import Pig from './pig.model';
 
 export const findMany = async (
-  filter: Record<string, any>,
-  options: IPaginateOptions
-): Promise<IPaginateResult<IPig>> => {
-  const piggies = await Pig.paginate(filter, {
-    ...options,
-    populate: 'user,period'
-  });
+  params: PaginateOptions & Prisma.pigsWhereInput
+) => {
+  const piggies = await paginate(prisma.pigs, params);
   return piggies;
 };
 

@@ -14,7 +14,7 @@ export const findMany = catchAsync(async (req: Request, res: Response) => {
 
   const user = await userService.findByAccessToken(accessToken);
 
-  const transactions = await transactionService.prismaFindMany({
+  const transactions = await transactionService.findMany({
     userId: user?.id,
     ...req.query
   });

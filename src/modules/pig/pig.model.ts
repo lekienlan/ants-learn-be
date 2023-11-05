@@ -1,4 +1,3 @@
-import paginate from 'middlewares/paginate';
 import mongoose, { isValidObjectId, Schema } from 'mongoose';
 import { sortWithIdOnTop } from 'utils';
 
@@ -51,8 +50,6 @@ pigSchema.virtual('period', {
   localField: '_id',
   foreignField: 'pigId'
 });
-
-pigSchema.plugin(paginate);
 
 const Pig = mongoose.model<IPigDoc, IPigModel>('Pig', pigSchema);
 

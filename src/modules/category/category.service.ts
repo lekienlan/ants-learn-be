@@ -1,14 +1,13 @@
+import type { Prisma } from '@prisma/client';
 import { StatusCodes } from 'http-status-codes';
 import { snakeCase } from 'lodash';
 import ApiError from 'middlewares/error/ApiError';
-import type {
-  IPaginateOptions,
-  IPaginateResult
-} from 'middlewares/paginate/paginate.interface';
+import paginate from 'middlewares/paginate';
+import type { PaginateOptions } from 'middlewares/paginate/paginate.interface';
+import prisma from 'prisma';
 import { removeDiacritics } from 'utils';
 
 import type {
-  ICategory,
   ICategoryDoc,
   ICategoryPayload,
   ICategoryUpdatePayload
@@ -16,10 +15,12 @@ import type {
 import Category from './category.model';
 
 export const findMany = async (
-  filter: Record<string, any>,
-  options: IPaginateOptions
-): Promise<IPaginateResult<ICategory>> => {
-  const categories = await Category.paginate(filter, options);
+  params: PaginateOptions & Prisma.categoriesWhereInput
+) => {
+  const categories = await paginate<Prisma.categoriesWhereInput>(
+    prisma.categories,
+    params
+  );
   return categories;
 };
 

@@ -1,4 +1,3 @@
-import paginate from 'middlewares/paginate';
 import mongoose, { Schema } from 'mongoose';
 import { sortWithIdOnTop } from 'utils';
 
@@ -37,8 +36,6 @@ historySchema.virtual('user', {
   foreignField: '_id',
   justOne: true
 });
-
-historySchema.plugin(paginate);
 
 const History = mongoose.model<IHistoryDoc, IHistoryModel>(
   'History',

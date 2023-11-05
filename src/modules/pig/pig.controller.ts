@@ -1,8 +1,5 @@
 import type { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { omit, pick } from 'lodash';
-import { PAGINATE_OPTIONS } from 'middlewares/paginate/paginate.constant';
-import type { IPaginateOptions } from 'middlewares/paginate/paginate.interface';
 import { tokenService } from 'modules/token';
 import { userService } from 'modules/user';
 import catchAsync from 'utils/catchAsync';
@@ -11,13 +8,7 @@ import { pigService } from '.';
 import type { IPigPayload, IPigUpdatePayload } from './pig.interface';
 
 export const findMany = catchAsync(async (req: Request, res: Response) => {
-  const filter = omit(req.query, PAGINATE_OPTIONS);
-  const options: IPaginateOptions = pick<Record<string, any>>(
-    req.query,
-    PAGINATE_OPTIONS
-  );
-
-  const piggies = await pigService.findMany(filter, options);
+  const piggies = await pigService.findMany(req.query);
 
   res.send(piggies);
 });

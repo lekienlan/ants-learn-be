@@ -1,77 +1,64 @@
-// import { startCase } from 'lodash';
-// import type { Document, Model, Schema } from 'mongoose';
+import { omit } from 'lodash';
+import { convertStringToType } from 'utils';
 
-import { startCase } from 'lodash';
-import type { Document, Model, Schema } from 'mongoose';
+import type { PaginateOptions, QueryResults } from './paginate.interface';
 
-import type { IPaginateOptions, IPaginateResult } from './paginate.interface';
-
-const paginate = <T extends Document, U extends Model<U>>(
-  schema: Schema<T>
-): void => {
-  schema.static(
-    'paginate',
-    async function (
-      filter: Record<string, any>,
-      options: IPaginateOptions
-    ): Promise<IPaginateResult> {
-      const { sortBy, limit, page = 1, pick, populate } = options;
-      const skip = (page - 1) * (limit || 0);
-      let sort = '';
-      if (sortBy) {
-        const sortingList = sortBy.split(',').map((sortOption: string) => {
-          const [key, order = 'asc'] = sortOption.split(':');
-          return `${order === 'desc' ? '-' : ''}${key}`;
-        });
-        sort = sortingList.join('');
+export const paginateFilter = (filter: Record<string, any>) => {
+  const formattedFilter = omit(filter, ['limit', 'sortBy', 'page']);
+  Object.keys(formattedFilter).forEach((key) => {
+    // if filter is an array
+    if (Array.isArray(formattedFilter[key])) {
+      const [gte, lte] = formattedFilter[key];
+      if (gte || lte) {
+        formattedFilter[key] = {
+          ...(gte ? { gte: convertStringToType(gte) } : {}),
+          ...(lte ? { lte: convertStringToType(lte) } : {})
+        };
       } else {
-        sort = '-createdAt';
+        delete formattedFilter[key];
       }
-
-      Object.keys(filter).forEach((key) => {
-        // if filter is an array
-        if (Array.isArray(filter[key])) {
-          const [gte, lte] = filter[key];
-          if (gte || lte) {
-            filter[key] = {
-              ...(gte ? { $gte: gte } : {}),
-              ...(lte ? { $lte: lte } : {})
-            };
-          } else {
-            delete filter[key];
-          }
-        } else {
-          filter[key] = { $in: filter[key].split(',') };
-        }
-      });
-
-      const [totalResults, results] = await Promise.all([
-        this.countDocuments(filter).exec(),
-        this.find(filter)
-          .sort(sort)
-          .skip(skip)
-          .limit(limit)
-          .select(pick?.replace(',', ' '))
-          .populate(
-            populate?.split(',').map((populateOption: string) => ({
-              path: populateOption,
-              model: startCase(populateOption)
-            }))
-          )
-          .exec()
-      ]);
-
-      const totalPages = limit ? Math.ceil(totalResults / limit) : 1;
-
-      return {
-        results,
-        page: parseInt(page.toString(), 10),
-        limit: limit ? parseInt(limit.toString(), 10) : undefined,
-        totalPages,
-        totalResults
-      };
+    } else {
+      formattedFilter[key] = { in: formattedFilter[key].split(',') };
     }
-  );
+  });
+
+  return formattedFilter;
+};
+
+const paginate = async <T = Record<string, any>>(
+  model: any,
+  params: T & PaginateOptions
+): Promise<QueryResults<T>> => {
+  const { sortBy = 'updatedAt', limit, page, ...query } = params;
+
+  const _limit = limit ? parseInt(limit, 10) : 10;
+  const _page = page ? parseInt(page, 10) : 1;
+  const skip = (_page - 1) * (_limit || 0);
+
+  const orderBy: { field: string; direction: 'asc' | 'desc' } =
+    sortBy.startsWith('-')
+      ? { field: sortBy.substring(1), direction: 'desc' }
+      : { field: sortBy, direction: 'asc' };
+
+  const totalResults = await model.count({ where: paginateFilter(query) });
+  const results = await model.findMany({
+    where: paginateFilter(query),
+    skip,
+    take: _limit,
+    orderBy: {
+      [orderBy.field]: orderBy.direction
+    }
+  });
+
+  const totalPages = _limit ? Math.ceil(totalResults / _limit) : 1;
+
+  return {
+    results,
+    page: _page,
+    limit: _limit,
+    totalPages,
+    totalResults
+  };
 };
 
 export default paginate;

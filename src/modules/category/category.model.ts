@@ -1,4 +1,3 @@
-import paginate from 'middlewares/paginate';
 import mongoose, { isValidObjectId, Schema } from 'mongoose';
 import { sortWithIdOnTop } from 'utils';
 
@@ -55,8 +54,6 @@ categorySchema.virtual('user', {
   foreignField: '_id',
   justOne: true
 });
-
-categorySchema.plugin(paginate);
 
 const Category = mongoose.model<ICategoryDoc, ICategoryModel>(
   'Category',

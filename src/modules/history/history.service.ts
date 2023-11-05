@@ -1,21 +1,21 @@
 import type { Prisma } from '@prisma/client';
 import { StatusCodes } from 'http-status-codes';
 import ApiError from 'middlewares/error/ApiError';
-import type {
-  IPaginateOptions,
-  IPaginateResult
-} from 'middlewares/paginate/paginate.interface';
-import type prisma from 'prisma';
+import paginate from 'middlewares/paginate';
+import type { PaginateOptions } from 'middlewares/paginate/paginate.interface';
+import prisma from 'prisma';
 
-import type { IHistory, IHistoryDoc } from './history.interface';
+import type { IHistoryDoc } from './history.interface';
 import History from './history.model';
 
 export const findMany = async (
-  filter: Record<string, any>,
-  options: IPaginateOptions
-): Promise<IPaginateResult<IHistory>> => {
-  const categories = await History.paginate(filter, options);
-  return categories;
+  params: PaginateOptions & Prisma.historiesWhereInput
+) => {
+  const histories = await paginate<Prisma.historiesWhereInput>(
+    prisma.histories,
+    params
+  );
+  return histories;
 };
 export const findTransHistories = async ({
   transactionId

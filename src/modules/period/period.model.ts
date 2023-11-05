@@ -1,4 +1,3 @@
-import paginate from 'middlewares/paginate';
 import mongoose, { Schema } from 'mongoose';
 import { sortWithIdOnTop } from 'utils';
 
@@ -30,8 +29,6 @@ const periodSchema = new Schema<IPeriodDoc, IPeriodModel>(
     }
   }
 );
-
-periodSchema.plugin(paginate);
 
 const Period = mongoose.model<IPeriodDoc, IPeriodModel>('Period', periodSchema);
 

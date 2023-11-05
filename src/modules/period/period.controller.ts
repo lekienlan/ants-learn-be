@@ -1,26 +1,17 @@
 import type { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { omit, pick } from 'lodash';
-import { PAGINATE_OPTIONS } from 'middlewares/paginate/paginate.constant';
-import type { IPaginateOptions } from 'middlewares/paginate/paginate.interface';
 import { historyService } from 'modules/history';
 import { tokenService } from 'modules/token';
 import { transactionService } from 'modules/transaction';
-import Transaction from 'modules/transaction/transaction.model';
 import { userService } from 'modules/user';
+import { Error } from 'mongoose';
 import catchAsync from 'utils/catchAsync';
 
 import { periodService } from '.';
 import type { IPeriodPayload, IPeriodUpdatePayload } from './period.interface';
 
 export const findMany = catchAsync(async (req: Request, res: Response) => {
-  const filter = omit(req.query, PAGINATE_OPTIONS);
-  const options: IPaginateOptions = pick<Record<string, any>>(
-    req.query,
-    PAGINATE_OPTIONS
-  );
-
-  const periods = await periodService.findMany(filter, options);
+  const periods = await periodService.findMany(req.query);
 
   res.send(periods);
 });
@@ -40,7 +31,7 @@ export const create = catchAsync(
     const accessToken = tokenService.getAccessTokenFromRequest(req);
     const user = await userService.findByAccessToken(accessToken);
 
-    if (!user) throw Error('User not found');
+    if (!user) throw new Error('User not found');
 
     const period = await periodService.create({
       ...req.body,
@@ -85,15 +76,15 @@ export const update = catchAsync(
     });
 
     if (req.body.budget) {
-      const currentTransaction = await Transaction.findOne({
+      const currentTransaction = await transactionService.findOne({
         periodId: period?.id,
         type: 'budget'
       });
 
-      if (!currentTransaction) throw Error('Transaction not found');
+      if (!currentTransaction) throw new Error('Transaction not found');
 
       const updatedTransaction = await transactionService.update(
-        currentTransaction._id,
+        currentTransaction.id,
         {
           amount: (req.body.budget || 0) * -1
         }

@@ -1,12 +1,11 @@
+import type { Prisma } from '@prisma/client';
 import { StatusCodes } from 'http-status-codes';
 import ApiError from 'middlewares/error/ApiError';
-import type {
-  IPaginateOptions,
-  IPaginateResult
-} from 'middlewares/paginate/paginate.interface';
+import paginate from 'middlewares/paginate';
+import type { PaginateOptions } from 'middlewares/paginate/paginate.interface';
+import prisma from 'prisma';
 
 import type {
-  IPeriod,
   IPeriodDoc,
   IPeriodPayload,
   IPeriodUpdatePayload
@@ -14,10 +13,9 @@ import type {
 import Period from './period.model';
 
 export const findMany = async (
-  filter: Record<string, any>,
-  options: IPaginateOptions
-): Promise<IPaginateResult<IPeriod>> => {
-  const periods = await Period.paginate(filter, options);
+  params: PaginateOptions & Prisma.periodsWhereInput
+) => {
+  const periods = await paginate(prisma.periods, params);
   return periods;
 };
 

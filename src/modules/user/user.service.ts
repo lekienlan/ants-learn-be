@@ -1,10 +1,10 @@
+import type { Prisma } from '@prisma/client';
 import { StatusCodes } from 'http-status-codes';
 import ApiError from 'middlewares/error/ApiError';
-import type {
-  IPaginateOptions,
-  IPaginateResult
-} from 'middlewares/paginate/paginate.interface';
+import paginate from 'middlewares/paginate';
+import type { PaginateOptions } from 'middlewares/paginate/paginate.interface';
 import { tokenService } from 'modules/token';
+import prisma from 'prisma';
 
 import { User } from '.';
 import type { IUser, IUserDoc } from './user.interface';
@@ -38,10 +38,13 @@ export const findByAccessToken = async (
   return user;
 };
 
-export const findAll = async (
-  filter: Record<string, any>,
-  options: IPaginateOptions
-): Promise<IPaginateResult<IUser>> => {
-  const users = await User.paginate(filter, options);
+export const findMany = async (
+  params: PaginateOptions & Prisma.transactionsWhereInput
+) => {
+  const users = await paginate<Prisma.transactionsWhereInput>(
+    prisma.users,
+    params
+  );
+
   return users;
 };
