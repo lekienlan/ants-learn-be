@@ -9,7 +9,10 @@ import catchAsync from 'utils/catchAsync';
 import { pigService } from '.';
 
 export const findMany = catchAsync(async (req: Request, res: Response) => {
-  const piggies = await pigService.findMany(req.query);
+  const piggies = await pigService.findMany(req.query, {
+    user: true,
+    periods: true
+  });
 
   res.send(piggies);
 });

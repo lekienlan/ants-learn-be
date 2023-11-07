@@ -1,4 +1,4 @@
-import type { Prisma } from '@prisma/client';
+import type { periods, Prisma } from '@prisma/client';
 import { StatusCodes } from 'http-status-codes';
 import ApiError from 'middlewares/error/ApiError';
 import paginate from 'middlewares/paginate';
@@ -6,10 +6,11 @@ import type { PaginateOptions } from 'middlewares/paginate/paginate.interface';
 import prisma from 'prisma';
 
 export const findMany = async (
-  params: PaginateOptions & Prisma.periodsWhereInput
+  params: PaginateOptions & Prisma.periodsWhereInput,
+  include?: Prisma.periodsInclude
 ) => {
-  const periods = await paginate(prisma.periods, params);
-  return periods;
+  const list = await paginate<periods>(prisma.periods, params, include);
+  return list;
 };
 
 export const findOne = async ({ id }: { id: string }) => {

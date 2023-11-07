@@ -1,4 +1,4 @@
-import type { Prisma } from '@prisma/client';
+import type { histories, Prisma } from '@prisma/client';
 import { StatusCodes } from 'http-status-codes';
 import ApiError from 'middlewares/error/ApiError';
 import paginate from 'middlewares/paginate';
@@ -6,13 +6,11 @@ import type { PaginateOptions } from 'middlewares/paginate/paginate.interface';
 import prisma from 'prisma';
 
 export const findMany = async (
-  params: PaginateOptions & Prisma.historiesWhereInput
+  params: PaginateOptions & Prisma.historiesWhereInput,
+  include?: Prisma.historiesInclude
 ) => {
-  const histories = await paginate<Prisma.historiesWhereInput>(
-    prisma.histories,
-    params
-  );
-  return histories;
+  const list = await paginate<histories>(prisma.histories, params, include);
+  return list;
 };
 export const findTransHistories = async ({
   transactionId

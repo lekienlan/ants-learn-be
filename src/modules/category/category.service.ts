@@ -1,4 +1,4 @@
-import type { Prisma } from '@prisma/client';
+import type { categories, Prisma } from '@prisma/client';
 import { StatusCodes } from 'http-status-codes';
 import { snakeCase } from 'lodash';
 import ApiError from 'middlewares/error/ApiError';
@@ -8,13 +8,11 @@ import prisma from 'prisma';
 import { removeDiacritics } from 'utils';
 
 export const findMany = async (
-  params: PaginateOptions & Prisma.categoriesWhereInput
+  params: PaginateOptions & Prisma.categoriesWhereInput,
+  include?: Prisma.categoriesInclude
 ) => {
-  const categories = await paginate<Prisma.categoriesWhereInput>(
-    prisma.categories,
-    params
-  );
-  return categories;
+  const list = await paginate<categories>(prisma.categories, params, include);
+  return list;
 };
 
 export const create = async (

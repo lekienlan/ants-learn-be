@@ -1,4 +1,4 @@
-import type { Prisma } from '@prisma/client';
+import type { pigs, Prisma } from '@prisma/client';
 import { StatusCodes } from 'http-status-codes';
 import ApiError from 'middlewares/error/ApiError';
 import paginate from 'middlewares/paginate';
@@ -6,10 +6,11 @@ import type { PaginateOptions } from 'middlewares/paginate/paginate.interface';
 import prisma from 'prisma';
 
 export const findMany = async (
-  params: PaginateOptions & Prisma.pigsWhereInput
+  params: PaginateOptions & Prisma.pigsWhereInput,
+  include?: Prisma.pigsInclude
 ) => {
-  const piggies = await paginate(prisma.pigs, params);
-  return piggies;
+  const list = await paginate<pigs>(prisma.pigs, params, include);
+  return list;
 };
 
 export const create = async (

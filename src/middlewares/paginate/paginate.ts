@@ -25,9 +25,10 @@ export const paginateFilter = (filter: Record<string, any>) => {
   return formattedFilter;
 };
 
-const paginate = async <T = Record<string, any>>(
+const paginate = async <T>(
   model: any,
-  params: T & PaginateOptions
+  params: PaginateOptions,
+  include?: Record<string, any>
 ): Promise<QueryResults<T>> => {
   const { sortBy = 'updatedAt', limit, page, ...query } = params;
 
@@ -47,7 +48,8 @@ const paginate = async <T = Record<string, any>>(
     take: _limit,
     orderBy: {
       [orderBy.field]: orderBy.direction
-    }
+    },
+    include
   });
 
   const totalPages = _limit ? Math.ceil(totalResults / _limit) : 1;

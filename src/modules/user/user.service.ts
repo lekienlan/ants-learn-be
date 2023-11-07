@@ -1,18 +1,16 @@
-import type { Prisma } from '@prisma/client';
+import type { Prisma, users } from '@prisma/client';
 import paginate from 'middlewares/paginate';
 import type { PaginateOptions } from 'middlewares/paginate/paginate.interface';
 import { tokenService } from 'modules/token';
 import prisma from 'prisma';
 
 export const findMany = async (
-  params: PaginateOptions & Prisma.transactionsWhereInput
+  params: PaginateOptions & Prisma.transactionsWhereInput,
+  include?: Prisma.usersInclude
 ) => {
-  const users = await paginate<Prisma.transactionsWhereInput>(
-    prisma.users,
-    params
-  );
+  const list = await paginate<users>(prisma.users, params, include);
 
-  return users;
+  return list;
 };
 
 export const create = async (

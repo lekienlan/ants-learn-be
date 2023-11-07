@@ -1,4 +1,4 @@
-import type { Prisma } from '@prisma/client';
+import type { Prisma, transactions } from '@prisma/client';
 import { StatusCodes } from 'http-status-codes';
 import ApiError from 'middlewares/error/ApiError';
 import paginate from 'middlewares/paginate';
@@ -6,14 +6,16 @@ import type { PaginateOptions } from 'middlewares/paginate/paginate.interface';
 import prisma from 'prisma';
 
 export const findMany = async (
-  params: PaginateOptions & Prisma.transactionsWhereInput
+  params: PaginateOptions & Prisma.transactionsWhereInput,
+  include?: Prisma.transactionsInclude
 ) => {
-  const transactions = await paginate<Prisma.transactionsWhereInput>(
+  const list = await paginate<transactions>(
     prisma.transactions,
-    params
+    params,
+    include
   );
 
-  return transactions;
+  return list;
 };
 
 export const findOne = async (where: Prisma.transactionsWhereInput) => {

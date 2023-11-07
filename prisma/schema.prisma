@@ -54,21 +54,24 @@ model periods {
   endDate      DateTime       @db.Date
   expense      Int
   members      String[]
-  pigId        String         @db.ObjectId
   repeat       Boolean
   startDate    DateTime       @db.Date
   transactions transactions[]
   updatedAt    DateTime?      @updatedAt
   createdAt    DateTime?      @default(now()) @db.Date
+  pig          pigs?          @relation(fields: [pigId], references: [id])
+  pigId        String?        @db.ObjectId
 }
 
 model pigs {
   id        String    @id @default(auto()) @map("_id") @db.ObjectId
   name      String
-  userId    String
   style     Style?
   updatedAt DateTime? @updatedAt
   createdAt DateTime? @default(now()) @db.Date
+  periods   periods[]
+  userId    String    @db.ObjectId
+  user      users?    @relation(fields: [userId], references: [id])
 }
 
 model tokens {
@@ -108,4 +111,5 @@ model users {
   transactions transactions[]
   updatedAt    DateTime?      @updatedAt
   createdAt    DateTime?      @default(now()) @db.Date
+  pigs         pigs[]
 }
