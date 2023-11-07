@@ -6,7 +6,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var joi_1 = __importDefault(require("joi"));
 var envVarsSchema = joi_1.default.object()
     .keys({
-    NODE_ENV: joi_1.default.string().valid('production', 'staging').required(),
+    NODE_ENV: joi_1.default.string()
+        .valid('production', 'staging')
+        .required()
+        .default('staging'),
     PORT: joi_1.default.number().default(3000),
     MONGODB_URL: joi_1.default.string().required().description('Mongo DB url'),
     ACCESS_TOKEN_SECRET_KEY: joi_1.default.string()

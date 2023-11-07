@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-type CategoriesStyle {
+type Style {
   color String
   icon  String
 }
@@ -24,63 +24,61 @@ type HistoriesData {
   date       DateTime? @db.Date
   note       String?
   periodId   String?
-  userId     String
 }
 
 model categories {
-  id           String           @id @default(auto()) @map("_id") @db.ObjectId
+  id           String         @id @default(auto()) @map("_id") @db.ObjectId
   code         String
   name         String
-  style        CategoriesStyle?
+  style        Style?
   type         CategoryType
-  updatedAt    DateTime?        @default(now()) @db.Date
-  createdAt    DateTime?        @default(now()) @db.Date
   transactions transactions[]
+  userId       String?
+  updatedAt    DateTime?      @updatedAt
+  createdAt    DateTime?      @default(now()) @db.Date
 }
 
 model histories {
   id            String        @id @default(auto()) @map("_id") @db.ObjectId
-  v             Int           @map("__v")
-  createdAt     DateTime      @db.Date
   data          HistoriesData
   state         String
-  transactionId String
-  updatedAt     DateTime      @db.Date
+  userId        String        @db.ObjectId
+  transactionId String        @db.ObjectId
+  updatedAt     DateTime?     @updatedAt
+  createdAt     DateTime?     @default(now()) @db.Date
 }
 
 model periods {
   id           String         @id @default(auto()) @map("_id") @db.ObjectId
-  v            Int            @map("__v")
   budget       Int
-  createdAt    DateTime       @db.Date
   endDate      DateTime       @db.Date
   expense      Int
   members      String[]
   pigId        String         @db.ObjectId
   repeat       Boolean
   startDate    DateTime       @db.Date
-  updatedAt    DateTime       @db.Date
   transactions transactions[]
+  updatedAt    DateTime?      @updatedAt
+  createdAt    DateTime?      @default(now()) @db.Date
 }
 
 model pigs {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  v         Int      @map("__v")
-  createdAt DateTime @db.Date
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
   name      String
-  updatedAt DateTime @db.Date
   userId    String
+  style     Style?
+  updatedAt DateTime? @updatedAt
+  createdAt DateTime? @default(now()) @db.Date
 }
 
 model tokens {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  v           Int      @map("__v")
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
   blacklisted Boolean
-  createdAt   DateTime @db.Date
-  expires     DateTime @db.Date
+  expires     DateTime  @db.Date
   token       String
-  updatedAt   DateTime @db.Date
   userId      String
+  updatedAt   DateTime? @updatedAt
+  createdAt   DateTime? @default(now()) @db.Date
 
   @@index([token], map: "token_1")
 }
@@ -98,17 +96,16 @@ model transactions {
   user       users       @relation(fields: [userId], references: [id])
   categoryId String?     @db.ObjectId
   category   categories? @relation(fields: [categoryId], references: [id])
-  updatedAt  DateTime?   @default(now()) @db.Date
+  updatedAt  DateTime?   @updatedAt
   createdAt  DateTime?   @default(now()) @db.Date
 }
 
 model users {
   id           String         @id @default(auto()) @map("_id") @db.ObjectId
-  v            Int            @map("__v")
-  createdAt    DateTime       @db.Date
-  email        String         @unique(map: "email_1")
+  email        String         @unique
   firstName    String
   lastName     String
-  updatedAt    DateTime       @db.Date
   transactions transactions[]
+  updatedAt    DateTime?      @updatedAt
+  createdAt    DateTime?      @default(now()) @db.Date
 }

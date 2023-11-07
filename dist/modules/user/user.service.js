@@ -39,29 +39,51 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findAll = exports.findByAccessToken = exports.findById = exports.findByEmail = exports.create = void 0;
-var http_status_codes_1 = require("http-status-codes");
-var ApiError_1 = __importDefault(require("../../middlewares/error/ApiError"));
-var token_1 = require("../../modules/token");
-var _1 = require(".");
-var create = function (userBody) { return __awaiter(void 0, void 0, void 0, function () {
+exports.findByAccessToken = exports.findById = exports.findByEmail = exports.findOrCreate = exports.create = exports.findMany = void 0;
+var paginate_1 = __importDefault(require("middlewares/paginate"));
+var token_1 = require("modules/token");
+var prisma_1 = __importDefault(require("prisma"));
+var findMany = function (params) { return __awaiter(void 0, void 0, void 0, function () {
+    var users;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, _1.User.isEmailTaken(userBody.email)];
+            case 0: return [4, (0, paginate_1.default)(prisma_1.default.users, params)];
             case 1:
-                if (_a.sent()) {
-                    throw new ApiError_1.default(http_status_codes_1.StatusCodes.BAD_REQUEST, 'Email is already existed');
-                }
-                return [2, _1.User.create(userBody)];
+                users = _a.sent();
+                return [2, users];
         }
     });
 }); };
+exports.findMany = findMany;
+var create = function (data) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        return [2, prisma_1.default.users.create({ data: data })];
+    });
+}); };
 exports.create = create;
+var findOrCreate = function (data) { return __awaiter(void 0, void 0, void 0, function () {
+    var user;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, prisma_1.default.users.upsert({
+                    where: {
+                        email: data.email
+                    },
+                    update: {},
+                    create: data
+                })];
+            case 1:
+                user = _a.sent();
+                return [2, user];
+        }
+    });
+}); };
+exports.findOrCreate = findOrCreate;
 var findByEmail = function (email) { return __awaiter(void 0, void 0, void 0, function () {
     var user;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, _1.User.findOne({ email: email })];
+            case 0: return [4, prisma_1.default.users.findFirst({ where: { email: email } })];
             case 1:
                 user = _a.sent();
                 return [2, user];
@@ -73,7 +95,7 @@ var findById = function (id) { return __awaiter(void 0, void 0, void 0, function
     var user;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, _1.User.findOne({ _id: id })];
+            case 0: return [4, prisma_1.default.users.findFirst({ where: { id: id } })];
             case 1:
                 user = _a.sent();
                 return [2, user];
@@ -87,7 +109,11 @@ var findByAccessToken = function (accessToken) { return __awaiter(void 0, void 0
         switch (_a.label) {
             case 0:
                 payload = token_1.tokenService.decode(accessToken);
-                return [4, _1.User.findOne({ _id: payload.sub })];
+                if (!payload.sub)
+                    throw new Error('Token invalid');
+                return [4, prisma_1.default.users.findFirst({
+                        where: { id: payload.sub }
+                    })];
             case 1:
                 user = _a.sent();
                 return [2, user];
@@ -95,16 +121,4 @@ var findByAccessToken = function (accessToken) { return __awaiter(void 0, void 0
     });
 }); };
 exports.findByAccessToken = findByAccessToken;
-var findAll = function (filter, options) { return __awaiter(void 0, void 0, void 0, function () {
-    var users;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4, _1.User.paginate(filter, options)];
-            case 1:
-                users = _a.sent();
-                return [2, users];
-        }
-    });
-}); };
-exports.findAll = findAll;
 //# sourceMappingURL=user.service.js.map

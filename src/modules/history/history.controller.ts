@@ -1,9 +1,10 @@
+import type { Prisma } from '@prisma/client';
 import type { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
+import type prisma from 'prisma';
 import catchAsync from 'utils/catchAsync';
 
 import { historyService } from '.';
-import type { IHistory } from './history.interface';
 
 export const findMany = catchAsync(async (req: Request, res: Response) => {
   const categories = await historyService.findMany(req.query);
@@ -22,7 +23,14 @@ export const findTransHistories = catchAsync(
 );
 
 export const create = catchAsync(
-  async (req: Request<{}, {}, IHistory>, res: Response) => {
+  async (
+    req: Request<
+      {},
+      {},
+      Prisma.Args<typeof prisma.histories, 'create'>['data']
+    >,
+    res: Response
+  ) => {
     const history = await historyService.create(req.body);
 
     res.status(StatusCodes.CREATED).send(history);

@@ -13,3 +13,16 @@ export interface IPaginateOptions {
     page?: number;
     populate?: string;
 }
+export type PaginateOptions = {
+    sortBy?: string;
+    limit?: string;
+    pick?: string;
+    page?: string;
+};
+export type QueryResults<T> = {
+    results: T[];
+    page: number;
+    limit: number;
+    totalPages: number;
+    totalResults: number;
+};

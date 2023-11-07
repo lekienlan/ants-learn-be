@@ -41,18 +41,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.remove = exports.update = exports.create = exports.findMany = void 0;
 var http_status_codes_1 = require("http-status-codes");
-var lodash_1 = require("lodash");
-var paginate_constant_1 = require("../../middlewares/paginate/paginate.constant");
-var catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
+var catchAsync_1 = __importDefault(require("utils/catchAsync"));
 var _1 = require(".");
 exports.findMany = (0, catchAsync_1.default)(function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var filter, options, categories;
+    var categories;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0:
-                filter = (0, lodash_1.omit)(req.query, paginate_constant_1.PAGINATE_OPTIONS);
-                options = (0, lodash_1.pick)(req.query, paginate_constant_1.PAGINATE_OPTIONS);
-                return [4, _1.categoryService.findMany(filter, options)];
+            case 0: return [4, _1.categoryService.findMany(req.query)];
             case 1:
                 categories = _a.sent();
                 res.send(categories);
@@ -85,8 +80,7 @@ exports.update = (0, catchAsync_1.default)(function (req, res) { return __awaite
         switch (_b.label) {
             case 0:
                 _a = req.body, name = _a.name, type = _a.type, style = _a.style;
-                return [4, _1.categoryService.update({
-                        id: req.params.id,
+                return [4, _1.categoryService.update(req.params.id, {
                         name: name,
                         type: type,
                         style: style

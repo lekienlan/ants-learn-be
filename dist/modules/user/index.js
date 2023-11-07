@@ -22,17 +22,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userValidation = exports.userService = exports.userInterfaces = exports.userController = exports.User = void 0;
+exports.userValidation = exports.userService = exports.userController = void 0;
 var userController = __importStar(require("./user.controller"));
 exports.userController = userController;
-var userInterfaces = __importStar(require("./user.interface"));
-exports.userInterfaces = userInterfaces;
-var user_model_1 = __importDefault(require("./user.model"));
-exports.User = user_model_1.default;
 var userService = __importStar(require("./user.service"));
 exports.userService = userService;
 var userValidation = __importStar(require("./user.validation"));

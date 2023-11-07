@@ -1,19 +1,19 @@
+import type { users } from '@prisma/client';
 import configs from 'configs';
 import type { Request } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import type { JwtPayload } from 'jsonwebtoken';
 import jwt from 'jsonwebtoken';
 import ApiError from 'middlewares/error/ApiError';
-import type { IUserDoc } from 'modules/user/user.interface';
 import type { Moment } from 'moment';
 import moment from 'moment';
-import type mongoose from 'mongoose';
+import prisma from 'prisma';
 
-import type { AccessAndRefreshTokens, ITokenDoc } from './token.interface';
+import type { AccessAndRefreshTokens } from './token.interface';
 import Token from './token.model';
 
 export const generate = (
-  userId: mongoose.Types.ObjectId,
+  userId: string,
   expires: Moment,
   secret: string = configs.jwt.accessSecretKey
 ): string => {
@@ -31,20 +31,22 @@ export const decode = (token: string): string | JwtPayload => {
 
 export const create = async (
   token: string,
-  userId: mongoose.Types.ObjectId,
+  userId: string,
   expires: Moment,
   blacklisted: boolean = false
-): Promise<ITokenDoc> => {
-  const tokenDoc = await Token.create({
-    token,
-    userId,
-    expires: expires.toDate(),
-    blacklisted
+) => {
+  const tokenDoc = await prisma.tokens.create({
+    data: {
+      token,
+      userId,
+      expires: expires.toDate(),
+      blacklisted
+    }
   });
   return tokenDoc;
 };
 
-export const verify = async (token: string): Promise<ITokenDoc> => {
+export const verify = async (token: string) => {
   const payload = decode(token);
   if (typeof payload.sub !== 'string') {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'bad user');
@@ -62,7 +64,7 @@ export const verify = async (token: string): Promise<ITokenDoc> => {
 };
 
 export const generateTokens = async (
-  user: IUserDoc
+  user: users
 ): Promise<AccessAndRefreshTokens> => {
   const accessTokenExpires = moment().add(
     configs.jwt.accessExpirationMinutes,

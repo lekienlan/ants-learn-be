@@ -26,10 +26,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.paginateValidation = exports.paginateInterface = exports.paginateConstant = void 0;
+exports.paginateValidation = exports.paginateInterface = void 0;
 var paginate_1 = __importDefault(require("./paginate"));
-var paginateConstant = __importStar(require("./paginate.constant"));
-exports.paginateConstant = paginateConstant;
 var paginateInterface = __importStar(require("./paginate.interface"));
 exports.paginateInterface = paginateInterface;
 var paginateValidation = __importStar(require("./paginate.validation"));

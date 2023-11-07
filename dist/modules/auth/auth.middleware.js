@@ -39,10 +39,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var configs_1 = __importDefault(require("../../configs"));
+var configs_1 = __importDefault(require("configs"));
 var http_status_codes_1 = require("http-status-codes");
 var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-var ApiError_1 = __importDefault(require("../../middlewares/error/ApiError"));
+var ApiError_1 = __importDefault(require("middlewares/error/ApiError"));
 var authMiddleware = function (req, _res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var token;
     return __generator(this, function (_a) {

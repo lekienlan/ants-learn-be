@@ -41,20 +41,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.remove = exports.update = exports.create = exports.findMany = void 0;
 var http_status_codes_1 = require("http-status-codes");
-var lodash_1 = require("lodash");
-var paginate_constant_1 = require("../../middlewares/paginate/paginate.constant");
-var token_1 = require("../../modules/token");
-var user_1 = require("../../modules/user");
-var catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
+var token_1 = require("modules/token");
+var user_1 = require("modules/user");
+var catchAsync_1 = __importDefault(require("utils/catchAsync"));
 var _1 = require(".");
 exports.findMany = (0, catchAsync_1.default)(function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var filter, options, piggies;
+    var piggies;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0:
-                filter = (0, lodash_1.omit)(req.query, paginate_constant_1.PAGINATE_OPTIONS);
-                options = (0, lodash_1.pick)(req.query, paginate_constant_1.PAGINATE_OPTIONS);
-                return [4, _1.pigService.findMany(filter, options)];
+            case 0: return [4, _1.pigService.findMany(req.query)];
             case 1:
                 piggies = _a.sent();
                 res.send(piggies);
@@ -63,41 +58,29 @@ exports.findMany = (0, catchAsync_1.default)(function (req, res) { return __awai
     });
 }); });
 exports.create = (0, catchAsync_1.default)(function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, name, type, style, user, pig;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0:
-                _a = req.body, name = _a.name, type = _a.type, style = _a.style;
-                return [4, user_1.userService.findByAccessToken(token_1.tokenService.getAccessTokenFromRequest(req))];
+    var user, pig;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, user_1.userService.findByAccessToken(token_1.tokenService.getAccessTokenFromRequest(req))];
             case 1:
-                user = _b.sent();
-                return [4, _1.pigService.create({
-                        name: name,
-                        type: type,
-                        style: style,
-                        userId: user === null || user === void 0 ? void 0 : user.id
-                    })];
+                user = _a.sent();
+                if (!user)
+                    throw new Error('User not found');
+                return [4, _1.pigService.create(req.body)];
             case 2:
-                pig = _b.sent();
+                pig = _a.sent();
                 res.status(http_status_codes_1.StatusCodes.CREATED).send(pig);
                 return [2];
         }
     });
 }); });
 exports.update = (0, catchAsync_1.default)(function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, name, type, style, pig;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0:
-                _a = req.body, name = _a.name, type = _a.type, style = _a.style;
-                return [4, _1.pigService.update({
-                        id: req.params.id,
-                        name: name,
-                        type: type,
-                        style: style
-                    })];
+    var pig;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, _1.pigService.update(req.params.id, req.body)];
             case 1:
-                pig = _b.sent();
+                pig = _a.sent();
                 res.send(pig);
                 return [2];
         }

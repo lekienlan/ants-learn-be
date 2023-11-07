@@ -22,13 +22,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var paginate_1 = __importDefault(require("../../middlewares/paginate"));
 var mongoose_1 = __importStar(require("mongoose"));
-var utils_1 = require("../../utils");
+var utils_1 = require("utils");
 var periodSchema = new mongoose_1.Schema({
     startDate: Date,
     endDate: Date,
@@ -39,7 +35,8 @@ var periodSchema = new mongoose_1.Schema({
     },
     repeat: Boolean,
     status: String,
-    pigId: mongoose_1.default.Schema.Types.ObjectId
+    pigId: mongoose_1.default.Schema.Types.ObjectId,
+    expense: Number
 }, {
     timestamps: true,
     toJSON: {
@@ -50,12 +47,6 @@ var periodSchema = new mongoose_1.Schema({
             return (0, utils_1.sortWithIdOnTop)(ret);
         }
     }
-});
-periodSchema.plugin(paginate_1.default);
-periodSchema.virtual('expenses', {
-    ref: 'Transaction',
-    localField: '_id',
-    foreignField: 'periodId'
 });
 var Period = mongoose_1.default.model('Period', periodSchema);
 exports.default = Period;

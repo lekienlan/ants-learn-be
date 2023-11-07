@@ -40,10 +40,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAccessTokenFromRequest = exports.generateTokens = exports.verify = exports.create = exports.decode = exports.generate = void 0;
-var configs_1 = __importDefault(require("../../configs"));
+var configs_1 = __importDefault(require("configs"));
 var http_status_codes_1 = require("http-status-codes");
 var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-var ApiError_1 = __importDefault(require("../../middlewares/error/ApiError"));
+var ApiError_1 = __importDefault(require("middlewares/error/ApiError"));
 var moment_1 = __importDefault(require("moment"));
 var token_model_1 = __importDefault(require("./token.model"));
 var generate = function (userId, expires, secret) {

@@ -22,13 +22,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var paginate_1 = __importDefault(require("../../middlewares/paginate"));
 var mongoose_1 = __importStar(require("mongoose"));
-var utils_1 = require("../../utils");
+var utils_1 = require("utils");
 var pigSchema = new mongoose_1.Schema({
     name: {
         type: String,
@@ -71,7 +67,6 @@ pigSchema.virtual('period', {
     localField: '_id',
     foreignField: 'pigId'
 });
-pigSchema.plugin(paginate_1.default);
 var Pig = mongoose_1.default.model('Pig', pigSchema);
 exports.default = Pig;
 //# sourceMappingURL=pig.model.js.map

@@ -1,3 +1,4 @@
+import type { Prisma } from '@prisma/client';
 import type { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { historyService } from 'modules/history';
@@ -5,10 +6,10 @@ import { tokenService } from 'modules/token';
 import { transactionService } from 'modules/transaction';
 import { userService } from 'modules/user';
 import { Error } from 'mongoose';
+import type prisma from 'prisma';
 import catchAsync from 'utils/catchAsync';
 
 import { periodService } from '.';
-import type { IPeriodPayload, IPeriodUpdatePayload } from './period.interface';
 
 export const findMany = catchAsync(async (req: Request, res: Response) => {
   const periods = await periodService.findMany(req.query);
@@ -17,7 +18,7 @@ export const findMany = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const findOne = catchAsync(
-  async (req: Request<{ id: string }, {}, IPeriodPayload>, res: Response) => {
+  async (req: Request<{ id: string }>, res: Response) => {
     const period = await periodService.findOne({
       id: req.params.id
     });
@@ -27,7 +28,10 @@ export const findOne = catchAsync(
 );
 
 export const create = catchAsync(
-  async (req: Request<{}, {}, IPeriodPayload>, res: Response) => {
+  async (
+    req: Request<{}, {}, Prisma.Args<typeof prisma.periods, 'create'>['data']>,
+    res: Response
+  ) => {
     const accessToken = tokenService.getAccessTokenFromRequest(req);
     const user = await userService.findByAccessToken(accessToken);
 
@@ -35,7 +39,7 @@ export const create = catchAsync(
 
     const period = await periodService.create({
       ...req.body,
-      members: [user?.id, ...(req.body.members || [])],
+      members: [user?.id, ...((req.body.members || []) as string[])],
       repeat: req.body.repeat ?? true,
       expense: 0
     });
@@ -49,16 +53,16 @@ export const create = catchAsync(
 
     await historyService.create({
       transactionId: transaction.id,
+      state: 'modified',
+      userId: transaction.userId,
       data: {
         amount: transaction.amount,
         categoryId: transaction.categoryId,
         currency: transaction.currency,
         date: transaction.date,
         note: transaction.note,
-        periodId: transaction.periodId,
-        userId: transaction.userId
-      },
-      state: 'original'
+        periodId: transaction.periodId
+      }
     });
 
     res.status(StatusCodes.CREATED).send(period);
@@ -67,15 +71,16 @@ export const create = catchAsync(
 
 export const update = catchAsync(
   async (
-    req: Request<{ id: string }, {}, IPeriodUpdatePayload>,
+    req: Request<
+      { id: string },
+      {},
+      Prisma.Args<typeof prisma.periods, 'update'>['data']
+    >,
     res: Response
   ) => {
-    const period = await periodService.update({
-      ...req.body,
-      id: req.params.id
-    });
+    const period = await periodService.update(req.params.id, req.body);
 
-    if (req.body.budget) {
+    if (period.budget) {
       const currentTransaction = await transactionService.findOne({
         periodId: period?.id,
         type: 'budget'
@@ -86,22 +91,22 @@ export const update = catchAsync(
       const updatedTransaction = await transactionService.update(
         currentTransaction.id,
         {
-          amount: (req.body.budget || 0) * -1
+          amount: period.budget * -1
         }
       );
 
       await historyService.create({
         transactionId: updatedTransaction.id,
+        state: 'modified',
+        userId: updatedTransaction.userId,
         data: {
           amount: updatedTransaction.amount,
           categoryId: updatedTransaction.categoryId,
           currency: updatedTransaction.currency,
           date: updatedTransaction.date,
           note: updatedTransaction.note,
-          periodId: updatedTransaction.periodId,
-          userId: updatedTransaction.userId
-        },
-        state: 'modified'
+          periodId: updatedTransaction.periodId
+        }
       });
     }
 

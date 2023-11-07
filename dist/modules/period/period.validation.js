@@ -16,12 +16,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.params = exports.updatePayload = exports.createPayload = void 0;
 var joi_1 = __importDefault(require("joi"));
-var paginate_validation_1 = require("../../middlewares/paginate/paginate.validation");
+var paginate_validation_1 = require("middlewares/paginate/paginate.validation");
 var startDate = joi_1.default.date();
 var endDate = joi_1.default.date();
 var budget = joi_1.default.number();
 var members = joi_1.default.array().items(joi_1.default.string());
-var expenses = joi_1.default.array().items(joi_1.default.string());
 var repeat = joi_1.default.boolean();
 var status = joi_1.default.string();
 var pigId = joi_1.default.string();
@@ -32,8 +31,7 @@ exports.createPayload = {
         budget: budget.required(),
         pigId: pigId.required(),
         members: members,
-        repeat: repeat,
-        expenses: expenses
+        repeat: repeat
     })
 };
 exports.updatePayload = {
@@ -42,7 +40,6 @@ exports.updatePayload = {
         endDate: endDate,
         budget: budget,
         members: members,
-        expenses: expenses,
         repeat: repeat,
         status: status,
         pigId: pigId

@@ -22,15 +22,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.categoryValidation = exports.categoryService = exports.categoryController = exports.category = void 0;
+exports.categoryValidation = exports.categoryService = exports.categoryController = void 0;
 var categoryController = __importStar(require("./category.controller"));
 exports.categoryController = categoryController;
-var category_model_1 = __importDefault(require("./category.model"));
-exports.category = category_model_1.default;
 var categoryService = __importStar(require("./category.service"));
 exports.categoryService = categoryService;
 var categoryValidation = __importStar(require("./category.validation"));

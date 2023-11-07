@@ -22,15 +22,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.transactionValidation = exports.transactionService = exports.transactionController = exports.transaction = void 0;
+exports.transactionValidation = exports.transactionService = exports.transactionController = void 0;
 var transactionController = __importStar(require("./transaction.controller"));
 exports.transactionController = transactionController;
-var transaction_model_1 = __importDefault(require("./transaction.model"));
-exports.transaction = transaction_model_1.default;
 var transactionService = __importStar(require("./transaction.service"));
 exports.transactionService = transactionService;
 var transactionValidation = __importStar(require("./transaction.validation"));

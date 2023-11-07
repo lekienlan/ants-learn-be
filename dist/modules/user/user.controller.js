@@ -39,11 +39,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAll = exports.create = void 0;
+exports.findMany = exports.create = void 0;
 var http_status_codes_1 = require("http-status-codes");
-var lodash_1 = require("lodash");
-var paginate_constant_1 = require("../../middlewares/paginate/paginate.constant");
-var catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
+var catchAsync_1 = __importDefault(require("utils/catchAsync"));
 var _1 = require(".");
 exports.create = (0, catchAsync_1.default)(function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var user;
@@ -57,14 +55,11 @@ exports.create = (0, catchAsync_1.default)(function (req, res) { return __awaite
         }
     });
 }); });
-exports.getAll = (0, catchAsync_1.default)(function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var filter, options, users;
+exports.findMany = (0, catchAsync_1.default)(function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var users;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0:
-                filter = (0, lodash_1.omit)(req.query, paginate_constant_1.PAGINATE_OPTIONS);
-                options = (0, lodash_1.pick)(req.query, paginate_constant_1.PAGINATE_OPTIONS);
-                return [4, _1.userService.findAll(filter, options)];
+            case 0: return [4, _1.userService.findMany(req.query)];
             case 1:
                 users = _a.sent();
                 res.send(users);

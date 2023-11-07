@@ -16,22 +16,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.params = exports.updatePayload = exports.createPayload = void 0;
 var joi_1 = __importDefault(require("joi"));
-var paginate_validation_1 = require("../../middlewares/paginate/paginate.validation");
-var amountSchema = joi_1.default.number().required();
+var paginate_validation_1 = require("middlewares/paginate/paginate.validation");
+var amountSchema = joi_1.default.number();
 var dateSchema = joi_1.default.date();
 var noteSchema = joi_1.default.string().max(50);
 var categoryIdSchema = joi_1.default.string();
+var typeSchema = joi_1.default.string().valid('income', 'expense', 'budget');
 var periodIdSchema = joi_1.default.string();
 exports.createPayload = {
     body: joi_1.default.object().keys({
-        amount: amountSchema,
+        amount: amountSchema.required(),
         date: dateSchema,
         note: noteSchema,
         categoryId: categoryIdSchema,
+        type: typeSchema,
         periodId: joi_1.default.when('amount', {
             is: joi_1.default.number().less(0),
             then: periodIdSchema.required(),
-            otherwise: periodIdSchema
+            otherwise: null
         })
     })
 };
@@ -40,7 +42,9 @@ exports.updatePayload = {
         amount: amountSchema,
         date: dateSchema,
         note: noteSchema,
-        categoryId: categoryIdSchema
+        categoryId: categoryIdSchema,
+        periodId: periodIdSchema,
+        type: typeSchema
     })
 };
 exports.params = joi_1.default.object().keys({

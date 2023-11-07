@@ -52,9 +52,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.refreshTokens = exports.login = exports.callbackGoogle = exports.loginWithGoogle = void 0;
 var http_status_codes_1 = require("http-status-codes");
-var token_1 = require("../../modules/token");
+var token_1 = require("modules/token");
 var passport_1 = __importDefault(require("passport"));
-var catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
+var catchAsync_1 = __importDefault(require("utils/catchAsync"));
 var _1 = require(".");
 exports.loginWithGoogle = (0, catchAsync_1.default)(passport_1.default.authenticate('google', { scope: ['profile', 'email'] }));
 exports.callbackGoogle = (0, catchAsync_1.default)(passport_1.default.authenticate('google', {

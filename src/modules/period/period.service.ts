@@ -5,13 +5,6 @@ import paginate from 'middlewares/paginate';
 import type { PaginateOptions } from 'middlewares/paginate/paginate.interface';
 import prisma from 'prisma';
 
-import type {
-  IPeriodDoc,
-  IPeriodPayload,
-  IPeriodUpdatePayload
-} from './period.interface';
-import Period from './period.model';
-
 export const findMany = async (
   params: PaginateOptions & Prisma.periodsWhereInput
 ) => {
@@ -19,44 +12,35 @@ export const findMany = async (
   return periods;
 };
 
-export const findOne = async ({
-  id
-}: {
-  id: string;
-}): Promise<IPeriodDoc | undefined> => {
-  const period = await Period.findById(id);
+export const findOne = async ({ id }: { id: string }) => {
+  const period = await prisma.periods.findFirst({ where: { id } });
 
   if (!period) throw new ApiError(StatusCodes.NOT_FOUND, 'Period not found');
 
   return period;
 };
 
-export const create = async (data: IPeriodPayload): Promise<IPeriodDoc> => {
-  const period = await Period.create(data);
+export const create = async (
+  data: Prisma.Args<typeof prisma.periods, 'create'>['data']
+) => {
+  const period = await prisma.periods.create({ data });
 
   return period;
 };
 
 export const update = async (
-  data: IPeriodUpdatePayload
-): Promise<IPeriodDoc | null> => {
-  const { id, ...payload } = data;
-
-  const period = await Period.findByIdAndUpdate(id, payload, {
-    returnDocument: 'after'
-  });
+  id: string,
+  data: Prisma.Args<typeof prisma.periods, 'update'>['data']
+) => {
+  const period = await prisma.periods.update({ where: { id }, data });
 
   if (!period) throw new ApiError(StatusCodes.NOT_FOUND, 'Period not found');
 
   return period;
 };
 
-export const remove = async ({
-  id
-}: {
-  id: string;
-}): Promise<IPeriodDoc | null> => {
-  const period = await Period.findByIdAndRemove(id);
+export const remove = async ({ id }: { id: string }) => {
+  const period = await prisma.periods.delete({ where: { id } });
 
   if (!period) throw new ApiError(StatusCodes.NOT_FOUND, 'Period not found');
 

@@ -1,42 +1,8 @@
 import type { Prisma } from '@prisma/client';
-import { StatusCodes } from 'http-status-codes';
-import ApiError from 'middlewares/error/ApiError';
 import paginate from 'middlewares/paginate';
 import type { PaginateOptions } from 'middlewares/paginate/paginate.interface';
 import { tokenService } from 'modules/token';
 import prisma from 'prisma';
-
-import { User } from '.';
-import type { IUser, IUserDoc } from './user.interface';
-
-export const create = async (userBody: IUser): Promise<IUser> => {
-  if (await User.isEmailTaken(userBody.email)) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, 'Email is already existed');
-  }
-
-  return User.create(userBody);
-};
-
-export const findByEmail = async (email: string): Promise<IUserDoc | null> => {
-  const user = await User.findOne({ email });
-
-  return user;
-};
-
-export const findById = async (id: string): Promise<IUserDoc | null> => {
-  const user = await User.findOne({ _id: id });
-  return user;
-};
-
-export const findByAccessToken = async (
-  accessToken: string
-): Promise<IUserDoc | null> => {
-  const payload = tokenService.decode(accessToken);
-
-  const user = await User.findOne({ _id: payload.sub });
-
-  return user;
-};
 
 export const findMany = async (
   params: PaginateOptions & Prisma.transactionsWhereInput
@@ -47,4 +13,46 @@ export const findMany = async (
   );
 
   return users;
+};
+
+export const create = async (
+  data: Prisma.Args<typeof prisma.users, 'create'>['data']
+) => {
+  return prisma.users.create({ data });
+};
+
+export const findOrCreate = async (
+  data: Prisma.Args<typeof prisma.users, 'create'>['data']
+) => {
+  const user = await prisma.users.upsert({
+    where: {
+      email: data.email
+    },
+    update: {},
+    create: data
+  });
+  return user;
+};
+
+export const findByEmail = async (email: string) => {
+  const user = await prisma.users.findFirst({ where: { email } });
+
+  return user;
+};
+
+export const findById = async (id: string) => {
+  const user = await prisma.users.findFirst({ where: { id } });
+  return user;
+};
+
+export const findByAccessToken = async (accessToken: string) => {
+  const payload = tokenService.decode(accessToken);
+
+  if (!payload.sub) throw new Error('Token invalid');
+
+  const user = await prisma.users.findFirst({
+    where: { id: payload.sub as string }
+  });
+
+  return user;
 };

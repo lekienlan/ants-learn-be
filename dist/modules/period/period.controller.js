@@ -61,20 +61,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.remove = exports.update = exports.create = exports.findOne = exports.findMany = void 0;
 var http_status_codes_1 = require("http-status-codes");
-var lodash_1 = require("lodash");
-var paginate_constant_1 = require("../../middlewares/paginate/paginate.constant");
-var token_1 = require("../../modules/token");
-var user_1 = require("../../modules/user");
-var catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
+var history_1 = require("modules/history");
+var token_1 = require("modules/token");
+var transaction_1 = require("modules/transaction");
+var user_1 = require("modules/user");
+var mongoose_1 = require("mongoose");
+var catchAsync_1 = __importDefault(require("utils/catchAsync"));
 var _1 = require(".");
 exports.findMany = (0, catchAsync_1.default)(function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var filter, options, periods;
+    var periods;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0:
-                filter = (0, lodash_1.omit)(req.query, paginate_constant_1.PAGINATE_OPTIONS);
-                options = (0, lodash_1.pick)(req.query, paginate_constant_1.PAGINATE_OPTIONS);
-                return [4, _1.periodService.findMany(filter, options)];
+            case 0: return [4, _1.periodService.findMany(req.query)];
             case 1:
                 periods = _a.sent();
                 res.send(periods);
@@ -83,21 +81,21 @@ exports.findMany = (0, catchAsync_1.default)(function (req, res) { return __awai
     });
 }); });
 exports.findOne = (0, catchAsync_1.default)(function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var transaction;
+    var period;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, _1.periodService.findOne({
                     id: req.params.id
                 })];
             case 1:
-                transaction = _a.sent();
-                res.send(transaction);
+                period = _a.sent();
+                res.send(period);
                 return [2];
         }
     });
 }); });
 exports.create = (0, catchAsync_1.default)(function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var accessToken, user, period;
+    var accessToken, user, period, transaction;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -107,22 +105,76 @@ exports.create = (0, catchAsync_1.default)(function (req, res) { return __awaite
             case 1:
                 user = _b.sent();
                 if (!user)
-                    throw Error('User not found');
-                return [4, _1.periodService.create(__assign(__assign({}, req.body), { members: __spreadArray([user === null || user === void 0 ? void 0 : user.id], (req.body.members || []), true), repeat: (_a = req.body.repeat) !== null && _a !== void 0 ? _a : true }))];
+                    throw new mongoose_1.Error('User not found');
+                return [4, _1.periodService.create(__assign(__assign({}, req.body), { members: __spreadArray([user === null || user === void 0 ? void 0 : user.id], (req.body.members || []), true), repeat: (_a = req.body.repeat) !== null && _a !== void 0 ? _a : true, expense: 0 }))];
             case 2:
                 period = _b.sent();
+                return [4, transaction_1.transactionService.create({
+                        periodId: period.id,
+                        amount: (period.budget || 0) * -1,
+                        type: 'budget',
+                        userId: user === null || user === void 0 ? void 0 : user.id
+                    })];
+            case 3:
+                transaction = _b.sent();
+                return [4, history_1.historyService.create({
+                        transactionId: transaction.id,
+                        state: 'modified',
+                        userId: transaction.userId,
+                        data: {
+                            amount: transaction.amount,
+                            categoryId: transaction.categoryId,
+                            currency: transaction.currency,
+                            date: transaction.date,
+                            note: transaction.note,
+                            periodId: transaction.periodId
+                        }
+                    })];
+            case 4:
+                _b.sent();
                 res.status(http_status_codes_1.StatusCodes.CREATED).send(period);
                 return [2];
         }
     });
 }); });
 exports.update = (0, catchAsync_1.default)(function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var period;
+    var period, currentTransaction, updatedTransaction;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, _1.periodService.update(__assign(__assign({}, req.body), { id: req.params.id }))];
+            case 0: return [4, _1.periodService.update(req.params.id, req.body)];
             case 1:
                 period = _a.sent();
+                if (!period.budget) return [3, 5];
+                return [4, transaction_1.transactionService.findOne({
+                        periodId: period === null || period === void 0 ? void 0 : period.id,
+                        type: 'budget'
+                    })];
+            case 2:
+                currentTransaction = _a.sent();
+                if (!currentTransaction)
+                    throw new mongoose_1.Error('Transaction not found');
+                return [4, transaction_1.transactionService.update(currentTransaction.id, {
+                        amount: period.budget * -1
+                    })];
+            case 3:
+                updatedTransaction = _a.sent();
+                return [4, history_1.historyService.create({
+                        transactionId: updatedTransaction.id,
+                        state: 'modified',
+                        userId: updatedTransaction.userId,
+                        data: {
+                            amount: updatedTransaction.amount,
+                            categoryId: updatedTransaction.categoryId,
+                            currency: updatedTransaction.currency,
+                            date: updatedTransaction.date,
+                            note: updatedTransaction.note,
+                            periodId: updatedTransaction.periodId
+                        }
+                    })];
+            case 4:
+                _a.sent();
+                _a.label = 5;
+            case 5:
                 res.send(period);
                 return [2];
         }

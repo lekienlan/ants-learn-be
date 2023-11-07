@@ -1,15 +1,4 @@
 "use strict";
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -46,30 +35,20 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __rest = (this && this.__rest) || function (s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-                t[p[i]] = s[p[i]];
-        }
-    return t;
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.remove = exports.update = exports.create = exports.findOne = exports.findMany = void 0;
 var http_status_codes_1 = require("http-status-codes");
-var ApiError_1 = __importDefault(require("../../middlewares/error/ApiError"));
-var transaction_model_1 = __importDefault(require("./transaction.model"));
-var findMany = function (filter, options) { return __awaiter(void 0, void 0, void 0, function () {
+var ApiError_1 = __importDefault(require("middlewares/error/ApiError"));
+var paginate_1 = __importDefault(require("middlewares/paginate"));
+var prisma_1 = __importDefault(require("prisma"));
+var findMany = function (params) { return __awaiter(void 0, void 0, void 0, function () {
     var transactions;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, transaction_model_1.default.paginate(filter, __assign(__assign({}, options), { populate: 'category,user,period' }))];
+            case 0: return [4, (0, paginate_1.default)(prisma_1.default.transactions, params)];
             case 1:
                 transactions = _a.sent();
                 return [2, transactions];
@@ -77,52 +56,47 @@ var findMany = function (filter, options) { return __awaiter(void 0, void 0, voi
     });
 }); };
 exports.findMany = findMany;
-var findOne = function (_a) {
-    var id = _a.id;
-    return __awaiter(void 0, void 0, void 0, function () {
-        var transaction;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
-                case 0: return [4, transaction_model_1.default.findById(id)];
-                case 1:
-                    transaction = _b.sent();
-                    if (!transaction)
-                        throw new ApiError_1.default(http_status_codes_1.StatusCodes.NOT_FOUND, 'Transaction not found');
-                    return [2, transaction === null || transaction === void 0 ? void 0 : transaction.populate([
-                            { path: 'user', model: 'User' },
-                            { path: 'category', model: 'Category' },
-                            { path: 'period', model: 'Period' }
-                        ])];
-            }
-        });
+var findOne = function (where) { return __awaiter(void 0, void 0, void 0, function () {
+    var transaction;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, prisma_1.default.transactions.findFirst({ where: where })];
+            case 1:
+                transaction = _a.sent();
+                if (!transaction)
+                    throw new ApiError_1.default(http_status_codes_1.StatusCodes.NOT_FOUND, 'Transaction not found');
+                return [2, transaction];
+        }
     });
-};
+}); };
 exports.findOne = findOne;
 var create = function (data) { return __awaiter(void 0, void 0, void 0, function () {
     var transaction;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, transaction_model_1.default.create(data)];
+            case 0: return [4, prisma_1.default.transactions.create({
+                    data: data,
+                    include: {
+                        user: true,
+                        category: true,
+                        period: true
+                    }
+                })];
             case 1:
                 transaction = _a.sent();
-                return [2, transaction.populate([
-                        { path: 'user', model: 'User' },
-                        { path: 'category', model: 'Category' },
-                        { path: 'period', model: 'Period' }
-                    ])];
+                return [2, transaction];
         }
     });
 }); };
 exports.create = create;
-var update = function (data) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, payload, transaction;
+var update = function (id, data) { return __awaiter(void 0, void 0, void 0, function () {
+    var transaction;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0:
-                id = data.id, payload = __rest(data, ["id"]);
-                return [4, transaction_model_1.default.findByIdAndUpdate(id, payload, {
-                        returnDocument: 'after'
-                    })];
+            case 0: return [4, prisma_1.default.transactions.update({
+                    where: { id: id },
+                    data: data
+                })];
             case 1:
                 transaction = _a.sent();
                 if (!transaction)
@@ -138,7 +112,7 @@ var remove = function (_a) {
         var transaction;
         return __generator(this, function (_b) {
             switch (_b.label) {
-                case 0: return [4, transaction_model_1.default.findByIdAndRemove(id)];
+                case 0: return [4, prisma_1.default.transactions.delete({ where: { id: id } })];
                 case 1:
                     transaction = _b.sent();
                     if (!transaction)

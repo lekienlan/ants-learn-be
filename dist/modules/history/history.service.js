@@ -41,16 +41,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.remove = exports.create = exports.findTransHistories = exports.findMany = void 0;
 var http_status_codes_1 = require("http-status-codes");
-var ApiError_1 = __importDefault(require("../../middlewares/error/ApiError"));
-var history_model_1 = __importDefault(require("./history.model"));
-var findMany = function (filter, options) { return __awaiter(void 0, void 0, void 0, function () {
-    var categories;
+var ApiError_1 = __importDefault(require("middlewares/error/ApiError"));
+var paginate_1 = __importDefault(require("middlewares/paginate"));
+var prisma_1 = __importDefault(require("prisma"));
+var findMany = function (params) { return __awaiter(void 0, void 0, void 0, function () {
+    var histories;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, history_model_1.default.paginate(filter, options)];
+            case 0: return [4, (0, paginate_1.default)(prisma_1.default.histories, params)];
             case 1:
-                categories = _a.sent();
-                return [2, categories];
+                histories = _a.sent();
+                return [2, histories];
         }
     });
 }); };
@@ -61,7 +62,10 @@ var findTransHistories = function (_a) {
         var histories;
         return __generator(this, function (_b) {
             switch (_b.label) {
-                case 0: return [4, history_model_1.default.find({ transactionId: transactionId })];
+                case 0: return [4, prisma_1.default.histories.findFirst({
+                        where: { transactionId: transactionId },
+                        orderBy: { createdAt: 'desc' }
+                    })];
                 case 1:
                     histories = _b.sent();
                     if (!histories)
@@ -76,7 +80,7 @@ var create = function (data) { return __awaiter(void 0, void 0, void 0, function
     var history;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, history_model_1.default.create(data)];
+            case 0: return [4, prisma_1.default.histories.create({ data: data })];
             case 1:
                 history = _a.sent();
                 return [2, history];
@@ -90,7 +94,7 @@ var remove = function (_a) {
         var history;
         return __generator(this, function (_b) {
             switch (_b.label) {
-                case 0: return [4, history_model_1.default.findByIdAndRemove(id)];
+                case 0: return [4, prisma_1.default.histories.delete({ where: { id: id } })];
                 case 1:
                     history = _b.sent();
                     if (!history)

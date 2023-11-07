@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var http_status_codes_1 = require("http-status-codes");
 var joi_1 = __importDefault(require("joi"));
 var lodash_1 = require("lodash");
-var ApiError_1 = __importDefault(require("../../middlewares/error/ApiError"));
+var ApiError_1 = __importDefault(require("middlewares/error/ApiError"));
 var validate = function (schema) {
     return function (req, _res, next) {
         var validSchema = (0, lodash_1.pick)(schema, ['params', 'query', 'body']);

@@ -56,7 +56,6 @@ export const create = catchAsync(
       type: type || (amount > 0 ? 'income' : 'expense')
     });
 
-    console.log(transaction);
     // await historyService.create({
     //   transactionId: transaction.id,
     //   data: transaction,
@@ -89,16 +88,16 @@ export const update = catchAsync(
 
     await historyService.create({
       transactionId: transaction.id,
+      state: 'modified',
+      userId: transaction.userId,
       data: {
         amount: transaction.amount,
         categoryId: transaction.categoryId,
         currency: transaction.currency,
         date: transaction.date,
         note: transaction.note,
-        periodId: transaction.periodId,
-        userId: transaction.userId
-      },
-      state: 'modified'
+        periodId: transaction.periodId
+      }
     });
 
     res.send(transaction);
@@ -113,16 +112,16 @@ export const remove = catchAsync(
 
     await historyService.create({
       transactionId: transaction.id,
+      state: 'deleted',
+      userId: transaction.userId,
       data: {
         amount: transaction.amount,
         categoryId: transaction.categoryId,
         currency: transaction.currency,
         date: transaction.date,
         note: transaction.note,
-        periodId: transaction.periodId,
-        userId: transaction.userId
-      },
-      state: 'deleted'
+        periodId: transaction.periodId
+      }
     });
 
     res.send(transaction);

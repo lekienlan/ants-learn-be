@@ -2,9 +2,8 @@ import { StatusCodes } from 'http-status-codes';
 import ApiError from 'middlewares/error/ApiError';
 import { generateTokens, verify } from 'modules/token/token.service';
 import { userService } from 'modules/user';
-import type { IUserDoc, IUserWithTokens } from 'modules/user/user.interface';
 
-export const loginWithEmail = async (email: string): Promise<IUserDoc> => {
+export const loginWithEmail = async (email: string) => {
   const user = await userService.findByEmail(email);
 
   if (!user) {
@@ -14,9 +13,7 @@ export const loginWithEmail = async (email: string): Promise<IUserDoc> => {
   return user;
 };
 
-export const refresh = async (
-  refreshToken: string
-): Promise<IUserWithTokens> => {
+export const refresh = async (refreshToken: string) => {
   try {
     const refreshTokenDoc = await verify(refreshToken);
 

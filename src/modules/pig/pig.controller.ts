@@ -1,11 +1,12 @@
+import type { Prisma } from '@prisma/client';
 import type { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { tokenService } from 'modules/token';
 import { userService } from 'modules/user';
+import type prisma from 'prisma';
 import catchAsync from 'utils/catchAsync';
 
 import { pigService } from '.';
-import type { IPigPayload, IPigUpdatePayload } from './pig.interface';
 
 export const findMany = catchAsync(async (req: Request, res: Response) => {
   const piggies = await pigService.findMany(req.query);
@@ -14,18 +15,17 @@ export const findMany = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const create = catchAsync(
-  async (req: Request<{}, {}, IPigPayload>, res: Response) => {
-    const { name, type, style } = req.body;
-
+  async (
+    req: Request<{}, {}, Prisma.Args<typeof prisma.pigs, 'create'>['data']>,
+    res: Response
+  ) => {
     const user = await userService.findByAccessToken(
       tokenService.getAccessTokenFromRequest(req)
     );
-    const pig = await pigService.create({
-      name,
-      type,
-      style,
-      userId: user?.id
-    });
+
+    if (!user) throw new Error('User not found');
+
+    const pig = await pigService.create(req.body);
 
     res.status(StatusCodes.CREATED).send(pig);
   }
@@ -33,17 +33,14 @@ export const create = catchAsync(
 
 export const update = catchAsync(
   async (
-    req: Request<{ id: string }, {}, IPigUpdatePayload>,
+    req: Request<
+      { id: string },
+      {},
+      Prisma.Args<typeof prisma.pigs, 'update'>['data']
+    >,
     res: Response
   ) => {
-    const { name, type, style } = req.body;
-
-    const pig = await pigService.update({
-      id: req.params.id,
-      name,
-      type,
-      style
-    });
+    const pig = await pigService.update(req.params.id, req.body);
 
     res.send(pig);
   }

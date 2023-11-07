@@ -1,7 +1,5 @@
 import * as userController from './user.controller';
-import * as userInterfaces from './user.interface';
-import User from './user.model';
 import * as userService from './user.service';
 import * as userValidation from './user.validation';
 
-export { User, userController, userInterfaces, userService, userValidation };
+export { userController, userService, userValidation };

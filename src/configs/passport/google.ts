@@ -1,5 +1,5 @@
 import configs from 'configs';
-import { User } from 'modules/user';
+import { userService } from 'modules/user';
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 
@@ -12,10 +12,10 @@ export default function google() {
         callbackURL: 'http://localhost:3000/v1/auth/google/callback'
       },
       async function (_accessToken, _refreshToken, profile, done) {
-        const user = await User.findOrCreate({
+        const user = await userService.findOrCreate({
+          email: profile?.emails?.[0]?.value || '',
           firstName: profile.name?.givenName || '',
-          lastName: profile.name?.familyName || '',
-          email: profile?.emails?.[0]?.value || ''
+          lastName: profile.name?.familyName || ''
         });
 
         return done(null, user);

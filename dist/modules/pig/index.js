@@ -22,15 +22,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.pigValidation = exports.pigService = exports.pigController = exports.pig = void 0;
+exports.pigValidation = exports.pigService = exports.pigController = void 0;
 var pigController = __importStar(require("./pig.controller"));
 exports.pigController = pigController;
-var pig_model_1 = __importDefault(require("./pig.model"));
-exports.pig = pig_model_1.default;
 var pigService = __importStar(require("./pig.service"));
 exports.pigService = pigService;
 var pigValidation = __importStar(require("./pig.validation"));

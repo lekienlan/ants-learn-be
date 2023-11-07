@@ -1,4 +1,4 @@
-import type { IPaginateOptions, IPaginateResult } from '../../middlewares/paginate/paginate.interface';
+import type { IPaginateOptions, IPaginateResult } from 'middlewares/paginate/paginate.interface';
 import type { Document, Model } from 'mongoose';
 export interface IPeriod {
     pigId?: string;
@@ -6,9 +6,9 @@ export interface IPeriod {
     endDate?: Date;
     budget?: number;
     members?: string[];
-    expenses?: string[];
     repeat?: boolean;
     status?: string;
+    expense?: number;
 }
 export interface IPeriodPayload extends Omit<IPeriod, 'user' | 'code'> {
 }

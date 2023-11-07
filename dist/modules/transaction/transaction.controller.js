@@ -52,15 +52,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.remove = exports.update = exports.create = exports.findOne = exports.findMany = void 0;
 var http_status_codes_1 = require("http-status-codes");
-var lodash_1 = require("lodash");
-var paginate_constant_1 = require("../../middlewares/paginate/paginate.constant");
-var history_1 = require("../../modules/history");
-var token_1 = require("../../modules/token");
-var user_1 = require("../../modules/user");
-var catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
+var history_1 = require("modules/history");
+var token_1 = require("modules/token");
+var user_1 = require("modules/user");
+var catchAsync_1 = __importDefault(require("utils/catchAsync"));
 var _1 = require(".");
 exports.findMany = (0, catchAsync_1.default)(function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var accessToken, user, filter, options, transactions, totalAmount;
+    var accessToken, user, transactions;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -68,15 +66,10 @@ exports.findMany = (0, catchAsync_1.default)(function (req, res) { return __awai
                 return [4, user_1.userService.findByAccessToken(accessToken)];
             case 1:
                 user = _a.sent();
-                filter = (0, lodash_1.omit)(__assign(__assign({}, req.query), { userId: user === null || user === void 0 ? void 0 : user.id }), paginate_constant_1.PAGINATE_OPTIONS);
-                options = (0, lodash_1.pick)(req.query, paginate_constant_1.PAGINATE_OPTIONS);
-                return [4, _1.transactionService.findMany(filter, options)];
+                return [4, _1.transactionService.findMany(__assign({ userId: user === null || user === void 0 ? void 0 : user.id }, req.query))];
             case 2:
                 transactions = _a.sent();
-                totalAmount = transactions.results.reduce(function (prev, current) {
-                    return prev + current.amount;
-                }, 0);
-                res.send(__assign(__assign({}, transactions), { totalAmount: totalAmount }));
+                res.send(transactions);
                 return [2];
         }
     });
@@ -96,7 +89,7 @@ exports.findOne = (0, catchAsync_1.default)(function (req, res) { return __await
     });
 }); });
 exports.create = (0, catchAsync_1.default)(function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var accessToken, user, _a, amount, categoryId, date, note, periodId, transaction;
+    var accessToken, user, _a, amount, categoryId, date, note, periodId, type, transaction;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -104,48 +97,51 @@ exports.create = (0, catchAsync_1.default)(function (req, res) { return __awaite
                 return [4, user_1.userService.findByAccessToken(accessToken)];
             case 1:
                 user = _b.sent();
-                _a = req.body, amount = _a.amount, categoryId = _a.categoryId, date = _a.date, note = _a.note, periodId = _a.periodId;
+                _a = req.body, amount = _a.amount, categoryId = _a.categoryId, date = _a.date, note = _a.note, periodId = _a.periodId, type = _a.type;
                 return [4, _1.transactionService.create({
-                        userId: user === null || user === void 0 ? void 0 : user.id,
+                        userId: (user === null || user === void 0 ? void 0 : user.id) || '',
                         amount: amount,
                         categoryId: categoryId,
                         date: date,
                         note: note,
-                        periodId: periodId
+                        periodId: periodId,
+                        type: type || (amount > 0 ? 'income' : 'expense')
                     })];
             case 2:
                 transaction = _b.sent();
-                return [4, history_1.historyService.create({
-                        transactionId: transaction.id,
-                        data: transaction,
-                        state: 'original'
-                    })];
-            case 3:
-                _b.sent();
                 res.status(http_status_codes_1.StatusCodes.CREATED).send(transaction);
                 return [2];
         }
     });
 }); });
 exports.update = (0, catchAsync_1.default)(function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, amount, categoryId, date, note, transaction;
+    var _a, amount, categoryId, date, note, periodId, type, transaction;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                _a = req.body, amount = _a.amount, categoryId = _a.categoryId, date = _a.date, note = _a.note;
-                return [4, _1.transactionService.update({
-                        id: req.params.id,
+                _a = req.body, amount = _a.amount, categoryId = _a.categoryId, date = _a.date, note = _a.note, periodId = _a.periodId, type = _a.type;
+                return [4, _1.transactionService.update(req.params.id, {
                         amount: amount,
                         categoryId: categoryId,
                         date: date,
-                        note: note
+                        note: note,
+                        periodId: periodId,
+                        type: type
                     })];
             case 1:
                 transaction = _b.sent();
                 return [4, history_1.historyService.create({
                         transactionId: transaction.id,
-                        data: transaction,
-                        state: 'modified'
+                        state: 'modified',
+                        userId: transaction.userId,
+                        data: {
+                            amount: transaction.amount,
+                            categoryId: transaction.categoryId,
+                            currency: transaction.currency,
+                            date: transaction.date,
+                            note: transaction.note,
+                            periodId: transaction.periodId
+                        }
                     })];
             case 2:
                 _b.sent();
@@ -165,8 +161,16 @@ exports.remove = (0, catchAsync_1.default)(function (req, res) { return __awaite
                 transaction = _a.sent();
                 return [4, history_1.historyService.create({
                         transactionId: transaction.id,
-                        data: transaction,
-                        state: 'deleted'
+                        state: 'deleted',
+                        userId: transaction.userId,
+                        data: {
+                            amount: transaction.amount,
+                            categoryId: transaction.categoryId,
+                            currency: transaction.currency,
+                            date: transaction.date,
+                            note: transaction.note,
+                            periodId: transaction.periodId
+                        }
                     })];
             case 2:
                 _a.sent();

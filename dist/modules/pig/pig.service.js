@@ -1,15 +1,4 @@
 "use strict";
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -46,32 +35,20 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __rest = (this && this.__rest) || function (s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-                t[p[i]] = s[p[i]];
-        }
-    return t;
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.remove = exports.update = exports.create = exports.findMany = void 0;
 var http_status_codes_1 = require("http-status-codes");
-var lodash_1 = require("lodash");
-var ApiError_1 = __importDefault(require("../../middlewares/error/ApiError"));
-var utils_1 = require("../../utils");
-var pig_model_1 = __importDefault(require("./pig.model"));
-var findMany = function (filter, options) { return __awaiter(void 0, void 0, void 0, function () {
+var ApiError_1 = __importDefault(require("middlewares/error/ApiError"));
+var paginate_1 = __importDefault(require("middlewares/paginate"));
+var prisma_1 = __importDefault(require("prisma"));
+var findMany = function (params) { return __awaiter(void 0, void 0, void 0, function () {
     var piggies;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, pig_model_1.default.paginate(filter, __assign(__assign({}, options), { populate: 'user,period' }))];
+            case 0: return [4, (0, paginate_1.default)(prisma_1.default.pigs, params)];
             case 1:
                 piggies = _a.sent();
                 return [2, piggies];
@@ -83,28 +60,22 @@ var create = function (data) { return __awaiter(void 0, void 0, void 0, function
     var pig;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, pig_model_1.default.create(data)];
+            case 0: return [4, prisma_1.default.pigs.create({ data: data })];
             case 1:
                 pig = _a.sent();
-                if (data.userId) {
-                    return [2, pig.populate('user')];
-                }
                 return [2, pig];
         }
     });
 }); };
 exports.create = create;
-var update = function (data) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, payload, pig;
+var update = function (id, data) { return __awaiter(void 0, void 0, void 0, function () {
+    var pig;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0:
-                id = data.id, payload = __rest(data, ["id"]);
-                return [4, pig_model_1.default.findByIdAndUpdate(id, __assign(__assign({}, payload), ((data === null || data === void 0 ? void 0 : data.name)
-                        ? { code: (0, lodash_1.snakeCase)((0, utils_1.removeDiacritics)(data.name)) }
-                        : undefined)), {
-                        returnDocument: 'after'
-                    })];
+            case 0: return [4, prisma_1.default.pigs.update({
+                    where: { id: id },
+                    data: data
+                })];
             case 1:
                 pig = _a.sent();
                 if (!pig)
@@ -120,7 +91,7 @@ var remove = function (_a) {
         var pig;
         return __generator(this, function (_b) {
             switch (_b.label) {
-                case 0: return [4, pig_model_1.default.findByIdAndRemove(id)];
+                case 0: return [4, prisma_1.default.pigs.delete({ where: { id: id } })];
                 case 1:
                     pig = _b.sent();
                     if (!pig)

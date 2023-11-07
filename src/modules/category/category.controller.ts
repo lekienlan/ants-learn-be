@@ -1,12 +1,10 @@
+import type { Prisma } from '@prisma/client';
 import type { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
+import type prisma from 'prisma';
 import catchAsync from 'utils/catchAsync';
 
 import { categoryService } from '.';
-import type {
-  ICategoryPayload,
-  ICategoryUpdatePayload
-} from './category.interface';
 
 export const findMany = catchAsync(async (req: Request, res: Response) => {
   const categories = await categoryService.findMany(req.query);
@@ -15,7 +13,14 @@ export const findMany = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const create = catchAsync(
-  async (req: Request<{}, {}, ICategoryPayload>, res: Response) => {
+  async (
+    req: Request<
+      {},
+      {},
+      Prisma.Args<typeof prisma.categories, 'create'>['data']
+    >,
+    res: Response
+  ) => {
     const { name, type, style, userId } = req.body;
     const category = await categoryService.create({
       name,
@@ -30,13 +35,16 @@ export const create = catchAsync(
 
 export const update = catchAsync(
   async (
-    req: Request<{ id: string }, {}, ICategoryUpdatePayload>,
+    req: Request<
+      { id: string },
+      {},
+      Prisma.Args<typeof prisma.categories, 'update'>['data']
+    >,
     res: Response
   ) => {
     const { name, type, style } = req.body;
 
-    const category = await categoryService.update({
-      id: req.params.id,
+    const category = await categoryService.update(req.params.id, {
       name,
       type,
       style

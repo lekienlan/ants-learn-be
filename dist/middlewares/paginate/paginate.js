@@ -46,66 +46,76 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-var lodash_1 = require("lodash");
-var paginate = function (schema) {
-    schema.static('paginate', function (filter, options) {
-        return __awaiter(this, void 0, void 0, function () {
-            var sortBy, limit, _a, page, pick, populate, skip, sort, sortingList, _b, totalResults, results, totalPages;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
-                    case 0:
-                        sortBy = options.sortBy, limit = options.limit, _a = options.page, page = _a === void 0 ? 1 : _a, pick = options.pick, populate = options.populate;
-                        skip = (page - 1) * (limit || 0);
-                        sort = '';
-                        if (sortBy) {
-                            sortingList = sortBy.split(',').map(function (sortOption) {
-                                var _a = sortOption.split(':'), key = _a[0], _b = _a[1], order = _b === void 0 ? 'asc' : _b;
-                                return "".concat(order === 'desc' ? '-' : '').concat(key);
-                            });
-                            sort = sortingList.join('');
-                        }
-                        else {
-                            sort = '-createdAt';
-                        }
-                        Object.keys(filter).forEach(function (key) {
-                            if (Array.isArray(filter[key])) {
-                                var _a = filter[key], gte = _a[0], lte = _a[1];
-                                if (gte || lte) {
-                                    filter[key] = __assign(__assign({}, (gte ? { $gte: gte } : {})), (lte ? { $lte: lte } : {}));
-                                }
-                                else {
-                                    delete filter[key];
-                                }
-                            }
-                        });
-                        return [4, Promise.all([
-                                this.countDocuments(filter).exec(),
-                                this.find(filter)
-                                    .sort(sort)
-                                    .skip(skip)
-                                    .limit(limit)
-                                    .select(pick === null || pick === void 0 ? void 0 : pick.replace(',', ' '))
-                                    .populate(populate === null || populate === void 0 ? void 0 : populate.split(',').map(function (populateOption) { return ({
-                                    path: populateOption,
-                                    model: (0, lodash_1.startCase)(populateOption)
-                                }); }))
-                                    .exec()
-                            ])];
-                    case 1:
-                        _b = _c.sent(), totalResults = _b[0], results = _b[1];
-                        totalPages = limit ? Math.ceil(totalResults / limit) : 1;
-                        return [2, {
-                                results: results,
-                                page: parseInt(page.toString(), 10),
-                                limit: limit ? parseInt(limit.toString(), 10) : undefined,
-                                totalPages: totalPages,
-                                totalResults: totalResults
-                            }];
-                }
-            });
-        });
-    });
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
 };
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.paginateFilter = void 0;
+var lodash_1 = require("lodash");
+var utils_1 = require("utils");
+var paginateFilter = function (filter) {
+    var formattedFilter = (0, lodash_1.omit)(filter, ['limit', 'sortBy', 'page']);
+    Object.keys(formattedFilter).forEach(function (key) {
+        if (Array.isArray(formattedFilter[key])) {
+            var _a = formattedFilter[key], gte = _a[0], lte = _a[1];
+            if (gte || lte) {
+                formattedFilter[key] = __assign(__assign({}, (gte ? { gte: (0, utils_1.convertStringToType)(gte) } : {})), (lte ? { lte: (0, utils_1.convertStringToType)(lte) } : {}));
+            }
+            else {
+                delete formattedFilter[key];
+            }
+        }
+        else {
+            formattedFilter[key] = { in: formattedFilter[key].split(',') };
+        }
+    });
+    return formattedFilter;
+};
+exports.paginateFilter = paginateFilter;
+var paginate = function (model, params) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, sortBy, limit, page, query, _limit, _page, skip, orderBy, totalResults, results, totalPages;
+    var _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                _a = params.sortBy, sortBy = _a === void 0 ? 'updatedAt' : _a, limit = params.limit, page = params.page, query = __rest(params, ["sortBy", "limit", "page"]);
+                _limit = limit ? parseInt(limit, 10) : 10;
+                _page = page ? parseInt(page, 10) : 1;
+                skip = (_page - 1) * (_limit || 0);
+                orderBy = sortBy.startsWith('-')
+                    ? { field: sortBy.substring(1), direction: 'desc' }
+                    : { field: sortBy, direction: 'asc' };
+                return [4, model.count({ where: (0, exports.paginateFilter)(query) })];
+            case 1:
+                totalResults = _c.sent();
+                return [4, model.findMany({
+                        where: (0, exports.paginateFilter)(query),
+                        skip: skip,
+                        take: _limit,
+                        orderBy: (_b = {},
+                            _b[orderBy.field] = orderBy.direction,
+                            _b)
+                    })];
+            case 2:
+                results = _c.sent();
+                totalPages = _limit ? Math.ceil(totalResults / _limit) : 1;
+                return [2, {
+                        results: results,
+                        page: _page,
+                        limit: _limit,
+                        totalPages: totalPages,
+                        totalResults: totalResults
+                    }];
+        }
+    });
+}); };
 exports.default = paginate;
 //# sourceMappingURL=paginate.js.map

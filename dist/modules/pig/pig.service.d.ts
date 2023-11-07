@@ -1,8 +1,42 @@
-import type { IPaginateOptions, IPaginateResult } from '../../middlewares/paginate/paginate.interface';
-import type { IPig, IPigDoc, IPigPayload, IPigUpdatePayload } from './pig.interface';
-export declare const findMany: (filter: Record<string, any>, options: IPaginateOptions) => Promise<IPaginateResult<IPig>>;
-export declare const create: (data: IPigPayload) => Promise<IPigDoc>;
-export declare const update: (data: IPigUpdatePayload) => Promise<IPigDoc | null>;
+import type { Prisma } from '@prisma/client';
+import type { PaginateOptions } from 'middlewares/paginate/paginate.interface';
+import prisma from 'prisma';
+export declare const findMany: (params: PaginateOptions & Prisma.pigsWhereInput) => Promise<import("middlewares/paginate/paginate.interface").QueryResults<Prisma.pigsWhereInput>>;
+export declare const create: (data: Prisma.Args<typeof prisma.pigs, 'create'>['data']) => Promise<{
+    id: string;
+    name: string;
+    userId: string;
+    updatedAt: Date | null;
+    createdAt: Date | null;
+} & {
+    style: {
+        color: string;
+        icon: string;
+    } | null;
+}>;
+export declare const update: (id: string, data: Prisma.Args<typeof prisma.pigs, 'update'>['data']) => Promise<{
+    id: string;
+    name: string;
+    userId: string;
+    updatedAt: Date | null;
+    createdAt: Date | null;
+} & {
+    style: {
+        color: string;
+        icon: string;
+    } | null;
+}>;
 export declare const remove: ({ id }: {
     id: string;
-}) => Promise<IPigDoc | null>;
+}) => Promise<{
+    id: string;
+    name: string;
+    userId: string;
+    updatedAt: Date | null;
+    createdAt: Date | null;
+} & {
+    style: {
+        color: string;
+        icon: string;
+    } | null;
+}>;

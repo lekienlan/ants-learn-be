@@ -22,15 +22,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.historyValidation = exports.historyService = exports.historyController = exports.history = void 0;
+exports.historyValidation = exports.historyService = exports.historyController = void 0;
 var historyController = __importStar(require("./history.controller"));
 exports.historyController = historyController;
-var history_model_1 = __importDefault(require("./history.model"));
-exports.history = history_model_1.default;
 var historyService = __importStar(require("./history.service"));
 exports.historyService = historyService;
 var historyValidation = __importStar(require("./history.validation"));

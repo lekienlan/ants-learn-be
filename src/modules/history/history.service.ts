@@ -5,9 +5,6 @@ import paginate from 'middlewares/paginate';
 import type { PaginateOptions } from 'middlewares/paginate/paginate.interface';
 import prisma from 'prisma';
 
-import type { IHistoryDoc } from './history.interface';
-import History from './history.model';
-
 export const findMany = async (
   params: PaginateOptions & Prisma.historiesWhereInput
 ) => {
@@ -21,8 +18,11 @@ export const findTransHistories = async ({
   transactionId
 }: {
   transactionId: string;
-}): Promise<IHistoryDoc[]> => {
-  const histories = await History.find({ transactionId }).sort('-createdAt');
+}) => {
+  const histories = await prisma.histories.findFirst({
+    where: { transactionId },
+    orderBy: { createdAt: 'desc' }
+  });
 
   if (!histories)
     throw new ApiError(StatusCodes.NOT_FOUND, 'Transaction not found');
@@ -31,19 +31,15 @@ export const findTransHistories = async ({
 };
 
 export const create = async (
-  data: Prisma.Args<typeof prisma.histories, 'update'>['data']
+  data: Prisma.Args<typeof prisma.histories, 'create'>['data']
 ) => {
-  const history = await History.create(data);
+  const history = await prisma.histories.create({ data });
 
   return history;
 };
 
-export const remove = async ({
-  id
-}: {
-  id: string;
-}): Promise<IHistoryDoc | null> => {
-  const history = await History.findByIdAndRemove(id);
+export const remove = async ({ id }: { id: string }) => {
+  const history = await prisma.histories.delete({ where: { id } });
 
   if (!history) throw new ApiError(StatusCodes.NOT_FOUND, 'History not found');
 

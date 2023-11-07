@@ -4,9 +4,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
-var validate_1 = __importDefault(require("../../middlewares/validate"));
-var auth_1 = require("../../modules/auth");
-var category_1 = require("../../modules/category");
+var validate_1 = __importDefault(require("middlewares/validate"));
+var auth_1 = require("modules/auth");
+var category_1 = require("modules/category");
 var router = express_1.default.Router();
 router
     .route('/')
