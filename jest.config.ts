@@ -6,6 +6,8 @@ const jestConfig: JestConfigWithTsJest = {
   moduleDirectories: ['node_modules', 'src'],
   setupFiles: ['dotenv/config'],
   setupFilesAfterEnv: ['<rootDir>/src/test/prismaMock.ts'],
+  coverageReporters: ['text', 'lcov'],
+  coverageProvider: 'v8'
 
 }
 

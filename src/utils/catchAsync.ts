@@ -3,14 +3,9 @@ import { StatusCodes } from 'http-status-codes';
 import ApiError from 'middlewares/error/ApiError';
 
 const catchAsync =
-  (fn: any) => (req: Request, res: Response, next: NextFunction) => {
-    Promise.resolve(fn(req, res, next)).catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(new ApiError(StatusCodes.BAD_REQUEST, err.message));
-        return;
-      }
-
-      next(err);
+  (fn: any) => async (req: Request, res: Response, next: NextFunction) => {
+    await Promise.resolve(fn(req, res, next)).catch((err) => {
+      next(new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, err.message));
     });
   };
 

@@ -1,27 +1,29 @@
 import Joi from 'joi';
 import { joiPaginate } from 'middlewares/paginate/paginate.validation';
 
-const nameSchema = Joi.string().required();
-const typeSchema = Joi.string().only().allow('expense', 'income').required();
+const name = Joi.string().required();
+const type = Joi.string().only().allow('expense', 'income').required();
+const userId = Joi.string();
 
-const styleSchema = Joi.object().keys({
+const style = Joi.object().keys({
   color: Joi.string(),
   icon: Joi.string()
 });
 
 export const basePayload = {
   body: Joi.object().keys({
-    name: nameSchema,
-    type: typeSchema,
-    style: styleSchema
+    name,
+    type,
+    style,
+    userId
   })
 };
 export const createPayload = basePayload;
 
 export const updatePayload = basePayload.body.keys({
-  name: nameSchema.optional(),
-  type: typeSchema.optional(),
-  style: styleSchema.optional()
+  name: name.optional(),
+  type: type.optional(),
+  style: style.optional()
 });
 
 export const params = {

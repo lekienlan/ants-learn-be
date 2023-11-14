@@ -12,8 +12,8 @@ export function removeDiacritics(string: string) {
   string = string
     .toLowerCase()
     .trim()
-    .replace(/[^a-z0-9-]/g, '-')
-    .replace(/-+/g, '-');
+    .replace(/[^a-z0-9- ]/g, '')
+    .replace(/\s+/g, '-');
 
   return string;
 }
@@ -39,24 +39,31 @@ export const sortWithIdOnTop = (object: Record<string, any>) => {
 export function convertStringToType(
   value: string
 ): number | string | Date | boolean {
-  if (!value) return '';
+  try {
+    if (!value) return '';
 
-  if (moment(value, 'YYYY-MM-DD', true).isValid()) {
-    return new Date(value);
-  }
+    if (moment(value, 'YYYY-MM-DDTHH:mm:ss.SSSZ', true).isValid()) {
+      return new Date(value);
+    }
 
-  if (!isNaN(parseInt(value, 10))) {
-    return parseInt(value, 10);
-  }
-  if (value === 'true') {
-    return true;
-  }
-  if (value === 'false') {
-    return false;
-  }
-  if (JSON.parse(value)) {
-    return JSON.parse(value);
-  }
+    if (moment(value, 'YYYY-MM-DD', true).isValid()) {
+      return new Date(value);
+    }
 
+    if (!isNaN(parseInt(value, 10))) {
+      return parseInt(value, 10);
+    }
+    if (value === 'true') {
+      return true;
+    }
+    if (value === 'false') {
+      return false;
+    }
+    if (JSON.parse(value)) {
+      return JSON.parse(value);
+    }
+  } catch (err: unknown) {
+    //
+  }
   return value;
 }

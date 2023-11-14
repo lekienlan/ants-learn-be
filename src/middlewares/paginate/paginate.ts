@@ -6,17 +6,22 @@ import type { PaginateOptions, QueryResults } from './paginate.interface';
 export const paginateFilter = (filter: Record<string, any>) => {
   const formattedFilter = omit(filter, ['limit', 'sortBy', 'page']);
   Object.keys(formattedFilter).forEach((key) => {
-    // if filter is an array
-    if (Array.isArray(formattedFilter[key])) {
+    // if filter is an 2 items array
+    if (
+      Array.isArray(formattedFilter[key]) &&
+      formattedFilter[key].length === 2
+    ) {
       const [gte, lte] = formattedFilter[key];
-      if (gte || lte) {
-        formattedFilter[key] = {
-          ...(gte ? { gte: convertStringToType(gte) } : {}),
-          ...(lte ? { lte: convertStringToType(lte) } : {})
-        };
-      } else {
+
+      if (!gte || !lte) {
         delete formattedFilter[key];
+        return;
       }
+
+      formattedFilter[key] = {
+        gte: convertStringToType(gte),
+        lte: convertStringToType(lte)
+      };
     } else {
       formattedFilter[key] = { in: formattedFilter[key].split(',') };
     }
@@ -36,7 +41,7 @@ const paginate = async <T>(
   const _page = page ? parseInt(page, 10) : 1;
   const skip = (_page - 1) * (_limit || 0);
 
-  const orderBy: { field: string; direction: 'asc' | 'desc' } =
+  const _sortBy: { field: string; direction: 'asc' | 'desc' } =
     sortBy.startsWith('-')
       ? { field: sortBy.substring(1), direction: 'desc' }
       : { field: sortBy, direction: 'asc' };
@@ -47,12 +52,12 @@ const paginate = async <T>(
     skip,
     take: _limit,
     orderBy: {
-      [orderBy.field]: orderBy.direction
+      [_sortBy.field]: _sortBy.direction
     },
     include
   });
 
-  const totalPages = _limit ? Math.ceil(totalResults / _limit) : 1;
+  const totalPages = Math.ceil(totalResults / _limit) || 1;
 
   return {
     results,

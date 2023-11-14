@@ -20,7 +20,8 @@ export const create = async (
   data: Prisma.Args<typeof prisma.categories, 'create'>['data']
 ): Promise<categories> => {
   const category = await prisma.categories.create({
-    data
+    data,
+    include: { user: true }
   });
 
   return category;
