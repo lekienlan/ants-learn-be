@@ -44,14 +44,14 @@ var http_status_codes_1 = require("http-status-codes");
 var ApiError_1 = __importDefault(require("middlewares/error/ApiError"));
 var paginate_1 = __importDefault(require("middlewares/paginate"));
 var prisma_1 = __importDefault(require("prisma"));
-var findMany = function (params) { return __awaiter(void 0, void 0, void 0, function () {
-    var periods;
+var findMany = function (params, include) { return __awaiter(void 0, void 0, void 0, function () {
+    var list;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, (0, paginate_1.default)(prisma_1.default.periods, params)];
+            case 0: return [4, (0, paginate_1.default)(prisma_1.default.periods, params, include)];
             case 1:
-                periods = _a.sent();
-                return [2, periods];
+                list = _a.sent();
+                return [2, list];
         }
     });
 }); };
@@ -62,7 +62,12 @@ var findOne = function (_a) {
         var period;
         return __generator(this, function (_b) {
             switch (_b.label) {
-                case 0: return [4, prisma_1.default.periods.findFirst({ where: { id: id } })];
+                case 0: return [4, prisma_1.default.periods.findFirst({
+                        where: { id: id },
+                        include: {
+                            transactions: true
+                        }
+                    })];
                 case 1:
                     period = _b.sent();
                     if (!period)

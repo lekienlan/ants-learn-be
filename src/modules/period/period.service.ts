@@ -14,7 +14,12 @@ export const findMany = async (
 };
 
 export const findOne = async ({ id }: { id: string }) => {
-  const period = await prisma.periods.findFirst({ where: { id } });
+  const period = await prisma.periods.findFirst({
+    where: { id },
+    include: {
+      transactions: true
+    }
+  });
 
   if (!period) throw new ApiError(StatusCodes.NOT_FOUND, 'Period not found');
 

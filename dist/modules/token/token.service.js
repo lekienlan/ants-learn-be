@@ -45,6 +45,7 @@ var http_status_codes_1 = require("http-status-codes");
 var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var ApiError_1 = __importDefault(require("middlewares/error/ApiError"));
 var moment_1 = __importDefault(require("moment"));
+var prisma_1 = __importDefault(require("prisma"));
 var token_model_1 = __importDefault(require("./token.model"));
 var generate = function (userId, expires, secret) {
     if (secret === void 0) { secret = configs_1.default.jwt.accessSecretKey; }
@@ -66,11 +67,13 @@ var create = function (token, userId, expires, blacklisted) {
         var tokenDoc;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4, token_model_1.default.create({
-                        token: token,
-                        userId: userId,
-                        expires: expires.toDate(),
-                        blacklisted: blacklisted
+                case 0: return [4, prisma_1.default.tokens.create({
+                        data: {
+                            token: token,
+                            userId: userId,
+                            expires: expires.toDate(),
+                            blacklisted: blacklisted
+                        }
                     })];
                 case 1:
                     tokenDoc = _a.sent();

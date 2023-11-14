@@ -1,15 +1,4 @@
 "use strict";
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -52,19 +41,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.remove = exports.update = exports.create = exports.findMany = void 0;
 var http_status_codes_1 = require("http-status-codes");
-var lodash_1 = require("lodash");
 var ApiError_1 = __importDefault(require("middlewares/error/ApiError"));
 var paginate_1 = __importDefault(require("middlewares/paginate"));
 var prisma_1 = __importDefault(require("prisma"));
-var utils_1 = require("utils");
-var findMany = function (params) { return __awaiter(void 0, void 0, void 0, function () {
-    var categories;
+var findMany = function (params, include) { return __awaiter(void 0, void 0, void 0, function () {
+    var list;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, (0, paginate_1.default)(prisma_1.default.categories, params)];
+            case 0: return [4, (0, paginate_1.default)(prisma_1.default.categories, params, include)];
             case 1:
-                categories = _a.sent();
-                return [2, categories];
+                list = _a.sent();
+                return [2, list];
         }
     });
 }); };
@@ -74,7 +61,7 @@ var create = function (data) { return __awaiter(void 0, void 0, void 0, function
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, prisma_1.default.categories.create({
-                    data: __assign(__assign({}, data), { code: (0, lodash_1.snakeCase)((0, utils_1.removeDiacritics)(data.name)) || '' })
+                    data: data
                 })];
             case 1:
                 category = _a.sent();

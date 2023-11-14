@@ -41,6 +41,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.remove = exports.update = exports.create = exports.findMany = void 0;
 var http_status_codes_1 = require("http-status-codes");
+var lodash_1 = require("lodash");
+var utils_1 = require("utils");
 var catchAsync_1 = __importDefault(require("utils/catchAsync"));
 var _1 = require(".");
 exports.findMany = (0, catchAsync_1.default)(function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
@@ -65,7 +67,8 @@ exports.create = (0, catchAsync_1.default)(function (req, res) { return __awaite
                         name: name,
                         type: type,
                         style: style,
-                        userId: userId
+                        userId: userId,
+                        code: (0, lodash_1.snakeCase)((0, utils_1.removeDiacritics)(name)) || ''
                     })];
             case 1:
                 category = _b.sent();

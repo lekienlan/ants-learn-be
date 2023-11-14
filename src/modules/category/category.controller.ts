@@ -1,7 +1,9 @@
 import type { Prisma } from '@prisma/client';
 import type { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
+import { snakeCase } from 'lodash';
 import type prisma from 'prisma';
+import { removeDiacritics } from 'utils';
 import catchAsync from 'utils/catchAsync';
 
 import { categoryService } from '.';
@@ -26,7 +28,8 @@ export const create = catchAsync(
       name,
       type,
       style,
-      userId
+      userId,
+      code: snakeCase(removeDiacritics(name)) || ''
     });
 
     res.status(StatusCodes.CREATED).send(category);

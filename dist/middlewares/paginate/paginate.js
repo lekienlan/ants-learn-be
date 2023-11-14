@@ -80,7 +80,7 @@ var paginateFilter = function (filter) {
     return formattedFilter;
 };
 exports.paginateFilter = paginateFilter;
-var paginate = function (model, params) { return __awaiter(void 0, void 0, void 0, function () {
+var paginate = function (model, params, include) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, sortBy, limit, page, query, _limit, _page, skip, orderBy, totalResults, results, totalPages;
     var _b;
     return __generator(this, function (_c) {
@@ -102,7 +102,8 @@ var paginate = function (model, params) { return __awaiter(void 0, void 0, void 
                         take: _limit,
                         orderBy: (_b = {},
                             _b[orderBy.field] = orderBy.direction,
-                            _b)
+                            _b),
+                        include: include
                     })];
             case 2:
                 results = _c.sent();

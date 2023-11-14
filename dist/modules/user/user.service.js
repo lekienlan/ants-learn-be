@@ -43,14 +43,14 @@ exports.findByAccessToken = exports.findById = exports.findByEmail = exports.fin
 var paginate_1 = __importDefault(require("middlewares/paginate"));
 var token_1 = require("modules/token");
 var prisma_1 = __importDefault(require("prisma"));
-var findMany = function (params) { return __awaiter(void 0, void 0, void 0, function () {
-    var users;
+var findMany = function (params, include) { return __awaiter(void 0, void 0, void 0, function () {
+    var list;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, (0, paginate_1.default)(prisma_1.default.users, params)];
+            case 0: return [4, (0, paginate_1.default)(prisma_1.default.users, params, include)];
             case 1:
-                users = _a.sent();
-                return [2, users];
+                list = _a.sent();
+                return [2, list];
         }
     });
 }); };

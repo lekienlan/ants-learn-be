@@ -43,15 +43,16 @@ exports.remove = exports.update = exports.create = exports.findOne = exports.fin
 var http_status_codes_1 = require("http-status-codes");
 var ApiError_1 = __importDefault(require("middlewares/error/ApiError"));
 var paginate_1 = __importDefault(require("middlewares/paginate"));
+var period_1 = require("modules/period");
 var prisma_1 = __importDefault(require("prisma"));
-var findMany = function (params) { return __awaiter(void 0, void 0, void 0, function () {
-    var transactions;
+var findMany = function (params, include) { return __awaiter(void 0, void 0, void 0, function () {
+    var list;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, (0, paginate_1.default)(prisma_1.default.transactions, params)];
+            case 0: return [4, (0, paginate_1.default)(prisma_1.default.transactions, params, include)];
             case 1:
-                transactions = _a.sent();
-                return [2, transactions];
+                list = _a.sent();
+                return [2, list];
         }
     });
 }); };
@@ -71,7 +72,7 @@ var findOne = function (where) { return __awaiter(void 0, void 0, void 0, functi
 }); };
 exports.findOne = findOne;
 var create = function (data) { return __awaiter(void 0, void 0, void 0, function () {
-    var transaction;
+    var transaction, expense;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, prisma_1.default.transactions.create({
@@ -84,6 +85,17 @@ var create = function (data) { return __awaiter(void 0, void 0, void 0, function
                 })];
             case 1:
                 transaction = _a.sent();
+                return [4, prisma_1.default.transactions.aggregate({
+                        where: { periodId: data.periodId },
+                        _sum: {
+                            amount: true
+                        }
+                    })];
+            case 2:
+                expense = _a.sent();
+                period_1.periodService.update(data.periodId || '', {
+                    expense: expense._sum.amount || 0
+                });
                 return [2, transaction];
         }
     });

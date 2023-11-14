@@ -3,6 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import ApiError from 'middlewares/error/ApiError';
 import paginate from 'middlewares/paginate';
 import type { PaginateOptions } from 'middlewares/paginate/paginate.interface';
+import { periodService } from 'modules/period';
 import prisma from 'prisma';
 
 export const findMany = async (
@@ -37,6 +38,17 @@ export const create = async (
       category: true,
       period: true
     }
+  });
+
+  const expense = await prisma.transactions.aggregate({
+    where: { periodId: data.periodId },
+    _sum: {
+      amount: true
+    }
+  });
+
+  periodService.update(data.periodId || '', {
+    expense: expense._sum.amount || 0
   });
 
   return transaction;

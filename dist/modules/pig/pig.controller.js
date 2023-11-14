@@ -49,7 +49,10 @@ exports.findMany = (0, catchAsync_1.default)(function (req, res) { return __awai
     var piggies;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, _1.pigService.findMany(req.query)];
+            case 0: return [4, _1.pigService.findMany(req.query, {
+                    user: true,
+                    periods: true
+                })];
             case 1:
                 piggies = _a.sent();
                 res.send(piggies);
