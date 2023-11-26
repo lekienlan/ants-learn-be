@@ -1,5 +1,3 @@
-import { describe } from 'node:test';
-
 import type { CategoryType } from '@prisma/client';
 import app from 'app';
 import { StatusCodes } from 'http-status-codes';
@@ -7,113 +5,212 @@ import supertest from 'supertest';
 import prismaMock from 'test/prismaMock';
 import { token } from 'test/setup';
 
-describe('GET /v1/categories', () => {
-  it('should return 200 if data is ok', async () => {
-    // Mock the categoryService.create method to resolve with a sample category
+describe('categories', () => {
+  describe('GET /v1/categories', () => {
+    it('should return categories list if data is ok', async () => {
+      // Mock the categoryService.create method to resolve with a sample category
 
-    const fakeResp = {
-      limit: 10,
-      page: 1,
-      results: [
-        {
-          id: 'someCategoryId',
-          name: 'TestCategory',
-          code: 'test',
-          type: 'expense' as CategoryType,
-          style: null,
-          userId: 'someUserId',
-          updatedAt: new Date().toISOString() as unknown as Date,
-          createdAt: new Date().toISOString() as unknown as Date
-        }
-      ],
-      totalPages: 1
-    };
-    prismaMock.categories.findMany.mockResolvedValue(fakeResp.results);
+      const fakeResp = {
+        limit: 10,
+        page: 1,
+        results: [
+          {
+            id: 'someCategoryId',
+            name: 'TestCategory',
+            code: 'test',
+            type: 'expense' as CategoryType,
+            style: null,
+            userId: 'someUserId',
+            updatedAt: new Date().toISOString() as unknown as Date,
+            createdAt: new Date().toISOString() as unknown as Date
+          }
+        ],
+        totalPages: 1
+      };
+      prismaMock.categories.findMany.mockResolvedValue(fakeResp.results);
 
-    // Use supertest to send a request to the create endpoint
-    const response = await supertest(app)
-      .get('/v1/categories')
-      .set('Authorization', `Bearer ${token}`);
-    // Assert the response status code and data
-    expect(response.status).toBe(StatusCodes.OK);
-    expect(response.body).toEqual(fakeResp);
+      // Use supertest to send a request to the create endpoint
+      const response = await supertest(app)
+        .get('/v1/categories')
+        .set('Authorization', `Bearer ${token}`);
+      // Assert the response status code and data
+      expect(response.status).toBe(StatusCodes.OK);
+      expect(response.body).toEqual(fakeResp);
+    });
   });
-});
 
-describe('POST /v1/categories', () => {
-  it('should return 201 if data is ok', async () => {
-    // Mock the categoryService.create method to resolve with a sample category
+  describe('POST /v1/categories', () => {
+    it('should create category if data is ok', async () => {
+      // Mock the categoryService.create method to resolve with a sample category
+      const fakeResp = {
+        id: 'someCategoryId',
+        name: 'TestCategory',
+        code: 'test',
+        type: 'expense' as CategoryType,
+        style: null,
+        userId: 'someUserId',
+        updatedAt: new Date().toISOString() as unknown as Date,
+        createdAt: new Date().toISOString() as unknown as Date
+      };
+      prismaMock.categories.create.mockResolvedValue(fakeResp);
+
+      // Use supertest to send a request to the create endpoint
+      const response = await supertest(app)
+        .post('/v1/categories')
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          name: 'TestCategory',
+          type: 'expense'
+        });
+
+      // Assert the response status code and data
+      expect(response.status).toBe(StatusCodes.CREATED);
+      expect(response.body).toEqual(fakeResp);
+    });
+
+    it('should fail to create if type or name is missing', async () => {
+      const response1 = await supertest(app)
+        .post('/v1/categories')
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          name: 'TestCategory'
+        });
+      const response2 = await supertest(app)
+        .post('/v1/categories')
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          type: 'expense'
+        });
+
+      // Assert the response status code and data
+      expect(response1.status).toBe(StatusCodes.BAD_REQUEST);
+      expect(response2.status).toBe(StatusCodes.BAD_REQUEST);
+    });
+
+    it('should include user if having userId', async () => {
+      const fakeResp = {
+        id: 'someCategoryId',
+        name: 'TestCategory',
+        code: 'test',
+        type: 'expense' as CategoryType,
+        style: null,
+        userId: 'userId',
+        user: { id: 'userId' },
+        updatedAt: new Date().toISOString() as unknown as Date,
+        createdAt: new Date().toISOString() as unknown as Date
+      };
+      prismaMock.categories.create.mockResolvedValue(fakeResp);
+
+      const response = await supertest(app)
+        .post('/v1/categories')
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          name: 'TestCategory',
+          userId: 'userId',
+          type: 'expense'
+        });
+
+      // Assert the response status code and data
+      expect(response.status).toBe(StatusCodes.CREATED);
+      expect(response.body).toHaveProperty('user');
+    });
+  });
+
+  describe('PUT /v1/categories', () => {
     const fakeResp = {
-      id: 'someCategoryId',
-      name: 'TestCategory',
+      id: 'cateId',
+      name: 'updatedCate',
       code: 'test',
-      type: 'expense' as CategoryType,
+      type: 'income' as CategoryType,
       style: null,
       userId: 'someUserId',
       updatedAt: new Date().toISOString() as unknown as Date,
       createdAt: new Date().toISOString() as unknown as Date
     };
-    prismaMock.categories.create.mockResolvedValue(fakeResp);
 
-    // Use supertest to send a request to the create endpoint
-    const response = await supertest(app)
-      .post('/v1/categories')
-      .set('Authorization', `Bearer ${token}`)
-      .send({
-        name: 'TestCategory',
-        type: 'expense'
+    it('should update category if data is ok', async () => {
+      prismaMock.categories.update.mockResolvedValue(fakeResp);
+
+      // Use supertest to send a request to the create endpoint
+      const response = await supertest(app)
+        .put('/v1/categories/cateId')
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          name: 'updatedCate'
+        });
+
+      // Assert the response status code and data
+      expect(response.status).toBe(StatusCodes.OK);
+      expect(response.body).toEqual(fakeResp);
+    });
+
+    it('should fail to update category if request is bad', async () => {
+      prismaMock.categories.update.mockImplementation(() => {
+        const error: any = new Error('message');
+        error.code = 'ERROR_CODE';
+
+        throw error;
       });
 
-    // Assert the response status code and data
-    expect(response.status).toBe(StatusCodes.CREATED);
-    expect(response.body).toEqual(fakeResp);
-    expect(response.body.name).toEqual(fakeResp.name);
+      // Use supertest to send a request to the create endpoint
+      const response = await supertest(app)
+        .put('/v1/categories/notValidId')
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          name: 'updatedCate'
+        });
+
+      // Assert the response status code and data
+      expect(response.status).toBe(StatusCodes.BAD_REQUEST);
+    });
   });
 
-  it('should return 400 if type or name is missing', async () => {
-    const response1 = await supertest(app)
-      .post('/v1/categories')
-      .set('Authorization', `Bearer ${token}`)
-      .send({
-        name: 'TestCategory'
-      });
-    const response2 = await supertest(app)
-      .post('/v1/categories')
-      .set('Authorization', `Bearer ${token}`)
-      .send({
-        type: 'expense'
-      });
-
-    // Assert the response status code and data
-    expect(response1.status).toBe(StatusCodes.BAD_REQUEST);
-    expect(response2.status).toBe(StatusCodes.BAD_REQUEST);
-  });
-
-  it('should include user if having userId', async () => {
+  describe('DELETE /v1/categories', () => {
     const fakeResp = {
-      id: 'someCategoryId',
-      name: 'TestCategory',
+      id: 'cateId',
+      name: 'updatedCate',
       code: 'test',
-      type: 'expense' as CategoryType,
+      type: 'income' as CategoryType,
       style: null,
-      userId: 'userId',
-      user: { id: 'userId' },
+      userId: 'someUserId',
       updatedAt: new Date().toISOString() as unknown as Date,
       createdAt: new Date().toISOString() as unknown as Date
     };
-    prismaMock.categories.create.mockResolvedValue(fakeResp);
 
-    const response = await supertest(app)
-      .post('/v1/categories')
-      .set('Authorization', `Bearer ${token}`)
-      .send({
-        name: 'TestCategory',
-        userId: 'userId',
-        type: 'expense'
+    it('should delete category if id is correct', async () => {
+      prismaMock.categories.delete.mockResolvedValue(fakeResp);
+
+      // Use supertest to send a request to the create endpoint
+      const response = await supertest(app)
+        .delete('/v1/categories/cateId')
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          name: 'updatedCate'
+        });
+
+      // Assert the response status code and data
+      expect(response.status).toBe(StatusCodes.OK);
+      expect(response.body).toEqual(fakeResp);
+    });
+
+    it('should fail to delete category if request is bad', async () => {
+      prismaMock.categories.update.mockImplementation(() => {
+        const error: any = new Error('message');
+        error.code = 'YOUR_STATUS_CODE';
+
+        throw error;
       });
 
-    // Assert the response status code and data
-    expect(response.status).toBe(StatusCodes.CREATED);
-    expect(response.body).toHaveProperty('user');
+      // Use supertest to send a request to the create endpoint
+      const response = await supertest(app)
+        .put('/v1/categories/notValidId')
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          name: 'updatedCate'
+        });
+
+      // Assert the response status code and data
+      expect(response.status).toBe(StatusCodes.BAD_REQUEST);
+    });
   });
 });

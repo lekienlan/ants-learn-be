@@ -3,7 +3,7 @@ import prismaMock from 'test/prismaMock';
 import paginate, { paginateFilter } from './paginate';
 
 describe('paginateFilter', () => {
-  it('should format filter with array correctly', () => {
+  it('should format filter with array', () => {
     const filter = {
       name: ['John', 'Doe'],
       age: ['25', '30']
@@ -16,7 +16,7 @@ describe('paginateFilter', () => {
       age: { gte: 25, lte: 30 }
     });
   });
-  it('should format filter with empty array correctly', () => {
+  it('should format filter with empty array', () => {
     const filter = {
       name: ['', ''],
       age: ['', '']
@@ -37,7 +37,7 @@ describe('paginateFilter', () => {
     expect(formattedFilter).toEqual({ name: { in: ['Lan', 'Phuong'] } });
   });
 
-  it('should format filter with date range correctly', () => {
+  it('should format filter with date range', () => {
     const filter = {
       dateRange: ['2023-01-01', '2023-01-31']
     };
@@ -52,13 +52,24 @@ describe('paginateFilter', () => {
     });
   });
 
-  it('should omit limit, sortBy, and page from filter', () => {
+  it('should format filter one-item array value', () => {
+    const filter = {
+      name: ['John'],
+      age: ['25']
+    };
+
+    const formattedFilter = paginateFilter(filter);
+
+    expect(formattedFilter).toEqual({
+      name: { gte: 'John' },
+      age: { gte: 25 }
+    });
+  });
+
+  it('should format filter single value', () => {
     const filter = {
       name: 'John',
-      age: '25',
-      limit: 10,
-      sortBy: 'createdAt',
-      page: 1
+      age: '25'
     };
 
     const formattedFilter = paginateFilter(filter);
@@ -152,7 +163,7 @@ describe('paginate', () => {
       where: paginateFilter(params),
       skip: 10,
       take: 10,
-      orderBy: { updatedAt: 'asc' },
+      orderBy: { updatedAt: 'desc' },
       include: undefined
     });
 

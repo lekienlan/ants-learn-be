@@ -1,6 +1,4 @@
 import type { histories, Prisma } from '@prisma/client';
-import { StatusCodes } from 'http-status-codes';
-import ApiError from 'middlewares/error/ApiError';
 import paginate from 'middlewares/paginate';
 import type { PaginateOptions } from 'middlewares/paginate/paginate.interface';
 import prisma from 'prisma';
@@ -17,13 +15,10 @@ export const findTransHistories = async ({
 }: {
   transactionId: string;
 }) => {
-  const histories = await prisma.histories.findFirst({
+  const histories = await prisma.histories.findMany({
     where: { transactionId },
     orderBy: { createdAt: 'desc' }
   });
-
-  if (!histories)
-    throw new ApiError(StatusCodes.NOT_FOUND, 'Transaction not found');
 
   return histories;
 };
@@ -38,8 +33,6 @@ export const create = async (
 
 export const remove = async ({ id }: { id: string }) => {
   const history = await prisma.histories.delete({ where: { id } });
-
-  if (!history) throw new ApiError(StatusCodes.NOT_FOUND, 'History not found');
 
   return history;
 };

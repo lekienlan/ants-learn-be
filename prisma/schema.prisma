@@ -91,7 +91,7 @@ model transactions {
   id         String      @id @default(auto()) @map("_id") @db.ObjectId
   amount     Int
   currency   String?
-  date       DateTime?   @db.Date
+  date       DateTime?   @default(now()) @db.Date
   note       String?
   periodId   String?     @db.ObjectId
   period     periods?    @relation(fields: [periodId], references: [id])

@@ -1,6 +1,4 @@
 import type { categories, Prisma } from '@prisma/client';
-import { StatusCodes } from 'http-status-codes';
-import ApiError from 'middlewares/error/ApiError';
 import paginate from 'middlewares/paginate';
 import type {
   PaginateOptions,
@@ -36,17 +34,11 @@ export const update = async (
     data
   });
 
-  if (!category)
-    throw new ApiError(StatusCodes.NOT_FOUND, 'Category not found');
-
   return category;
 };
 
 export const remove = async ({ id }: { id: string }): Promise<categories> => {
   const category = await prisma.categories.delete({ where: { id } });
-
-  if (!category)
-    throw new ApiError(StatusCodes.NOT_FOUND, 'Category not found');
 
   return category;
 };

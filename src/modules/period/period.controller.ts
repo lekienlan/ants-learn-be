@@ -44,25 +44,11 @@ export const create = catchAsync(
       expense: 0
     });
 
-    const transaction = await transactionService.create({
+    await transactionService.create({
       periodId: period.id,
       amount: (period.budget || 0) * -1,
       type: 'budget',
       userId: user?.id
-    });
-
-    await historyService.create({
-      transactionId: transaction.id,
-      state: 'modified',
-      userId: transaction.userId,
-      data: {
-        amount: transaction.amount,
-        categoryId: transaction.categoryId,
-        currency: transaction.currency,
-        date: transaction.date,
-        note: transaction.note,
-        periodId: transaction.periodId
-      }
     });
 
     res.status(StatusCodes.CREATED).send(period);

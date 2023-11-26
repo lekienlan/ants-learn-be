@@ -7,14 +7,18 @@ export const paginateFilter = (filter: Record<string, any>) => {
   const formattedFilter = omit(filter, ['limit', 'sortBy', 'page']);
   Object.keys(formattedFilter).forEach((key) => {
     // if filter is an 2 items array
-    if (
-      Array.isArray(formattedFilter[key]) &&
-      formattedFilter[key].length === 2
-    ) {
+    if (Array.isArray(formattedFilter[key]) && formattedFilter[key].length) {
       const [gte, lte] = formattedFilter[key];
 
-      if (!gte || !lte) {
+      if (!gte) {
         delete formattedFilter[key];
+        return;
+      }
+
+      if (!lte) {
+        formattedFilter[key] = {
+          gte: convertStringToType(gte)
+        };
         return;
       }
 
@@ -35,7 +39,7 @@ const paginate = async <T>(
   params: PaginateOptions,
   include?: Record<string, any>
 ): Promise<QueryResults<T>> => {
-  const { sortBy = 'updatedAt', limit, page, ...query } = params;
+  const { sortBy = '-updatedAt', limit, page, ...query } = params;
 
   const _limit = limit ? parseInt(limit, 10) : 10;
   const _page = page ? parseInt(page, 10) : 1;

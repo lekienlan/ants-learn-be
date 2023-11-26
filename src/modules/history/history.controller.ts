@@ -1,48 +1,37 @@
-import type { Prisma } from '@prisma/client';
 import type { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import type prisma from 'prisma';
+import ApiError from 'middlewares/error/ApiError';
+import { tokenService } from 'modules/token';
+import { userService } from 'modules/user';
 import catchAsync from 'utils/catchAsync';
 
 import { historyService } from '.';
 
 export const findMany = catchAsync(async (req: Request, res: Response) => {
-  const categories = await historyService.findMany(req.query);
+  const accessToken = tokenService.getAccessTokenFromRequest(req);
+  const user = await userService.findByAccessToken(accessToken);
 
-  res.send(categories);
+  if (!user?.id) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'userId not found');
+  }
+
+  const histories = await historyService.findMany({
+    ...req.query,
+    userId: user.id
+  });
+
+  res.send(histories);
 });
 
 export const findTransHistories = catchAsync(
   async (req: Request<{ id: string }>, res: Response) => {
-    const history = await historyService.findTransHistories({
+    const transactionHistory = await historyService.findTransHistories({
       transactionId: req.params.id
     });
 
-    res.send(history);
-  }
-);
+    if (!transactionHistory.length)
+      throw new ApiError(StatusCodes.NOT_FOUND, 'Transaction not found');
 
-export const create = catchAsync(
-  async (
-    req: Request<
-      {},
-      {},
-      Prisma.Args<typeof prisma.histories, 'create'>['data']
-    >,
-    res: Response
-  ) => {
-    const history = await historyService.create(req.body);
-
-    res.status(StatusCodes.CREATED).send(history);
-  }
-);
-
-export const remove = catchAsync(
-  async (req: Request<{ id: string }>, res: Response) => {
-    const history = await historyService.remove({
-      id: req.params.id
-    });
-
-    res.send(history);
+    res.send(transactionHistory);
   }
 );

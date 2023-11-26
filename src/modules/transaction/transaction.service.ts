@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import ApiError from 'middlewares/error/ApiError';
 import paginate from 'middlewares/paginate';
 import type { PaginateOptions } from 'middlewares/paginate/paginate.interface';
-import { periodService } from 'modules/period';
+import { historyService } from 'modules/history';
 import prisma from 'prisma';
 
 export const findMany = async (
@@ -40,16 +40,30 @@ export const create = async (
     }
   });
 
-  const expense = await prisma.transactions.aggregate({
-    where: { periodId: data.periodId },
-    _sum: {
-      amount: true
+  await historyService.create({
+    transactionId: transaction.id,
+    state: 'original',
+    userId: transaction.userId,
+    data: {
+      amount: transaction.amount,
+      categoryId: transaction.categoryId,
+      currency: transaction.currency,
+      date: transaction.date,
+      note: transaction.note,
+      periodId: transaction.periodId
     }
   });
 
-  periodService.update(data.periodId || '', {
-    expense: expense._sum.amount || 0
-  });
+  // const expense = await prisma.transactions.aggregate({
+  //   where: { periodId: data.periodId },
+  //   _sum: {
+  //     amount: true
+  //   }
+  // });
+
+  // periodService.update(data.periodId || '', {
+  //   expense: expense._sum.amount || 0
+  // });
 
   return transaction;
 };

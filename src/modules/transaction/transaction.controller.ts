@@ -14,10 +14,13 @@ export const findMany = catchAsync(async (req: Request, res: Response) => {
 
   const user = await userService.findByAccessToken(accessToken);
 
-  const transactions = await transactionService.findMany({
-    userId: user?.id,
-    ...req.query
-  });
+  const transactions = await transactionService.findMany(
+    {
+      userId: user?.id,
+      ...req.query
+    },
+    { user: true }
+  );
 
   res.send(transactions);
 });
@@ -55,12 +58,6 @@ export const create = catchAsync(
       periodId,
       type: type || (amount > 0 ? 'income' : 'expense')
     });
-
-    // await historyService.create({
-    //   transactionId: transaction.id,
-    //   data: transaction,
-    //   state: 'original'
-    // });
 
     res.status(StatusCodes.CREATED).send(transaction);
   }
