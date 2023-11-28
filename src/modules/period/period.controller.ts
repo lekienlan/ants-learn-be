@@ -1,6 +1,7 @@
 import type { Prisma } from '@prisma/client';
 import type { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
+import ApiError from 'middlewares/error/ApiError';
 import { historyService } from 'modules/history';
 import { tokenService } from 'modules/token';
 import { transactionService } from 'modules/transaction';
@@ -17,9 +18,9 @@ export const findMany = catchAsync(async (req: Request, res: Response) => {
   res.send(periods);
 });
 
-export const findOne = catchAsync(
+export const findFirst = catchAsync(
   async (req: Request<{ id: string }>, res: Response) => {
-    const period = await periodService.findOne({
+    const period = await periodService.findFirst({
       id: req.params.id
     });
 
@@ -35,7 +36,7 @@ export const create = catchAsync(
     const accessToken = tokenService.getAccessTokenFromRequest(req);
     const user = await userService.findByAccessToken(accessToken);
 
-    if (!user) throw new Error('User not found');
+    if (!user) throw new ApiError(StatusCodes.BAD_REQUEST, 'User not found');
 
     const period = await periodService.create({
       ...req.body,
@@ -65,6 +66,8 @@ export const update = catchAsync(
     res: Response
   ) => {
     const period = await periodService.update(req.params.id, req.body);
+
+    if (!period) throw new ApiError(StatusCodes.NOT_FOUND, 'Period not found');
 
     if (period.budget) {
       const currentTransaction = await transactionService.findOne({

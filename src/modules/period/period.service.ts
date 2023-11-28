@@ -13,7 +13,7 @@ export const findMany = async (
   return list;
 };
 
-export const findOne = async ({ id }: { id: string }) => {
+export const findFirst = async ({ id }: { id: string }) => {
   const period = await prisma.periods.findFirst({
     where: { id },
     include: {
