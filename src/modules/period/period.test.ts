@@ -163,24 +163,6 @@ describe('period', () => {
       expect(response.status).toBe(StatusCodes.NOT_FOUND);
       expect(response.body.message).toBe('Period not found');
     });
-    it('should fail to update period if period not found', async () => {
-      // Mock the periodService.update method to reject with an error
-
-      const response = await supertest(app)
-        .put('/v1/periods/nonexistent-id')
-        .set('Authorization', `Bearer ${token}`)
-        .send({
-          // Provide updated data for the period
-          startDate: '2023-10-16',
-          endDate: '2023-10-20',
-          budget: 250000,
-          pigId: '652aa067af2b8ebd0748e306'
-        });
-
-      // Assert the response status code and error message
-      expect(response.status).toBe(StatusCodes.NOT_FOUND);
-      expect(response.body.message).toBe('Period not found');
-    });
 
     it('should create transaction history when budget is updated', async () => {
       // Mock the periodService.update method to resolve with a sample period
@@ -218,6 +200,14 @@ describe('period', () => {
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(StatusCodes.OK);
+    });
+    it('should throw error if period not found', async () => {
+      const response = await supertest(app)
+        .delete(`/v1/periods/123`)
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(response.body.message).toBe('Period not found');
+      expect(response.status).toBe(StatusCodes.NOT_FOUND);
     });
   });
 

@@ -1,6 +1,7 @@
 import type { Prisma } from '@prisma/client';
 import type { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
+import ApiError from 'middlewares/error/ApiError';
 import { tokenService } from 'modules/token';
 import { userService } from 'modules/user';
 import type prisma from 'prisma';
@@ -26,7 +27,7 @@ export const create = catchAsync(
       tokenService.getAccessTokenFromRequest(req)
     );
 
-    if (!user) throw new Error('User not found');
+    if (!user) throw new ApiError(StatusCodes.NOT_FOUND, 'User not found');
 
     const pig = await pigService.create(req.body);
 
