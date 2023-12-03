@@ -1,6 +1,7 @@
 import { StatusCodes } from 'http-status-codes';
 import ApiError from 'middlewares/error/ApiError';
-import { generateTokens, verify } from 'modules/token/token.service';
+import { tokenService } from 'modules/token';
+import { generateTokens } from 'modules/token/token.service';
 import { userService } from 'modules/user';
 
 export const loginWithEmail = async (email: string) => {
@@ -15,14 +16,14 @@ export const loginWithEmail = async (email: string) => {
 
 export const refresh = async (refreshToken: string) => {
   try {
-    const refreshTokenDoc = await verify(refreshToken);
+    const token = await tokenService.verify(refreshToken);
 
-    const user = await userService.findById(refreshTokenDoc.userId);
+    const user = await userService.findById(token.userId);
 
     if (!user) {
       throw new Error('User not found');
     }
-    await refreshTokenDoc.deleteOne();
+    await tokenService.remove(token.id);
     const tokens = await generateTokens(user);
     return { user, tokens };
   } catch (error: any) {

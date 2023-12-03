@@ -10,7 +10,6 @@ import moment from 'moment';
 import prisma from 'prisma';
 
 import type { AccessAndRefreshTokens } from './token.interface';
-import Token from './token.model';
 
 export const generate = (
   userId: string,
@@ -49,18 +48,20 @@ export const create = async (
 export const verify = async (token: string) => {
   const payload = decode(token);
   if (typeof payload.sub !== 'string') {
-    throw new ApiError(StatusCodes.BAD_REQUEST, 'bad user');
+    throw new ApiError(StatusCodes.NOT_FOUND, 'User not found');
   }
-  const tokenDoc = await Token.findOne({
-    token,
-    userId: payload.sub,
-    blacklisted: false
+  const tokenResult = await prisma.tokens.findFirst({
+    where: {
+      token,
+      userId: payload.sub,
+      blacklisted: false
+    }
   });
 
-  if (!tokenDoc) {
+  if (!tokenResult) {
     throw new Error('Invalid token');
   }
-  return tokenDoc;
+  return tokenResult;
 };
 
 export const generateTokens = async (
@@ -96,4 +97,8 @@ export const getAccessTokenFromRequest = (header: Request) => {
     header.headers?.authorization?.replace('Bearer ', '') || '';
 
   return accessToken;
+};
+
+export const remove = async (id: string) => {
+  await prisma.tokens.delete({ where: { id } });
 };
