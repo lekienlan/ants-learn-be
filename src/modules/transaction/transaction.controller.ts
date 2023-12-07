@@ -1,6 +1,7 @@
 import type { Prisma } from '@prisma/client';
 import type { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
+import ApiError from 'middlewares/error/ApiError';
 import { historyService } from 'modules/history';
 import { tokenService } from 'modules/token';
 import { userService } from 'modules/user';
@@ -14,9 +15,11 @@ export const findMany = catchAsync(async (req: Request, res: Response) => {
 
   const user = await userService.findByAccessToken(accessToken);
 
+  if (!user) throw new ApiError(StatusCodes.NOT_FOUND, 'User not found');
+
   const transactions = await transactionService.findMany(
     {
-      userId: user?.id,
+      userId: user.id,
       ...req.query
     },
     { user: true }
