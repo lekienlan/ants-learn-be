@@ -38,6 +38,7 @@ if (error) {
 const configs = {
   env: envVars.NODE_ENV,
   port: envVars.PORT,
+  url: envVars.URL,
   mongoose: {
     url: envVars.MONGODB_URL,
     options: {

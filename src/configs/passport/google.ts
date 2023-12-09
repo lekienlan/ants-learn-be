@@ -9,7 +9,7 @@ export default function google() {
       {
         clientID: configs.google.clientId,
         clientSecret: configs.google.clientSecret,
-        callbackURL: 'http://localhost:3000/v1/auth/google/callback'
+        callbackURL: `${configs.url}/v1/auth/google/callback`
       },
       async function (_accessToken, _refreshToken, profile, done) {
         const user = await userService.findOrCreate({
