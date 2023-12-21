@@ -2,11 +2,16 @@ import app from 'app';
 import configs from 'configs';
 import logger from 'configs/logger';
 import { connectMongodb } from 'configs/mongodb';
+import ws from 'configs/ws';
 
 connectMongodb();
 
-app.listen(configs.port, () => {
+const server = app.listen(configs.port, () => {
   logger.info(
     `⚡️[server]: Server is running at http://localhost:${configs.port}`
   );
 });
+
+ws(server);
+
+export default server;

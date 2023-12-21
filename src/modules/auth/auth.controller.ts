@@ -1,5 +1,5 @@
+import { sendWSMessage } from 'configs/ws';
 import type { Request, Response } from 'express';
-import { StatusCodes } from 'http-status-codes';
 import { tokenService } from 'modules/token';
 import passport from 'passport';
 import catchAsync from 'utils/catchAsync';
@@ -20,7 +20,9 @@ export const callbackGoogle = catchAsync(
 export const login = catchAsync(async (req: Request, res: Response) => {
   const user = await authService.loginWithEmail(req?.user?.email || '');
   const tokens = await tokenService.generateTokens(user);
-  res.status(StatusCodes.ACCEPTED).send({ user, tokens });
+
+  sendWSMessage('login', tokens);
+  res.redirect(`http://localhost:3001/close`);
 });
 
 export const refreshTokens = catchAsync(async (req: Request, res: Response) => {
