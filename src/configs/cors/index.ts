@@ -2,7 +2,10 @@ import type cors from 'cors';
 import { StatusCodes } from 'http-status-codes';
 import ApiError from 'middlewares/error/ApiError';
 
-export const WHITE_LISTS = ['http://localhost:3001'];
+export const WHITE_LISTS = [
+  'http://localhost:3001',
+  'http://192.168.0.101:3001'
+];
 
 export const CORS_OPTION: cors.CorsOptions = {
   origin: (origin, callback) => {
