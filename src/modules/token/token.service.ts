@@ -34,7 +34,7 @@ export const create = async (
   expires: Moment,
   blacklisted: boolean = false
 ) => {
-  const tokenDoc = await prisma.tokens.create({
+  const tokenResp = await prisma.tokens.create({
     data: {
       token,
       userId,
@@ -42,7 +42,7 @@ export const create = async (
       blacklisted
     }
   });
-  return tokenDoc;
+  return tokenResp;
 };
 
 export const verify = async (token: string) => {
