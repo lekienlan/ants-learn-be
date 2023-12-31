@@ -58,7 +58,24 @@ describe('pig', () => {
     it('should create pig if data is ok', async () => {
       // Mock the categoryService.create method to resolve with a sample category
 
-      prismaMock.pigs.create.mockResolvedValue(pigData);
+      const DATA_CREATE = {
+        style: null,
+        id: '6591259da7d876c10808f526',
+        name: 'tạo bằng UI',
+        updatedAt: '2023-12-31T08:26:05.194Z' as unknown as Date,
+        createdAt: '2023-12-31T08:26:05.194Z' as unknown as Date,
+        userId: '651e94ef813f47c9080f71b7',
+        user: {
+          id: '651e94ef813f47c9080f71b7',
+          email: 'lekienlan98@gmail.com',
+          firstName: 'Lân',
+          lastName: 'Lê',
+          updatedAt: '2023-10-05T10:50:23.101Z' as unknown as Date,
+          createdAt: '2023-10-05T10:50:23.101Z' as unknown as Date
+        }
+      };
+
+      prismaMock.pigs.create.mockResolvedValue(DATA_CREATE);
 
       // Use supertest to send a request to the create endpoint
       prismaMock.users.findFirst.mockResolvedValue({
@@ -79,7 +96,7 @@ describe('pig', () => {
 
       // Assert the response status code and data
       expect(response.status).toBe(StatusCodes.CREATED);
-      expect(response.body).toEqual(pigData);
+      expect(response.body).toEqual(DATA_CREATE);
     });
     it('should fail to create pig if user not found', async () => {
       const response = await supertest(app)

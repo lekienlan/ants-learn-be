@@ -20,7 +20,7 @@ export const findMany = catchAsync(async (req: Request, res: Response) => {
 
 export const create = catchAsync(
   async (
-    req: Request<{}, {}, Prisma.Args<typeof prisma.pigs, 'create'>['data']>,
+    req: Request<{}, {}, Prisma.pigsUncheckedCreateInput>,
     res: Response
   ) => {
     const user = await userService.findByAccessToken(
@@ -29,7 +29,7 @@ export const create = catchAsync(
 
     if (!user) throw new ApiError(StatusCodes.NOT_FOUND, 'User not found');
 
-    const pig = await pigService.create(req.body);
+    const pig = await pigService.create({ ...req.body, userId: user?.id });
 
     res.status(StatusCodes.CREATED).send(pig);
   }

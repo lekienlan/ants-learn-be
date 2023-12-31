@@ -13,10 +13,8 @@ export const findMany = async (
   return list;
 };
 
-export const create = async (
-  data: Prisma.Args<typeof prisma.pigs, 'create'>['data']
-) => {
-  const pig = await prisma.pigs.create({ data });
+export const create = async (data: Prisma.pigsUncheckedCreateInput) => {
+  const pig = await prisma.pigs.create({ data, include: { user: true } });
 
   return pig;
 };
