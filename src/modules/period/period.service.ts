@@ -5,6 +5,8 @@ import paginate from 'middlewares/paginate';
 import type { PaginateOptions } from 'middlewares/paginate/paginate.interface';
 import prisma from 'prisma';
 
+import { periodSchedule } from '.';
+
 export const findMany = async (
   params: PaginateOptions & Prisma.periodsWhereInput,
   include?: Prisma.periodsInclude
@@ -30,6 +32,8 @@ export const create = async (
   data: Prisma.Args<typeof prisma.periods, 'create'>['data']
 ) => {
   const period = await prisma.periods.create({ data });
+
+  periodSchedule.scheduleTaskForPeriod(period);
 
   return period;
 };

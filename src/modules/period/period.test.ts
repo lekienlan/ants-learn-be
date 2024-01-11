@@ -4,6 +4,12 @@ import supertest from 'supertest';
 import prismaMock from 'test/prismaMock';
 import { token } from 'test/setup';
 
+import { periodSchedule } from '.';
+
+jest.mock('./period.schedule', () => ({
+  scheduleTaskForPeriod: jest.fn()
+}));
+
 describe('period', () => {
   const periodData = {
     id: '6533f8fcf69468807254b754',
@@ -55,7 +61,10 @@ describe('period', () => {
     it('should create period if data is ok', async () => {
       // Mock the categoryService.create method to resolve with a sample category
 
-      prismaMock.periods.create.mockResolvedValue(periodData);
+      prismaMock.periods.create.mockResolvedValue({
+        ...periodData,
+        endDate: new Date('2023-10-25T00:00:00.000Z')
+      });
 
       // Use supertest to send a request to the create endpoint
       prismaMock.users.findFirst.mockResolvedValue({
@@ -79,6 +88,7 @@ describe('period', () => {
         });
 
       // Assert the response status code and data
+      expect(periodSchedule.scheduleTaskForPeriod).toHaveBeenCalled();
       expect(response.status).toBe(StatusCodes.CREATED);
       expect(response.body).toEqual(periodData);
     });

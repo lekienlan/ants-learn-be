@@ -1,6 +1,4 @@
-import type { Document } from 'mongoose';
-
-export interface IPaginateResult<T = Document> {
+export interface IPaginateResult<T> {
   results: T[];
   page: number;
   limit?: number;

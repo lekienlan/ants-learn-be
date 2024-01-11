@@ -67,3 +67,9 @@ export function convertStringToType(
   }
   return value;
 }
+
+export const isToday = (dateString: string) => {
+  const today = moment();
+  const date = moment(dateString);
+  return date.isSame(today, 'day');
+};

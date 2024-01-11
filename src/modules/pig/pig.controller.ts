@@ -11,12 +11,21 @@ import { pigService } from '.';
 
 export const findMany = catchAsync(async (req: Request, res: Response) => {
   const piggies = await pigService.findMany(req.query, {
-    user: true,
     periods: true
   });
 
   res.send(piggies);
 });
+
+export const findFirst = catchAsync(
+  async (req: Request<{ id: string }>, res: Response) => {
+    const pig = await pigService.findFirst({
+      id: req.params.id
+    });
+
+    res.send(pig);
+  }
+);
 
 export const create = catchAsync(
   async (

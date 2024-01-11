@@ -42,6 +42,7 @@ describe('transaction', () => {
   describe('GET /v1/transactions', () => {
     it('should return list of transactions if user is ok', async () => {
       const fakeResp = {
+        totalAmount: 10000,
         limit: 10,
         page: 1,
         results: [transactionData],
@@ -50,11 +51,23 @@ describe('transaction', () => {
       const user = jest.spyOn(userService, 'findByAccessToken');
       user.mockResolvedValue(userData);
       prismaMock.transactions.findMany.mockResolvedValue(fakeResp.results);
+      prismaMock.transactions.aggregate.mockResolvedValue({
+        _sum: { amount: 10000 },
+        _count: {},
+        _avg: {},
+        _min: {},
+        _max: {}
+      });
 
       // Use supertest to send a request to the create endpoint
       const response = await supertest(app)
         .get('/v1/transactions')
-        .set('Authorization', `Bearer ${token}`);
+        .set('Authorization', `Bearer ${token}`)
+        .query({
+          periodId: '123'
+        });
+
+      console.log(response);
       // Assert the response status code and data
       expect(response.status).toBe(StatusCodes.OK);
       expect(response.body).toEqual(fakeResp);

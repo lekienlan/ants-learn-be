@@ -45,9 +45,9 @@ export const create = catchAsync(
       expense: 0
     });
 
-    await transactionService.create({
+    transactionService.create({
       periodId: period.id,
-      amount: (period.budget || 0) * -1,
+      amount: period.budget || 0,
       type: 'budget',
       userId: user?.id
     });

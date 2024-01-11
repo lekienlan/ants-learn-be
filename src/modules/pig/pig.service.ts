@@ -13,6 +13,40 @@ export const findMany = async (
   return list;
 };
 
+export const findFirst = async ({ id }: { id: string }) => {
+  const pig = await prisma.pigs.findFirst({
+    where: { id },
+    include: {
+      periods: {
+        include: {
+          transactions: {
+            where: {
+              type: 'expense'
+            }
+          }
+        }
+      }
+    }
+  });
+
+  if (!pig?.periods)
+    throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, 'Period not found');
+
+  // Manually compute the expense for each period
+  pig.periods = pig.periods.map((period) => {
+    const totalExpense = period.transactions.reduce((sum, transaction) => {
+      return sum + transaction.amount; // Replace 'amount' with the actual field in your transaction model
+    }, 0);
+
+    // Assign the computed totalExpense to the expense field
+    return { ...period, expense: totalExpense };
+  });
+
+  if (!pig) throw new ApiError(StatusCodes.NOT_FOUND, 'Pig not found');
+
+  return pig;
+};
+
 export const create = async (data: Prisma.pigsUncheckedCreateInput) => {
   const pig = await prisma.pigs.create({ data, include: { user: true } });
 

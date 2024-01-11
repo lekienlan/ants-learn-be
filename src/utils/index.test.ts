@@ -1,4 +1,10 @@
-import { convertStringToType, removeDiacritics, sortWithIdOnTop } from 'utils';
+import moment from 'moment';
+import {
+  convertStringToType,
+  isToday,
+  removeDiacritics,
+  sortWithIdOnTop
+} from 'utils';
 
 describe('removeDiacritics', () => {
   it('should remove diacritics from a string', () => {
@@ -99,5 +105,22 @@ describe('sortWithIdOnTop', () => {
 
     // Ensure the result is an empty object
     expect(sortedObject).toEqual({});
+  });
+});
+
+describe('isToday function', () => {
+  it("should return true for today's date", () => {
+    const todayString = moment().format('YYYY-MM-DD');
+    expect(isToday(todayString)).toBeTruthy();
+  });
+
+  it("should return false for yesterday's date", () => {
+    const yesterdayString = moment().subtract(1, 'days').format('YYYY-MM-DD');
+    expect(isToday(yesterdayString)).toBeFalsy();
+  });
+
+  it("should return false for tomorrow's date", () => {
+    const tomorrowString = moment().add(1, 'days').format('YYYY-MM-DD');
+    expect(isToday(tomorrowString)).toBeFalsy();
   });
 });

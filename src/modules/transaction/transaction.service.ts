@@ -16,7 +16,14 @@ export const findMany = async (
     include
   );
 
-  return list;
+  const total = await prisma.transactions.aggregate({
+    _sum: {
+      amount: true
+    },
+    where: params
+  });
+
+  return { ...list, totalAmount: total._sum.amount };
 };
 
 export const findOne = async (where: Prisma.transactionsWhereInput) => {
@@ -40,7 +47,7 @@ export const create = async (
     }
   });
 
-  await historyService.create({
+  historyService.create({
     transactionId: transaction.id,
     state: 'original',
     userId: transaction.userId,
@@ -53,17 +60,6 @@ export const create = async (
       periodId: transaction.periodId
     }
   });
-
-  // const expense = await prisma.transactions.aggregate({
-  //   where: { periodId: data.periodId },
-  //   _sum: {
-  //     amount: true
-  //   }
-  // });
-
-  // periodService.update(data.periodId || '', {
-  //   expense: expense._sum.amount || 0
-  // });
 
   return transaction;
 };

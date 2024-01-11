@@ -13,6 +13,7 @@ router
 
 router
   .route('/:id')
+  .get(auth, pigController.findFirst)
   .put(auth, validate(pigValidation.updatePayload), pigController.update)
   .delete(auth, pigController.remove);
 
