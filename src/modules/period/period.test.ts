@@ -7,7 +7,8 @@ import { token } from 'test/setup';
 import { periodSchedule } from '.';
 
 jest.mock('./period.schedule', () => ({
-  scheduleTaskForPeriod: jest.fn()
+  scheduleTaskForPeriod: jest.fn(),
+  restartPeriodScheduledTasks: jest.fn()
 }));
 
 describe('period', () => {

@@ -9,7 +9,8 @@
     "check-types": "tsc --noEmit --pretty",
     "test": "NODE_ENV=staging jest --verbose",
     "start": "node dist/index.js",
-    "dev": "NODE_ENV=staging nodemon"
+    "dev": "NODE_ENV=staging nodemon",
+    "pm2": "pm2 start ts-node -- -P tsconfig.json ./src/index.ts"
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^17.7.0",
@@ -60,6 +61,7 @@
     "axios": "^1.6.1",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
+    "cron": "^3.1.6",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "express-mongo-sanitize": "^2.2.0",

@@ -10,6 +10,7 @@ import express from 'express';
 import mongoSanitize from 'express-mongo-sanitize';
 import helmet from 'helmet';
 import { errorHandler } from 'middlewares/error';
+import { restartPeriodScheduledTasks } from 'modules/period/period.schedule';
 import passport from 'passport';
 import v1Router from 'routes/v1';
 
@@ -42,6 +43,8 @@ app.use(mongoSanitize());
 
 // v1 api routes
 app.use('/v1', v1Router);
+
+restartPeriodScheduledTasks();
 
 // Error handling middleware for CORS
 app.use(errorHandler);
