@@ -1,10 +1,20 @@
 import app from 'app';
 import { StatusCodes } from 'http-status-codes';
+import { userService } from 'modules/user';
 import supertest from 'supertest';
 import prismaMock from 'test/prismaMock';
 import { token } from 'test/setup';
 
 describe('pig', () => {
+  const userData = {
+    id: '651ed73162790f0d198ceac0',
+    email: 'dphuong0311@gmail.com',
+    firstName: 'Do',
+    lastName: 'Phuong',
+    updatedAt: '2023-10-05T15:33:05.492Z' as unknown as Date,
+    createdAt: '2023-10-05T15:33:05.492Z' as unknown as Date
+  };
+
   const pigData = {
     style: null,
     id: '652aa067af2b8ebd0748e306',
@@ -35,6 +45,11 @@ describe('pig', () => {
       }
     ]
   };
+
+  beforeEach(() => {
+    const user = jest.spyOn(userService, 'findByAccessToken');
+    user.mockResolvedValue(userData);
+  });
   describe('GET /v1/piggies', () => {
     it('should return list of pig if data is ok', async () => {
       const fakeResp = {
@@ -43,6 +58,7 @@ describe('pig', () => {
         results: [pigData],
         totalPages: 1
       };
+
       prismaMock.pigs.findMany.mockResolvedValue(fakeResp.results);
 
       // Use supertest to send a request to the create endpoint
@@ -99,6 +115,9 @@ describe('pig', () => {
       expect(response.body).toEqual(DATA_CREATE);
     });
     it('should fail to create pig if user not found', async () => {
+      const user = jest.spyOn(userService, 'findByAccessToken');
+      user.mockResolvedValue(null);
+
       const response = await supertest(app)
         .post('/v1/piggies')
         .set('Authorization', `Bearer ${token}`)
