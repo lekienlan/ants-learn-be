@@ -22,7 +22,7 @@ export const login = catchAsync(async (req: Request, res: Response) => {
   const tokens = await tokenService.generateTokens(user);
 
   sendWSMessage('login', tokens);
-  res.redirect(`http://localhost:3001/close`);
+  res.redirect(`https://piggies-400707.web.app/close`);
 });
 
 export const refreshTokens = catchAsync(async (req: Request, res: Response) => {
