@@ -19,8 +19,6 @@ const scheduleTaskForPeriod = (period: periods) => {
           periodId: period.id
         });
 
-        console.log('created income for userId', member);
-
         await transactionService.create({
           type: 'income',
           amount: period.budget + (expenseResp.totalAmount || 0),

@@ -5,6 +5,10 @@ import prismaMock from 'test/prismaMock';
 import { token } from 'test/setup';
 
 import { periodSchedule } from '.';
+import {
+  restartPeriodScheduledTasks,
+  scheduleTaskForPeriod
+} from './period.schedule';
 
 jest.mock('./period.schedule', () => ({
   scheduleTaskForPeriod: jest.fn(),
@@ -39,7 +43,7 @@ describe('period', () => {
     createdAt: '2023-10-22T17:19:51.834Z' as unknown as Date
   };
 
-  describe('GET /v1/categories', () => {
+  describe('GET /v1/periods', () => {
     it('should return list of period if data is ok', async () => {
       const fakeResp = {
         limit: 10,
@@ -232,6 +236,22 @@ describe('period', () => {
 
       expect(response.status).toBe(StatusCodes.OK);
       expect(response.body).toEqual(periodData);
+    });
+  });
+
+  describe('restartPeriodScheduledTasks', () => {
+    it('fetches periods and schedules tasks for each', async () => {
+      const fakeResp = {
+        limit: 10,
+        page: 1,
+        results: [periodData],
+        totalPages: 1
+      };
+      prismaMock.periods.findMany.mockResolvedValue(fakeResp.results);
+
+      await restartPeriodScheduledTasks();
+
+      expect(scheduleTaskForPeriod).toHaveBeenCalled();
     });
   });
 });

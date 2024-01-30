@@ -70,6 +70,38 @@ describe('pig', () => {
       expect(response.body).toEqual(fakeResp);
     });
   });
+  describe('GET /v1/piggies/:id', () => {
+    it('should return pig detail if data is ok', async () => {
+      const pigWithPeriod = {
+        ...pigData,
+        periods: [
+          {
+            id: '6533f8fcf69468807254b754',
+            budget: 40000,
+            endDate: '2023-10-25T00:00:00.000Z' as unknown as Date,
+            expense: -2730000,
+            members: ['651e94ef813f47c9080f71b7'],
+            repeat: true,
+            startDate: '2023-10-21T00:00:00.000Z' as unknown as Date,
+            updatedAt: new Date().toISOString() as unknown as Date,
+            createdAt: new Date().toISOString() as unknown as Date,
+            pigId: '652aa067af2b8ebd0748e306',
+            transactions: [{ amount: 1000 }, { amount: 2000 }]
+          }
+        ]
+      };
+      prismaMock.pigs.findFirst.mockResolvedValue(pigWithPeriod);
+
+      // Use supertest to send a request to the create endpoint
+      const response = await supertest(app)
+        .get('/v1/piggies/123')
+        .set('Authorization', `Bearer ${token}`);
+      console.log(response);
+      expect(response.status).toBe(StatusCodes.OK);
+      expect(response.body).toEqual(pigWithPeriod);
+      expect(response.body.periods?.[0]?.expense).toEqual(3000);
+    });
+  });
   describe('POST /v1/piggies', () => {
     it('should create pig if data is ok', async () => {
       // Mock the categoryService.create method to resolve with a sample category
