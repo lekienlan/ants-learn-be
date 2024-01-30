@@ -11,8 +11,8 @@ const envVarsSchema = Joi.object()
     ACCESS_TOKEN_SECRET_KEY: Joi.string()
       .required()
       .description('JWT secret key'),
-    JWT_ACCESS_EXPIRATION_MINUTES: Joi.number()
-      .default(300)
+    JWT_ACCESS_EXPIRATION_DAYS: Joi.number()
+      .default(30)
       .description('minutes after which access tokens expire'),
     JWT_REFRESH_EXPIRATION_DAYS: Joi.number()
       .default(30)
@@ -49,7 +49,7 @@ const configs = {
   },
   jwt: {
     accessSecretKey: envVars.ACCESS_TOKEN_SECRET_KEY,
-    accessExpirationMinutes: envVars.JWT_ACCESS_EXPIRATION_MINUTES,
+    accessExpirationDays: envVars.JWT_ACCESS_EXPIRATION_DAYS,
     refreshExpirationDays: envVars.JWT_REFRESH_EXPIRATION_DAYS
   },
   google: {

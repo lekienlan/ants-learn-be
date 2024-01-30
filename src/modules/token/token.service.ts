@@ -68,8 +68,8 @@ export const generateTokens = async (
   user: users
 ): Promise<AccessAndRefreshTokens> => {
   const accessTokenExpires = moment().add(
-    configs.jwt.accessExpirationMinutes,
-    'minutes'
+    configs.jwt.accessExpirationDays,
+    'days'
   );
   const accessToken = generate(user.id, accessTokenExpires);
 
