@@ -1,15 +1,11 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
-}
-
-type Style {
-  color String
-  icon  String
 }
 
 enum CategoryType {
@@ -17,101 +13,92 @@ enum CategoryType {
   income
 }
 
-type HistoriesData {
-  amount     Int
-  categoryId String?
-  currency   String?
-  date       DateTime? @db.Date
-  note       String?
-  periodId   String?
-}
-
 model categories {
-  id           String         @id @default(auto()) @map("_id") @db.ObjectId
+  id           String         @id @default(uuid())
   code         String
   name         String
-  style        Style?
+  style        Json?
   type         CategoryType
+  user_id      String?
+  user         users?         @relation(fields: [user_id], references: [id])
+  updated_at   DateTime?      @updatedAt
+  created_at   DateTime?      @default(now()) @db.Date
   transactions transactions[]
-  userId       String?        @db.ObjectId
-  user         users?         @relation(fields: [userId], references: [id])
-  updatedAt    DateTime?      @updatedAt
-  createdAt    DateTime?      @default(now()) @db.Date
 }
 
 model histories {
-  id            String        @id @default(auto()) @map("_id") @db.ObjectId
-  data          HistoriesData
-  state         String
-  userId        String        @db.ObjectId
-  transactionId String        @db.ObjectId
-  updatedAt     DateTime?     @updatedAt
-  createdAt     DateTime?     @default(now()) @db.Date
+  id             String    @id @default(uuid())
+  data           Json
+  state          String
+  user_id        String
+  transaction_id String
+  updated_at     DateTime? @updatedAt
+  created_at     DateTime? @default(now()) @db.Date
 }
 
 model periods {
-  id           String         @id @default(auto()) @map("_id") @db.ObjectId
+  id           String         @id @default(uuid())
   budget       Int
-  endDate      DateTime       @db.Date
+  end_date     DateTime       @db.Date
   expense      Int
   members      String[]
   repeat       Boolean
-  startDate    DateTime       @db.Date
+  start_date   DateTime       @db.Date
   transactions transactions[]
-  updatedAt    DateTime?      @updatedAt
-  createdAt    DateTime?      @default(now()) @db.Date
-  pig          pigs?          @relation(fields: [pigId], references: [id])
-  pigId        String?        @db.ObjectId
+  updated_at   DateTime?      @updatedAt
+  created_at   DateTime?      @default(now()) @db.Date
+  pig          pigs?          @relation(fields: [pig_id], references: [id])
+  pig_id       String?
 }
 
 model pigs {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  style     Style?
-  updatedAt DateTime? @updatedAt
-  createdAt DateTime? @default(now()) @db.Date
-  periods   periods[]
-  userId    String    @db.ObjectId
-  user      users?    @relation(fields: [userId], references: [id])
+  id         String    @id @default(uuid())
+  name       String
+  style      Json?
+  updated_at DateTime? @updatedAt
+  created_at DateTime? @default(now()) @db.Date
+  periods    periods[]
+  user_id    String
+  user       users?    @relation(fields: [user_id], references: [id])
 }
 
 model tokens {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  id          String    @id @default(uuid())
   blacklisted Boolean
   expires     DateTime  @db.Date
   token       String
-  userId      String
-  updatedAt   DateTime? @updatedAt
-  createdAt   DateTime? @default(now()) @db.Date
+  user_id     String
+  updated_at  DateTime? @updatedAt
+  created_at  DateTime? @default(now()) @db.Date
 
   @@index([token], map: "token_1")
 }
 
 model transactions {
-  id         String      @id @default(auto()) @map("_id") @db.ObjectId
-  amount     Int
-  currency   String?
-  date       DateTime?   @default(now()) @db.Date
-  note       String?
-  periodId   String?     @db.ObjectId
-  period     periods?    @relation(fields: [periodId], references: [id])
-  type       String?
-  userId     String      @db.ObjectId
-  user       users       @relation(fields: [userId], references: [id])
-  categoryId String?     @db.ObjectId
-  category   categories? @relation(fields: [categoryId], references: [id])
-  updatedAt  DateTime?   @updatedAt
-  createdAt  DateTime?   @default(now()) @db.Date
+  id          String      @id @default(uuid())
+  amount      Int
+  currency    String?
+  date        DateTime?   @default(now()) @db.Date
+  note        String?
+  period_id   String?
+  period      periods?    @relation(fields: [period_id], references: [id])
+  type        String?
+  user_id     String
+  user        users       @relation(fields: [user_id], references: [id])
+  category_id String?
+  category    categories? @relation(fields: [category_id], references: [id])
+  updated_at  DateTime?   @updatedAt
+  created_at  DateTime?   @default(now()) @db.Date
 }
 
 model users {
-  id           String         @id @default(auto()) @map("_id") @db.ObjectId
+  id           String         @id @default(uuid())
   email        String         @unique
-  firstName    String
-  lastName     String
+  first_name   String
+  last_name    String
   transactions transactions[]
-  updatedAt    DateTime?      @updatedAt
-  createdAt    DateTime?      @default(now()) @db.Date
+  updated_at   DateTime?      @updatedAt
+  created_at   DateTime?      @default(now()) @db.Date
   pigs         pigs[]
   categories   categories[]
 }

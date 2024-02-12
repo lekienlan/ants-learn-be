@@ -3,7 +3,7 @@ import { joiPaginate } from 'middlewares/paginate/paginate.validation';
 
 const name = Joi.string().required();
 const type = Joi.string().only().allow('expense', 'income').required();
-const userId = Joi.string();
+const user_id = Joi.string();
 
 const style = Joi.object().keys({
   color: Joi.string(),
@@ -15,7 +15,7 @@ export const basePayload = {
     name,
     type,
     style,
-    userId
+    user_id
   })
 };
 export const createPayload = basePayload;

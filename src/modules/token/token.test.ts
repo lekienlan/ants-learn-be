@@ -7,10 +7,10 @@ import prismaMock from 'test/prismaMock';
 import { tokenService } from '.';
 
 describe('token', () => {
-  const userId = 'testUserId';
+  const user_id = 'testUserId';
   const expires = moment().add(1, 'hour');
   const token = tokenService.generate(
-    userId,
+    user_id,
     expires,
     configs.jwt.accessSecretKey
   );
@@ -20,9 +20,9 @@ describe('token', () => {
     blacklisted: false,
     expires: expiresDate,
     token,
-    userId,
-    createdAt: null,
-    updatedAt: null
+    user_id,
+    created_at: null,
+    updated_at: null
   };
   beforeEach(() => {
     prismaMock.tokens.create.mockResolvedValue(tokenResult);
@@ -30,7 +30,7 @@ describe('token', () => {
 
   it('should generate a token', () => {
     const result = tokenService.generate(
-      userId,
+      user_id,
       expires,
       configs.jwt.accessSecretKey
     );
@@ -39,7 +39,7 @@ describe('token', () => {
 
   it('should decode a token', () => {
     const decodedPayload = {
-      sub: userId,
+      sub: user_id,
       iat: moment().unix(),
       exp: expires.unix()
     };
@@ -49,22 +49,22 @@ describe('token', () => {
   });
 
   it('should create a token in the database', async () => {
-    const result = await tokenService.create(token, userId, expires);
+    const result = await tokenService.create(token, user_id, expires);
     expect(result).toBeDefined();
     expect(prismaMock.tokens.create).toHaveBeenCalledWith({
-      data: { token, userId, expires: expiresDate, blacklisted: false }
+      data: { token, user_id, expires: expiresDate, blacklisted: false }
     });
   });
 
   describe('verify', () => {
     it('should verify a token', async () => {
-      // const payload = { sub: userId };
+      // const payload = { sub: user_id };
       prismaMock.tokens.findFirst.mockResolvedValue(tokenResult);
 
       const result = await tokenService.verify(token);
       expect(result).toBeDefined();
       expect(prismaMock.tokens.findFirst).toHaveBeenCalledWith({
-        where: { token, userId, blacklisted: false }
+        where: { token, user_id, blacklisted: false }
       });
     });
 
@@ -90,12 +90,12 @@ describe('token', () => {
 
   it('should generate access and refresh tokens', async () => {
     const user = {
-      id: userId,
+      id: user_id,
       email: 'abc@gmail.com',
-      firstName: 'Lan',
-      lastName: 'Le',
-      createdAt: null,
-      updatedAt: null
+      first_name: 'Lan',
+      last_name: 'Le',
+      created_at: null,
+      updated_at: null
     };
 
     const result = await tokenService.generateTokens(user);

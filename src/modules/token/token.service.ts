@@ -12,12 +12,12 @@ import prisma from 'prisma';
 import type { AccessAndRefreshTokens } from './token.interface';
 
 export const generate = (
-  userId: string,
+  user_id: string,
   expires: Moment,
   secret: string = configs.jwt.accessSecretKey
 ): string => {
   const payload = {
-    sub: userId,
+    sub: user_id,
     iat: moment().unix(),
     exp: expires.unix()
   };
@@ -30,14 +30,14 @@ export const decode = (token: string): string | JwtPayload => {
 
 export const create = async (
   token: string,
-  userId: string,
+  user_id: string,
   expires: Moment,
   blacklisted: boolean = false
 ) => {
   const tokenResp = await prisma.tokens.create({
     data: {
       token,
-      userId,
+      user_id,
       expires: expires.toDate(),
       blacklisted
     }
@@ -53,7 +53,7 @@ export const verify = async (token: string) => {
   const tokenResult = await prisma.tokens.findFirst({
     where: {
       token,
-      userId: payload.sub,
+      user_id: payload.sub,
       blacklisted: false
     }
   });

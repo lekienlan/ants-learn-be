@@ -23,12 +23,12 @@ export const create = catchAsync(
     >,
     res: Response
   ) => {
-    const { name, type, style, userId } = req.body;
+    const { name, type, style, user_id } = req.body;
     const category = await categoryService.create({
       name,
       type,
       style,
-      userId,
+      user_id,
       code: snakeCase(removeDiacritics(name)) || ''
     });
 

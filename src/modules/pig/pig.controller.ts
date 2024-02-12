@@ -17,7 +17,7 @@ export const findMany = catchAsync(async (req: Request, res: Response) => {
   if (!user) throw new ApiError(StatusCodes.NOT_FOUND, 'User not found');
 
   const piggies = await pigService.findMany(
-    { ...req.query, userId: user.id },
+    { ...req.query, user_id: user.id },
     {
       periods: true
     }
@@ -47,7 +47,7 @@ export const create = catchAsync(
 
     if (!user) throw new ApiError(StatusCodes.NOT_FOUND, 'User not found');
 
-    const pig = await pigService.create({ ...req.body, userId: user?.id });
+    const pig = await pigService.create({ ...req.body, user_id: user?.id });
 
     res.status(StatusCodes.CREATED).send(pig);
   }

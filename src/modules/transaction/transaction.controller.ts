@@ -19,7 +19,7 @@ export const findMany = catchAsync(async (req: Request, res: Response) => {
 
   const transactions = await transactionService.findMany(
     {
-      userId: user.id,
+      user_id: user.id,
       ...req.query
     },
     { user: true }
@@ -51,14 +51,14 @@ export const create = catchAsync(
 
     const user = await userService.findByAccessToken(accessToken);
 
-    const { amount, categoryId, date, note, periodId, type } = req.body;
+    const { amount, category_id, date, note, period_id, type } = req.body;
     const transaction = await transactionService.create({
-      userId: user?.id || '',
+      user_id: user?.id || '',
       amount,
-      categoryId,
+      category_id,
       date,
       note,
-      periodId,
+      period_id,
       type: type || (amount > 0 ? 'income' : 'expense')
     });
 
@@ -75,28 +75,28 @@ export const update = catchAsync(
     >,
     res: Response
   ) => {
-    const { amount, categoryId, date, note, periodId, type } = req.body;
+    const { amount, category_id, date, note, period_id, type } = req.body;
 
     const transaction = await transactionService.update(req.params.id, {
       amount,
-      categoryId,
+      category_id,
       date,
       note,
-      periodId,
+      period_id,
       type
     });
 
     await historyService.create({
-      transactionId: transaction.id,
+      transaction_id: transaction.id,
       state: 'modified',
-      userId: transaction.userId,
+      user_id: transaction.user_id,
       data: {
         amount: transaction.amount,
-        categoryId: transaction.categoryId,
+        category_id: transaction.category_id,
         currency: transaction.currency,
         date: transaction.date,
         note: transaction.note,
-        periodId: transaction.periodId
+        period_id: transaction.period_id
       }
     });
 
@@ -111,16 +111,16 @@ export const remove = catchAsync(
     });
 
     await historyService.create({
-      transactionId: transaction.id,
+      transaction_id: transaction.id,
       state: 'deleted',
-      userId: transaction.userId,
+      user_id: transaction.user_id,
       data: {
         amount: transaction.amount,
-        categoryId: transaction.categoryId,
+        category_id: transaction.category_id,
         currency: transaction.currency,
         date: transaction.date,
         note: transaction.note,
-        periodId: transaction.periodId
+        period_id: transaction.period_id
       }
     });
 

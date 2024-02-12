@@ -14,8 +14,8 @@ export default function google() {
       async function (_accessToken, _refreshToken, profile, done) {
         const user = await userService.findOrCreate({
           email: profile?.emails?.[0]?.value || '',
-          firstName: profile.name?.givenName || '',
-          lastName: profile.name?.familyName || ''
+          first_name: profile.name?.givenName || '',
+          last_name: profile.name?.familyName || ''
         });
 
         return done(null, user);

@@ -10,10 +10,10 @@ describe('user', () => {
   const userData = {
     id: '651ed73162790f0d198ceac0',
     email: 'dphuong0311@gmail.com',
-    firstName: 'Do',
-    lastName: 'Phuong',
-    updatedAt: '2023-10-05T15:33:05.492Z' as unknown as Date,
-    createdAt: '2023-10-05T15:33:05.492Z' as unknown as Date
+    first_name: 'Do',
+    last_name: 'Phuong',
+    updated_at: '2023-10-05T15:33:05.492Z' as unknown as Date,
+    created_at: '2023-10-05T15:33:05.492Z' as unknown as Date
   };
 
   describe('GET /v1/users', () => {
@@ -22,7 +22,7 @@ describe('user', () => {
         limit: 10,
         page: 1,
         results: [userData],
-        totalPages: 1
+        total_pages: 1
       };
       prismaMock.users.findMany.mockResolvedValue(fakeResp.results);
 
@@ -52,8 +52,8 @@ describe('user', () => {
     prismaMock.users.create.mockResolvedValue(userData);
     const res = await userService.create({
       email: 'dphuong0311@gmail.com',
-      firstName: 'Do',
-      lastName: 'Phuong'
+      first_name: 'Do',
+      last_name: 'Phuong'
     });
 
     expect(res).toEqual(userData);
@@ -62,8 +62,8 @@ describe('user', () => {
     prismaMock.users.upsert.mockResolvedValue(userData);
     const res = await userService.findOrCreate({
       email: 'dphuong0311@gmail.com',
-      firstName: 'Do',
-      lastName: 'Phuong'
+      first_name: 'Do',
+      last_name: 'Phuong'
     });
 
     expect(res).toEqual(userData);

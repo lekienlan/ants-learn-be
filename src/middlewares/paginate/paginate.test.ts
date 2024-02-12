@@ -96,12 +96,12 @@ describe('paginate', () => {
     currency: null,
     date: new Date('2023-10-21T00:00:00.000Z'),
     note: 'ăn cơm',
-    periodId: '6533f8fcf69468807254b754',
+    period_id: '6533f8fcf69468807254b754',
     type: 'expense',
-    userId: '651e94ef813f47c9080f71b7',
-    categoryId: '65256e69c8511c542ee97fa5',
-    updatedAt: new Date('2023-10-21T00:00:00.000Z'),
-    createdAt: new Date('2023-10-21T00:00:00.000Z')
+    user_id: '651e94ef813f47c9080f71b7',
+    category_id: '65256e69c8511c542ee97fa5',
+    updated_at: new Date('2023-10-21T00:00:00.000Z'),
+    created_at: new Date('2023-10-21T00:00:00.000Z')
   };
 
   beforeEach(() => {
@@ -116,7 +116,7 @@ describe('paginate', () => {
     // Define paginate options
     const params = {
       limit: '10',
-      sortBy: '-name',
+      sort_by: '-name',
       page: '1',
       date: ['2023-10-21T00:00:00.000Z', '2023-10-22T00:00:00.000Z']
     };
@@ -144,8 +144,8 @@ describe('paginate', () => {
       results: [fakeTransaction, fakeTransaction],
       page: 1,
       limit: 10,
-      totalPages: 1,
-      totalResults: 2
+      total_pages: 1,
+      total_results: 2
     });
   });
 
@@ -163,7 +163,7 @@ describe('paginate', () => {
       where: paginateFilter(params),
       skip: 10,
       take: 10,
-      orderBy: { updatedAt: 'desc' },
+      orderBy: { updated_at: 'desc' },
       include: undefined
     });
 
@@ -172,8 +172,8 @@ describe('paginate', () => {
       results: [fakeTransaction, fakeTransaction],
       page: 2,
       limit: 10,
-      totalPages: 1,
-      totalResults: 2
+      total_pages: 1,
+      total_results: 2
     });
   });
 });

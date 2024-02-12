@@ -1,10 +1,9 @@
 import app from 'app';
 import configs from 'configs';
 import logger from 'configs/logger';
-import { connectMongodb } from 'configs/mongodb';
 import ws from 'configs/ws';
 
-connectMongodb();
+// connectMongodb();
 
 const server = app.listen(configs.port, () => {
   logger.info(

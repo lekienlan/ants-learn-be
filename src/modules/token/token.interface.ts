@@ -2,7 +2,7 @@ import type { JwtPayload } from 'jsonwebtoken';
 
 export interface IToken {
   token: string;
-  userId: string;
+  user_id: string;
   type: string;
   expires: Date;
   blacklisted: boolean;

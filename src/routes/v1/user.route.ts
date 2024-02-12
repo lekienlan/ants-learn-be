@@ -41,7 +41,7 @@ export default router;
  *           type: string
  *         description: User role
  *       - in: query
- *         name: sortBy
+ *         name: sort_by
  *         schema:
  *           type: string
  *         description: sort by query in the form of field:desc/asc (ex. name:asc)
@@ -82,10 +82,10 @@ export default router;
  *                 limit:
  *                   type: integer
  *                   example: 10
- *                 totalPages:
+ *                 total_pages:
  *                   type: integer
  *                   example: 1
- *                 totalResults:
+ *                 total_results:
  *                   type: integer
  *                   example: 1
  *       "401":

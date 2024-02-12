@@ -4,9 +4,9 @@ import { transactionService } from 'modules/transaction';
 import prisma from 'prisma';
 
 const scheduleTaskForPeriod = (period: periods) => {
-  // Convert period.endDate to a cron pattern
-  // Example: Assuming you want to run the job every day at the time specified by endDate
-  const date = new Date(period.endDate);
+  // Convert period.end_date to a cron pattern
+  // Example: Assuming you want to run the job every day at the time specified by end_date
+  const date = new Date(period.end_date);
   const cronPattern = `${date.getMinutes()} ${date.getHours()} * * *`;
 
   const job = new CronJob(
@@ -14,15 +14,15 @@ const scheduleTaskForPeriod = (period: periods) => {
     async () => {
       period.members.forEach(async (member) => {
         const expenseResp = await transactionService.findMany({
-          userId: member,
+          user_id: member,
           type: 'expense',
-          periodId: period.id
+          period_id: period.id
         });
 
         await transactionService.create({
           type: 'income',
           amount: period.budget + (expenseResp.totalAmount || 0),
-          userId: member
+          user_id: member
         });
       });
       // Additional task logic here

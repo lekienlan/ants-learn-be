@@ -17,7 +17,7 @@ export const refresh = async (refreshToken: string) => {
   try {
     const token = await tokenService.verify(refreshToken);
 
-    const user = await userService.findById(token.userId);
+    const user = await userService.findById(token.user_id);
 
     if (!user) {
       throw new Error('User not found');

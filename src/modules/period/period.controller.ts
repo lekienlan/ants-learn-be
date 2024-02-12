@@ -46,10 +46,10 @@ export const create = catchAsync(
     });
 
     transactionService.create({
-      periodId: period.id,
+      period_id: period.id,
       amount: period.budget || 0,
       type: 'budget',
-      userId: user?.id
+      user_id: user?.id
     });
 
     res.status(StatusCodes.CREATED).send(period);
@@ -71,7 +71,7 @@ export const update = catchAsync(
 
     if (period.budget) {
       const currentTransaction = await transactionService.findOne({
-        periodId: period?.id,
+        period_id: period?.id,
         type: 'budget'
       });
 
@@ -85,16 +85,16 @@ export const update = catchAsync(
       );
 
       await historyService.create({
-        transactionId: updatedTransaction.id,
+        transaction_id: updatedTransaction.id,
         state: 'modified',
-        userId: updatedTransaction.userId,
+        user_id: updatedTransaction.user_id,
         data: {
           amount: updatedTransaction.amount,
-          categoryId: updatedTransaction.categoryId,
+          category_id: updatedTransaction.category_id,
           currency: updatedTransaction.currency,
           date: updatedTransaction.date,
           note: updatedTransaction.note,
-          periodId: updatedTransaction.periodId
+          period_id: updatedTransaction.period_id
         }
       });
     }

@@ -4,20 +4,19 @@ import type { PaginateOptions } from 'middlewares/paginate/paginate.interface';
 import prisma from 'prisma';
 
 export const findMany = async (
-  params: PaginateOptions & Prisma.historiesWhereInput,
-  include?: Prisma.historiesInclude
+  params: PaginateOptions & Prisma.historiesWhereInput
 ) => {
-  const list = await paginate<histories>(prisma.histories, params, include);
+  const list = await paginate<histories>(prisma.histories, params);
   return list;
 };
 export const findTransHistories = async ({
-  transactionId
+  transaction_id
 }: {
-  transactionId: string;
+  transaction_id: string;
 }) => {
   const histories = await prisma.histories.findMany({
-    where: { transactionId },
-    orderBy: { createdAt: 'desc' }
+    where: { transaction_id },
+    orderBy: { created_at: 'desc' }
   });
 
   return histories;

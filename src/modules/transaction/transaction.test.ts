@@ -11,10 +11,10 @@ describe('transaction', () => {
   const userData = {
     id: '651ed73162790f0d198ceac0',
     email: 'dphuong0311@gmail.com',
-    firstName: 'Do',
-    lastName: 'Phuong',
-    updatedAt: '2023-10-05T15:33:05.492Z' as unknown as Date,
-    createdAt: '2023-10-05T15:33:05.492Z' as unknown as Date
+    first_name: 'Do',
+    last_name: 'Phuong',
+    updated_at: '2023-10-05T15:33:05.492Z' as unknown as Date,
+    created_at: '2023-10-05T15:33:05.492Z' as unknown as Date
   };
 
   const transactionData = {
@@ -23,19 +23,19 @@ describe('transaction', () => {
     currency: null,
     date: '2023-11-26T16:14:28.258Z' as unknown as Date,
     note: null,
-    periodId: '65636ee25e81c86731cf906f',
+    period_id: '65636ee25e81c86731cf906f',
     type: 'budget',
-    userId: '651e94ef813f47c9080f71b7',
-    categoryId: null,
-    updatedAt: '2023-11-26T16:14:28.258Z' as unknown as Date,
-    createdAt: '2023-11-26T16:14:28.258Z' as unknown as Date,
+    user_id: '651e94ef813f47c9080f71b7',
+    category_id: null,
+    updated_at: '2023-11-26T16:14:28.258Z' as unknown as Date,
+    created_at: '2023-11-26T16:14:28.258Z' as unknown as Date,
     user: {
       id: '651e94ef813f47c9080f71b7',
       email: 'lekienlan98@gmail.com',
-      firstName: 'Lân',
-      lastName: 'Lê',
-      updatedAt: '2023-10-05T10:50:23.101Z' as unknown as Date,
-      createdAt: '2023-10-05T10:50:23.101Z' as unknown as Date
+      first_name: 'Lân',
+      last_name: 'Lê',
+      updated_at: '2023-10-05T10:50:23.101Z' as unknown as Date,
+      created_at: '2023-10-05T10:50:23.101Z' as unknown as Date
     }
   };
 
@@ -46,7 +46,7 @@ describe('transaction', () => {
         limit: 10,
         page: 1,
         results: [transactionData],
-        totalPages: 1
+        total_pages: 1
       };
       const user = jest.spyOn(userService, 'findByAccessToken');
       user.mockResolvedValue(userData);
@@ -64,7 +64,7 @@ describe('transaction', () => {
         .get('/v1/transactions')
         .set('Authorization', `Bearer ${token}`)
         .query({
-          periodId: '123'
+          period_id: '123'
         });
 
       console.log(response);
@@ -77,7 +77,7 @@ describe('transaction', () => {
         limit: 10,
         page: 1,
         results: [transactionData],
-        totalPages: 1
+        total_pages: 1
       };
       const user = jest.spyOn(userService, 'findByAccessToken');
       user.mockResolvedValue(null);
@@ -107,7 +107,7 @@ describe('transaction', () => {
         .send({
           amount: -311000,
           date: '2023-11-26T16:14:28.258Z' as unknown as Date,
-          periodId: '65636ee25e81c86731cf906f'
+          period_id: '65636ee25e81c86731cf906f'
         });
 
       expect(response.body).toEqual(transactionData);
@@ -115,15 +115,15 @@ describe('transaction', () => {
       expect(history).toHaveBeenCalledWith({
         data: {
           amount: -311000,
-          categoryId: null,
+          category_id: null,
           currency: null,
           date: '2023-11-26T16:14:28.258Z',
           note: null,
-          periodId: '65636ee25e81c86731cf906f'
+          period_id: '65636ee25e81c86731cf906f'
         },
         state: 'original',
-        transactionId: expect.anything(),
-        userId: '651e94ef813f47c9080f71b7'
+        transaction_id: expect.anything(),
+        user_id: '651e94ef813f47c9080f71b7'
       });
     });
   });
@@ -161,15 +161,15 @@ describe('transaction', () => {
       expect(history).toHaveBeenCalledWith({
         data: {
           amount: -311000,
-          categoryId: null,
+          category_id: null,
           currency: null,
           date: '2023-12-26T16:14:28.258Z',
           note: null,
-          periodId: '65636ee25e81c86731cf906f'
+          period_id: '65636ee25e81c86731cf906f'
         },
         state: 'modified',
-        transactionId: expect.anything(),
-        userId: '651e94ef813f47c9080f71b7'
+        transaction_id: expect.anything(),
+        user_id: '651e94ef813f47c9080f71b7'
       });
 
       expect(response.body).toEqual({

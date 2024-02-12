@@ -48,16 +48,16 @@ export const create = async (
   });
 
   historyService.create({
-    transactionId: transaction.id,
+    transaction_id: transaction.id,
     state: 'original',
-    userId: transaction.userId,
+    user_id: transaction.user_id,
     data: {
       amount: transaction.amount,
-      categoryId: transaction.categoryId,
+      category_id: transaction.category_id,
       currency: transaction.currency,
       date: transaction.date,
       note: transaction.note,
-      periodId: transaction.periodId
+      period_id: transaction.period_id
     }
   });
 

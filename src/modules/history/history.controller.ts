@@ -12,12 +12,12 @@ export const findMany = catchAsync(async (req: Request, res: Response) => {
   const user = await userService.findByAccessToken(accessToken);
 
   if (!user?.id) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, 'userId not found');
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'user_id not found');
   }
 
   const histories = await historyService.findMany({
     ...req.query,
-    userId: user.id
+    user_id: user.id
   });
 
   res.send(histories);
@@ -26,7 +26,7 @@ export const findMany = catchAsync(async (req: Request, res: Response) => {
 export const findTransHistories = catchAsync(
   async (req: Request<{ id: string }>, res: Response) => {
     const transactionHistory = await historyService.findTransHistories({
-      transactionId: req.params.id
+      transaction_id: req.params.id
     });
 
     if (!transactionHistory.length)

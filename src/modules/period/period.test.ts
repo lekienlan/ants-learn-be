@@ -19,14 +19,14 @@ describe('period', () => {
   const periodData = {
     id: '6533f8fcf69468807254b754',
     budget: 40000,
-    endDate: '2023-10-25T00:00:00.000Z' as unknown as Date,
+    end_date: '2023-10-25T00:00:00.000Z' as unknown as Date,
     expense: -2730000,
     members: ['651e94ef813f47c9080f71b7'],
     repeat: true,
-    startDate: '2023-10-21T00:00:00.000Z' as unknown as Date,
-    updatedAt: new Date().toISOString() as unknown as Date,
-    createdAt: new Date().toISOString() as unknown as Date,
-    pigId: '652aa067af2b8ebd0748e306'
+    start_date: '2023-10-21T00:00:00.000Z' as unknown as Date,
+    updated_at: new Date().toISOString() as unknown as Date,
+    created_at: new Date().toISOString() as unknown as Date,
+    pig_id: '652aa067af2b8ebd0748e306'
   };
 
   const transactionData = {
@@ -35,12 +35,12 @@ describe('period', () => {
     currency: null,
     date: '2023-10-21T00:00:00.000Z' as unknown as Date,
     note: 'ăn cơm',
-    periodId: '6533f8fcf69468807254b754',
+    period_id: '6533f8fcf69468807254b754',
     type: 'expense',
-    userId: '651e94ef813f47c9080f71b7',
-    categoryId: '65256e69c8511c542ee97fa5',
-    updatedAt: '2023-10-22T17:19:51.834Z' as unknown as Date,
-    createdAt: '2023-10-22T17:19:51.834Z' as unknown as Date
+    user_id: '651e94ef813f47c9080f71b7',
+    category_id: '65256e69c8511c542ee97fa5',
+    updated_at: '2023-10-22T17:19:51.834Z' as unknown as Date,
+    created_at: '2023-10-22T17:19:51.834Z' as unknown as Date
   };
 
   describe('GET /v1/periods', () => {
@@ -49,7 +49,7 @@ describe('period', () => {
         limit: 10,
         page: 1,
         results: [periodData],
-        totalPages: 1
+        total_pages: 1
       };
       prismaMock.periods.findMany.mockResolvedValue(fakeResp.results);
 
@@ -68,17 +68,17 @@ describe('period', () => {
 
       prismaMock.periods.create.mockResolvedValue({
         ...periodData,
-        endDate: new Date('2023-10-25T00:00:00.000Z')
+        end_date: new Date('2023-10-25T00:00:00.000Z')
       });
 
       // Use supertest to send a request to the create endpoint
       prismaMock.users.findFirst.mockResolvedValue({
         id: '651e94ef813f47c9080f71b7',
         email: 'lekienlan98@gmail.com',
-        firstName: 'Lân',
-        lastName: 'Lê',
-        updatedAt: new Date().toISOString() as unknown as Date,
-        createdAt: new Date().toISOString() as unknown as Date
+        first_name: 'Lân',
+        last_name: 'Lê',
+        updated_at: new Date().toISOString() as unknown as Date,
+        created_at: new Date().toISOString() as unknown as Date
       });
       prismaMock.transactions.create.mockResolvedValue(transactionData);
 
@@ -86,10 +86,10 @@ describe('period', () => {
         .post('/v1/periods')
         .set('Authorization', `Bearer ${token}`)
         .send({
-          startDate: '2023-10-16',
-          endDate: '2023-10-18',
+          start_date: '2023-10-16',
+          end_date: '2023-10-18',
           budget: 200000,
-          pigId: '652aa067af2b8ebd0748e306'
+          pig_id: '652aa067af2b8ebd0748e306'
         });
 
       // Assert the response status code and data
@@ -102,35 +102,35 @@ describe('period', () => {
         .post('/v1/periods')
         .set('Authorization', `Bearer ${token}`)
         .send({
-          startDate: '2023-10-16',
-          endDate: '2023-10-18',
+          start_date: '2023-10-16',
+          end_date: '2023-10-18',
           budget: 200000,
-          pigId: '652aa067af2b8ebd0748e306'
+          pig_id: '652aa067af2b8ebd0748e306'
         });
 
       expect(response.status).toBe(StatusCodes.BAD_REQUEST);
       expect(response.body.message).toBe('User not found');
     });
 
-    it('should fail to create period if pigId or budget not found', async () => {
+    it('should fail to create period if pig_id or budget not found', async () => {
       const response1 = await supertest(app)
         .post('/v1/periods')
         .set('Authorization', `Bearer ${token}`)
         .send({
-          startDate: '2023-10-16',
-          endDate: '2023-10-18',
+          start_date: '2023-10-16',
+          end_date: '2023-10-18',
           budget: 200000
         });
       const response2 = await supertest(app)
         .post('/v1/periods')
         .set('Authorization', `Bearer ${token}`)
         .send({
-          startDate: '2023-10-16',
-          endDate: '2023-10-18',
-          pigId: '123'
+          start_date: '2023-10-16',
+          end_date: '2023-10-18',
+          pig_id: '123'
         });
       expect(response1.status).toBe(StatusCodes.BAD_REQUEST);
-      expect(response1.body.message).toBe('"pigId" is required');
+      expect(response1.body.message).toBe('"pig_id" is required');
       expect(response2.body.message).toBe('"budget" is required');
     });
   });
@@ -149,10 +149,10 @@ describe('period', () => {
         .set('Authorization', `Bearer ${token}`)
         .send({
           // Provide updated data for the period
-          startDate: '2023-10-16',
-          endDate: '2023-10-20',
+          start_date: '2023-10-16',
+          end_date: '2023-10-20',
           budget: 250000,
-          pigId: '652aa067af2b8ebd0748e306'
+          pig_id: '652aa067af2b8ebd0748e306'
         });
 
       // Assert the response status code and data
@@ -168,10 +168,10 @@ describe('period', () => {
         .set('Authorization', `Bearer ${token}`)
         .send({
           // Provide updated data for the period
-          startDate: '2023-10-16',
-          endDate: '2023-10-20',
+          start_date: '2023-10-16',
+          end_date: '2023-10-20',
           budget: 250000,
-          pigId: '652aa067af2b8ebd0748e306'
+          pig_id: '652aa067af2b8ebd0748e306'
         });
 
       // Assert the response status code and error message
@@ -192,10 +192,10 @@ describe('period', () => {
         .set('Authorization', `Bearer ${token}`)
         .send({
           // Provide updated data for the period
-          startDate: '2023-10-16',
-          endDate: '2023-10-20',
+          start_date: '2023-10-16',
+          end_date: '2023-10-20',
           budget: 250000,
-          pigId: '652aa067af2b8ebd0748e306'
+          pig_id: '652aa067af2b8ebd0748e306'
         });
 
       // Assert the response status code and data
@@ -245,7 +245,7 @@ describe('period', () => {
         limit: 10,
         page: 1,
         results: [periodData],
-        totalPages: 1
+        total_pages: 1
       };
       prismaMock.periods.findMany.mockResolvedValue(fakeResp.results);
 

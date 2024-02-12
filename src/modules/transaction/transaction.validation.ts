@@ -13,9 +13,9 @@ export const createPayload = {
     amount: amountSchema.required(),
     date: dateSchema,
     note: noteSchema,
-    categoryId: categoryIdSchema,
+    category_id: categoryIdSchema,
     type: typeSchema,
-    periodId: Joi.when('amount', {
+    period_id: Joi.when('amount', {
       is: Joi.number().less(0),
       then: periodIdSchema.required(),
       otherwise: null
@@ -28,8 +28,8 @@ export const updatePayload = {
     amount: amountSchema,
     date: dateSchema,
     note: noteSchema,
-    categoryId: categoryIdSchema,
-    periodId: periodIdSchema,
+    category_id: categoryIdSchema,
+    period_id: periodIdSchema,
     type: typeSchema
   })
 };
@@ -39,6 +39,6 @@ export const params = Joi.object().keys({
     ...joiPaginate,
     amount: Joi.array().items(Joi.number()),
     date: Joi.array().items(Joi.date()),
-    categoryId: Joi.string()
+    category_id: Joi.string()
   })
 });

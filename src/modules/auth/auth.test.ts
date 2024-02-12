@@ -14,17 +14,17 @@ describe('auth', () => {
     blacklisted: false,
     expires: moment().add(1, 'hour').toDate(),
     token: '',
-    userId: '123',
-    createdAt: null,
-    updatedAt: null
+    user_id: '123',
+    created_at: null,
+    updated_at: null
   };
   const userData = {
     id: '123',
     email: 'abc@gmail.com',
-    firstName: 'Lan',
-    lastName: 'Le',
-    createdAt: null,
-    updatedAt: null
+    first_name: 'Lan',
+    last_name: 'Le',
+    created_at: null,
+    updated_at: null
   };
 
   describe('loginWithEmail function', () => {

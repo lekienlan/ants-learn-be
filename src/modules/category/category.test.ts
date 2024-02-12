@@ -20,12 +20,12 @@ describe('categories', () => {
             code: 'test',
             type: 'expense' as CategoryType,
             style: null,
-            userId: 'someUserId',
-            updatedAt: new Date().toISOString() as unknown as Date,
-            createdAt: new Date().toISOString() as unknown as Date
+            user_id: 'someUserId',
+            updated_at: new Date().toISOString() as unknown as Date,
+            created_at: new Date().toISOString() as unknown as Date
           }
         ],
-        totalPages: 1
+        total_pages: 1
       };
       prismaMock.categories.findMany.mockResolvedValue(fakeResp.results);
 
@@ -48,9 +48,9 @@ describe('categories', () => {
         code: 'test',
         type: 'expense' as CategoryType,
         style: null,
-        userId: 'someUserId',
-        updatedAt: new Date().toISOString() as unknown as Date,
-        createdAt: new Date().toISOString() as unknown as Date
+        user_id: 'someUserId',
+        updated_at: new Date().toISOString() as unknown as Date,
+        created_at: new Date().toISOString() as unknown as Date
       };
       prismaMock.categories.create.mockResolvedValue(fakeResp);
 
@@ -87,17 +87,17 @@ describe('categories', () => {
       expect(response2.status).toBe(StatusCodes.BAD_REQUEST);
     });
 
-    it('should include user if having userId', async () => {
+    it('should include user if having user_id', async () => {
       const fakeResp = {
         id: 'someCategoryId',
         name: 'TestCategory',
         code: 'test',
         type: 'expense' as CategoryType,
         style: null,
-        userId: 'userId',
-        user: { id: 'userId' },
-        updatedAt: new Date().toISOString() as unknown as Date,
-        createdAt: new Date().toISOString() as unknown as Date
+        user_id: 'user_id',
+        user: { id: 'user_id' },
+        updated_at: new Date().toISOString() as unknown as Date,
+        created_at: new Date().toISOString() as unknown as Date
       };
       prismaMock.categories.create.mockResolvedValue(fakeResp);
 
@@ -106,7 +106,7 @@ describe('categories', () => {
         .set('Authorization', `Bearer ${token}`)
         .send({
           name: 'TestCategory',
-          userId: 'userId',
+          user_id: 'user_id',
           type: 'expense'
         });
 
@@ -123,9 +123,9 @@ describe('categories', () => {
       code: 'test',
       type: 'income' as CategoryType,
       style: null,
-      userId: 'someUserId',
-      updatedAt: new Date().toISOString() as unknown as Date,
-      createdAt: new Date().toISOString() as unknown as Date
+      user_id: 'someUserId',
+      updated_at: new Date().toISOString() as unknown as Date,
+      created_at: new Date().toISOString() as unknown as Date
     };
 
     it('should update category if data is ok', async () => {
@@ -172,9 +172,9 @@ describe('categories', () => {
       code: 'test',
       type: 'income' as CategoryType,
       style: null,
-      userId: 'someUserId',
-      updatedAt: new Date().toISOString() as unknown as Date,
-      createdAt: new Date().toISOString() as unknown as Date
+      user_id: 'someUserId',
+      updated_at: new Date().toISOString() as unknown as Date,
+      created_at: new Date().toISOString() as unknown as Date
     };
 
     it('should delete category if id is correct', async () => {

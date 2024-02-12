@@ -4,7 +4,7 @@ import { convertStringToType } from 'utils';
 import type { PaginateOptions, QueryResults } from './paginate.interface';
 
 export const paginateFilter = (filter: Record<string, any>) => {
-  const formattedFilter = omit(filter, ['limit', 'sortBy', 'page']);
+  const formattedFilter = omit(filter, ['limit', 'sort_by', 'page']);
   Object.keys(formattedFilter).forEach((key) => {
     // if filter is an 2 items array
     if (Array.isArray(formattedFilter[key]) && formattedFilter[key].length) {
@@ -39,18 +39,18 @@ const paginate = async <T>(
   params: PaginateOptions,
   include?: Record<string, any>
 ): Promise<QueryResults<T>> => {
-  const { sortBy = '-updatedAt', limit, page, ...query } = params;
+  const { sort_by = '-updated_at', limit, page, ...query } = params;
 
   const _limit = limit ? parseInt(limit, 10) : 10;
   const _page = page ? parseInt(page, 10) : 1;
   const skip = (_page - 1) * (_limit || 0);
 
   const _sortBy: { field: string; direction: 'asc' | 'desc' } =
-    sortBy.startsWith('-')
-      ? { field: sortBy.substring(1), direction: 'desc' }
-      : { field: sortBy, direction: 'asc' };
+    sort_by.startsWith('-')
+      ? { field: sort_by.substring(1), direction: 'desc' }
+      : { field: sort_by, direction: 'asc' };
 
-  const totalResults = await model.count({ where: paginateFilter(query) });
+  const total_results = await model.count({ where: paginateFilter(query) });
   const results = await model.findMany({
     where: paginateFilter(query),
     skip,
@@ -61,14 +61,14 @@ const paginate = async <T>(
     include
   });
 
-  const totalPages = Math.ceil(totalResults / _limit) || 1;
+  const total_pages = Math.ceil(total_results / _limit) || 1;
 
   return {
     results,
     page: _page,
     limit: _limit,
-    totalPages,
-    totalResults
+    total_pages,
+    total_results
   };
 };
 

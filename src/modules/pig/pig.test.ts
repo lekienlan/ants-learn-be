@@ -9,39 +9,39 @@ describe('pig', () => {
   const userData = {
     id: '651ed73162790f0d198ceac0',
     email: 'dphuong0311@gmail.com',
-    firstName: 'Do',
-    lastName: 'Phuong',
-    updatedAt: '2023-10-05T15:33:05.492Z' as unknown as Date,
-    createdAt: '2023-10-05T15:33:05.492Z' as unknown as Date
+    first_name: 'Do',
+    last_name: 'Phuong',
+    updated_at: '2023-10-05T15:33:05.492Z' as unknown as Date,
+    created_at: '2023-10-05T15:33:05.492Z' as unknown as Date
   };
 
   const pigData = {
     style: null,
     id: '652aa067af2b8ebd0748e306',
     name: 'Tiền ăn uống',
-    updatedAt: '2023-10-14T14:06:31.460Z' as unknown as Date,
-    createdAt: '2023-10-14T14:06:31.460Z' as unknown as Date,
-    userId: '651e94ef813f47c9080f71b7',
+    updated_at: '2023-10-14T14:06:31.460Z' as unknown as Date,
+    created_at: '2023-10-14T14:06:31.460Z' as unknown as Date,
+    user_id: '651e94ef813f47c9080f71b7',
     user: {
       id: '651e94ef813f47c9080f71b7',
       email: 'lekienlan98@gmail.com',
-      firstName: 'Lân',
-      lastName: 'Lê',
-      updatedAt: '2023-10-05T10:50:23.101Z' as unknown as Date,
-      createdAt: '2023-10-05T10:50:23.101Z' as unknown as Date
+      first_name: 'Lân',
+      last_name: 'Lê',
+      updated_at: '2023-10-05T10:50:23.101Z' as unknown as Date,
+      created_at: '2023-10-05T10:50:23.101Z' as unknown as Date
     },
     pigs: [
       {
         id: '6533f8fcf69468807254b754',
         budget: 40000,
-        endDate: '2023-10-25T00:00:00.000Z' as unknown as Date,
+        end_date: '2023-10-25T00:00:00.000Z' as unknown as Date,
         expense: -2730000,
         members: ['651e94ef813f47c9080f71b7'],
         repeat: true,
-        startDate: '2023-10-21T00:00:00.000Z',
-        updatedAt: '2023-11-09T16:19:30.915Z' as unknown as Date,
-        createdAt: '2023-10-21T16:14:52.504Z' as unknown as Date,
-        pigId: '652aa067af2b8ebd0748e306'
+        start_date: '2023-10-21T00:00:00.000Z',
+        updated_at: '2023-11-09T16:19:30.915Z' as unknown as Date,
+        created_at: '2023-10-21T16:14:52.504Z' as unknown as Date,
+        pig_id: '652aa067af2b8ebd0748e306'
       }
     ]
   };
@@ -56,7 +56,7 @@ describe('pig', () => {
         limit: 10,
         page: 1,
         results: [pigData],
-        totalPages: 1
+        total_pages: 1
       };
 
       prismaMock.pigs.findMany.mockResolvedValue(fakeResp.results);
@@ -78,14 +78,14 @@ describe('pig', () => {
           {
             id: '6533f8fcf69468807254b754',
             budget: 40000,
-            endDate: '2023-10-25T00:00:00.000Z' as unknown as Date,
+            end_date: '2023-10-25T00:00:00.000Z' as unknown as Date,
             expense: -2730000,
             members: ['651e94ef813f47c9080f71b7'],
             repeat: true,
-            startDate: '2023-10-21T00:00:00.000Z' as unknown as Date,
-            updatedAt: new Date().toISOString() as unknown as Date,
-            createdAt: new Date().toISOString() as unknown as Date,
-            pigId: '652aa067af2b8ebd0748e306',
+            start_date: '2023-10-21T00:00:00.000Z' as unknown as Date,
+            updated_at: new Date().toISOString() as unknown as Date,
+            created_at: new Date().toISOString() as unknown as Date,
+            pig_id: '652aa067af2b8ebd0748e306',
             transactions: [{ amount: 1000 }, { amount: 2000 }]
           }
         ]
@@ -110,16 +110,16 @@ describe('pig', () => {
         style: null,
         id: '6591259da7d876c10808f526',
         name: 'tạo bằng UI',
-        updatedAt: '2023-12-31T08:26:05.194Z' as unknown as Date,
-        createdAt: '2023-12-31T08:26:05.194Z' as unknown as Date,
-        userId: '651e94ef813f47c9080f71b7',
+        updated_at: '2023-12-31T08:26:05.194Z' as unknown as Date,
+        created_at: '2023-12-31T08:26:05.194Z' as unknown as Date,
+        user_id: '651e94ef813f47c9080f71b7',
         user: {
           id: '651e94ef813f47c9080f71b7',
           email: 'lekienlan98@gmail.com',
-          firstName: 'Lân',
-          lastName: 'Lê',
-          updatedAt: '2023-10-05T10:50:23.101Z' as unknown as Date,
-          createdAt: '2023-10-05T10:50:23.101Z' as unknown as Date
+          first_name: 'Lân',
+          last_name: 'Lê',
+          updated_at: '2023-10-05T10:50:23.101Z' as unknown as Date,
+          created_at: '2023-10-05T10:50:23.101Z' as unknown as Date
         }
       };
 
@@ -129,10 +129,10 @@ describe('pig', () => {
       prismaMock.users.findFirst.mockResolvedValue({
         id: '651e94ef813f47c9080f71b7',
         email: 'lekienlan98@gmail.com',
-        firstName: 'Lân',
-        lastName: 'Lê',
-        updatedAt: new Date().toISOString() as unknown as Date,
-        createdAt: new Date().toISOString() as unknown as Date
+        first_name: 'Lân',
+        last_name: 'Lê',
+        updated_at: new Date().toISOString() as unknown as Date,
+        created_at: new Date().toISOString() as unknown as Date
       });
 
       const response = await supertest(app)

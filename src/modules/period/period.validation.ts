@@ -1,20 +1,20 @@
 import Joi from 'joi';
 import { joiPaginate } from 'middlewares/paginate/paginate.validation';
 
-const startDate = Joi.date();
-const endDate = Joi.date();
+const start_date = Joi.date();
+const end_date = Joi.date();
 const budget = Joi.number();
 const members = Joi.array().items(Joi.string());
 const repeat = Joi.boolean();
 const status = Joi.string();
-const pigId = Joi.string();
+const pig_id = Joi.string();
 
 export const createPayload = {
   body: Joi.object().keys({
-    startDate: startDate.required(),
-    endDate: endDate.required(),
+    start_date: start_date.required(),
+    end_date: end_date.required(),
     budget: budget.required(),
-    pigId: pigId.required(),
+    pig_id: pig_id.required(),
     members,
     repeat
   })
@@ -22,13 +22,13 @@ export const createPayload = {
 
 export const updatePayload = {
   body: Joi.object().keys({
-    startDate,
-    endDate,
+    start_date,
+    end_date,
     budget,
     members,
     repeat,
     status,
-    pigId
+    pig_id
   })
 };
 
