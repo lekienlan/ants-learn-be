@@ -1,4 +1,4 @@
-import type { CategoryType } from '@prisma/client';
+import type { category_type_enum } from '@prisma/client';
 import app from 'app';
 import { StatusCodes } from 'http-status-codes';
 import supertest from 'supertest';
@@ -18,7 +18,7 @@ describe('categories', () => {
             id: 'someCategoryId',
             name: 'TestCategory',
             code: 'test',
-            type: 'expense' as CategoryType,
+            type: 'expense' as category_type_enum,
             style: null,
             user_id: 'someUserId',
             updated_at: new Date().toISOString() as unknown as Date,
@@ -46,7 +46,7 @@ describe('categories', () => {
         id: 'someCategoryId',
         name: 'TestCategory',
         code: 'test',
-        type: 'expense' as CategoryType,
+        type: 'expense' as category_type_enum,
         style: null,
         user_id: 'someUserId',
         updated_at: new Date().toISOString() as unknown as Date,
@@ -92,7 +92,7 @@ describe('categories', () => {
         id: 'someCategoryId',
         name: 'TestCategory',
         code: 'test',
-        type: 'expense' as CategoryType,
+        type: 'expense' as category_type_enum,
         style: null,
         user_id: 'user_id',
         user: { id: 'user_id' },
@@ -110,6 +110,8 @@ describe('categories', () => {
           type: 'expense'
         });
 
+      console.log(response);
+
       // Assert the response status code and data
       expect(response.status).toBe(StatusCodes.CREATED);
       expect(response.body).toHaveProperty('user');
@@ -121,7 +123,7 @@ describe('categories', () => {
       id: 'cateId',
       name: 'updatedCate',
       code: 'test',
-      type: 'income' as CategoryType,
+      type: 'income' as category_type_enum,
       style: null,
       user_id: 'someUserId',
       updated_at: new Date().toISOString() as unknown as Date,
@@ -170,7 +172,7 @@ describe('categories', () => {
       id: 'cateId',
       name: 'updatedCate',
       code: 'test',
-      type: 'income' as CategoryType,
+      type: 'income' as category_type_enum,
       style: null,
       user_id: 'someUserId',
       updated_at: new Date().toISOString() as unknown as Date,

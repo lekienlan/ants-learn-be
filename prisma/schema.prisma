@@ -8,21 +8,21 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum CategoryType {
+enum category_type_enum {
   expense
   income
 }
 
 model categories {
-  id           String         @id @default(uuid())
+  id           String             @id @default(uuid())
   code         String
   name         String
   style        Json?
-  type         CategoryType
+  type         category_type_enum
   user_id      String?
-  user         users?         @relation(fields: [user_id], references: [id])
-  updated_at   DateTime?      @updatedAt
-  created_at   DateTime?      @default(now()) @db.Date
+  user         users?             @relation(fields: [user_id], references: [id])
+  updated_at   DateTime?          @updatedAt
+  created_at   DateTime?          @default(now()) @db.Date
   transactions transactions[]
 }
 
