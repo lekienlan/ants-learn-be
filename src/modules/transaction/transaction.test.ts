@@ -1,11 +1,23 @@
 import app from 'app';
 import { StatusCodes } from 'http-status-codes';
 import { historyService } from 'modules/history';
-import { tokenService } from 'modules/token';
 import { userService } from 'modules/user';
 import supertest from 'supertest';
 import prismaMock from 'test/prismaMock';
 import { token } from 'test/setup';
+
+const periodMockData = {
+  id: '6533f8fcf69468807254b754',
+  budget: 40000,
+  end_date: '2023-10-25T00:00:00.000Z' as unknown as Date,
+  expense: -2730000,
+  members: ['651e94ef813f47c9080f71b7'],
+  repeat: true,
+  start_date: '2023-10-21T00:00:00.000Z' as unknown as Date,
+  updated_at: new Date().toISOString() as unknown as Date,
+  created_at: new Date().toISOString() as unknown as Date,
+  pig_id: '652aa067af2b8ebd0748e306'
+};
 
 describe('transaction', () => {
   const userData = {
@@ -67,7 +79,6 @@ describe('transaction', () => {
           period_id: '123'
         });
 
-      console.log(response);
       // Assert the response status code and data
       expect(response.status).toBe(StatusCodes.OK);
       expect(response.body).toEqual(fakeResp);
@@ -94,12 +105,13 @@ describe('transaction', () => {
 
   describe('POST /v1/transactions', () => {
     it('should create new transaction if data is ok', async () => {
-      const accessToken = jest.spyOn(tokenService, 'getAccessTokenFromRequest');
       const user = jest.spyOn(userService, 'findByAccessToken');
       const history = jest.spyOn(historyService, 'create');
-      accessToken.mockReturnValue('validToken');
+
       user.mockResolvedValue(userData);
       prismaMock.transactions.create.mockResolvedValue(transactionData);
+      prismaMock.periods.findFirst.mockResolvedValue(periodMockData);
+      prismaMock.periods.update.mockResolvedValue(periodMockData);
 
       const response = await supertest(app)
         .post('/v1/transactions')
@@ -125,6 +137,32 @@ describe('transaction', () => {
         transaction_id: expect.anything(),
         user_id: '651e94ef813f47c9080f71b7'
       });
+    });
+
+    it('should update period expense', async () => {
+      const user = jest.spyOn(userService, 'findByAccessToken');
+
+      user.mockResolvedValue(userData);
+      prismaMock.periods.update.mockResolvedValue(periodMockData);
+      prismaMock.periods.findFirst.mockResolvedValue(periodMockData);
+
+      await supertest(app)
+        .post('/v1/transactions')
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          amount: -20000,
+          date: '2023-11-26T16:14:28.258Z' as unknown as Date,
+          period_id: '6533f8fcf69468807254b754',
+          type: 'expense'
+        });
+
+      expect(prismaMock.periods.findFirst).toHaveBeenCalledWith({
+        where: { id: '6533f8fcf69468807254b754' },
+        include: {
+          transactions: true
+        }
+      });
+      expect(prismaMock.periods.update).toHaveBeenCalled();
     });
   });
   describe('GET /v1/transactions/:id', () => {

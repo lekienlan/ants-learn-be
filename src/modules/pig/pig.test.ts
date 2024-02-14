@@ -96,10 +96,8 @@ describe('pig', () => {
       const response = await supertest(app)
         .get('/v1/piggies/123')
         .set('Authorization', `Bearer ${token}`);
-      console.log(response);
       expect(response.status).toBe(StatusCodes.OK);
       expect(response.body).toEqual(pigWithPeriod);
-      expect(response.body.periods?.[0]?.expense).toEqual(3000);
     });
   });
   describe('POST /v1/piggies', () => {

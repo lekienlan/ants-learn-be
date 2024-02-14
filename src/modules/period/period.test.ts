@@ -92,11 +92,14 @@ describe('period', () => {
           pig_id: '652aa067af2b8ebd0748e306'
         });
 
+      console.log(response);
+
       // Assert the response status code and data
       expect(periodSchedule.scheduleTaskForPeriod).toHaveBeenCalled();
       expect(response.status).toBe(StatusCodes.CREATED);
       expect(response.body).toEqual(periodData);
     });
+
     it('should fail to create period if user not found', async () => {
       const response = await supertest(app)
         .post('/v1/periods')

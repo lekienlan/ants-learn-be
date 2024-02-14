@@ -22,7 +22,7 @@ model categories {
   user_id      String?
   user         users?             @relation(fields: [user_id], references: [id])
   updated_at   DateTime?          @updatedAt
-  created_at   DateTime?          @default(now()) @db.Date
+  created_at   DateTime?          @default(now()) @db.Time
   transactions transactions[]
 }
 
@@ -33,20 +33,20 @@ model histories {
   user_id        String
   transaction_id String
   updated_at     DateTime? @updatedAt
-  created_at     DateTime? @default(now()) @db.Date
+  created_at     DateTime? @default(now()) @db.Time
 }
 
 model periods {
   id           String         @id @default(uuid())
   budget       Int
-  end_date     DateTime       @db.Date
+  end_date     DateTime       @db.Time
   expense      Int
   members      String[]
   repeat       Boolean
-  start_date   DateTime       @db.Date
+  start_date   DateTime       @db.Time
   transactions transactions[]
   updated_at   DateTime?      @updatedAt
-  created_at   DateTime?      @default(now()) @db.Date
+  created_at   DateTime?      @default(now()) @db.Time
   pig          pigs?          @relation(fields: [pig_id], references: [id])
   pig_id       String?
 }
@@ -56,7 +56,7 @@ model pigs {
   name       String
   style      Json?
   updated_at DateTime? @updatedAt
-  created_at DateTime? @default(now()) @db.Date
+  created_at DateTime? @default(now()) @db.Time
   periods    periods[]
   user_id    String
   user       users?    @relation(fields: [user_id], references: [id])
@@ -65,11 +65,11 @@ model pigs {
 model tokens {
   id          String    @id @default(uuid())
   blacklisted Boolean
-  expires     DateTime  @db.Date
+  expires     DateTime  @db.Time
   token       String
   user_id     String
   updated_at  DateTime? @updatedAt
-  created_at  DateTime? @default(now()) @db.Date
+  created_at  DateTime? @default(now()) @db.Time
 
   @@index([token], map: "token_1")
 }
@@ -78,7 +78,7 @@ model transactions {
   id          String      @id @default(uuid())
   amount      Int
   currency    String?
-  date        DateTime?   @default(now()) @db.Date
+  date        DateTime?   @default(now()) @db.Time
   note        String?
   period_id   String?
   period      periods?    @relation(fields: [period_id], references: [id])
@@ -88,7 +88,7 @@ model transactions {
   category_id String?
   category    categories? @relation(fields: [category_id], references: [id])
   updated_at  DateTime?   @updatedAt
-  created_at  DateTime?   @default(now()) @db.Date
+  created_at  DateTime?   @default(now()) @db.Time
 }
 
 model users {
@@ -98,7 +98,7 @@ model users {
   last_name    String
   transactions transactions[]
   updated_at   DateTime?      @updatedAt
-  created_at   DateTime?      @default(now()) @db.Date
+  created_at   DateTime?      @default(now()) @db.Time
   pigs         pigs[]
   categories   categories[]
 }

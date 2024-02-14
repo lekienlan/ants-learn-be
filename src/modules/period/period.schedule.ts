@@ -12,6 +12,7 @@ const scheduleTaskForPeriod = (period: periods) => {
   const job = new CronJob(
     cronPattern,
     async () => {
+      console.log('running cron job for period id: ', period?.id);
       period.members.forEach(async (member) => {
         const expenseResp = await transactionService.findMany({
           user_id: member,

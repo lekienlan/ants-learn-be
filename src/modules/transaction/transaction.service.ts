@@ -4,6 +4,7 @@ import ApiError from 'middlewares/error/ApiError';
 import paginate from 'middlewares/paginate';
 import type { PaginateOptions } from 'middlewares/paginate/paginate.interface';
 import { historyService } from 'modules/history';
+import { periodService } from 'modules/period';
 import prisma from 'prisma';
 
 export const findMany = async (
@@ -46,6 +47,15 @@ export const create = async (
       period: true
     }
   });
+
+  if (data?.period_id && data?.type === 'expense') {
+    const currentPeriod = await periodService?.findFirst({
+      id: data?.period_id
+    });
+    await periodService.update(data?.period_id, {
+      expense: (currentPeriod?.expense || 0) + (data?.amount || 0)
+    });
+  }
 
   historyService.create({
     transaction_id: transaction.id,
