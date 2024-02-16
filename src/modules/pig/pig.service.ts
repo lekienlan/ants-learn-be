@@ -67,7 +67,10 @@ export const update = async (
 };
 
 export const remove = async ({ id }: { id: string }) => {
-  const pig = await prisma.pigs.delete({ where: { id } });
+  const pig = await prisma.pigs.update({
+    where: { id },
+    data: { status: 'deleted' }
+  });
 
   if (!pig) throw new ApiError(StatusCodes.NOT_FOUND, 'Pig not found');
 

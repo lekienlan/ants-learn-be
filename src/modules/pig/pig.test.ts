@@ -1,3 +1,4 @@
+import type { status_enum } from '@prisma/client';
 import app from 'app';
 import { StatusCodes } from 'http-status-codes';
 import { userService } from 'modules/user';
@@ -17,6 +18,7 @@ describe('pig', () => {
 
   const pigData = {
     style: null,
+    status: 'waiting' as status_enum,
     id: '652aa067af2b8ebd0748e306',
     name: 'Tiền ăn uống',
     updated_at: '2023-10-14T14:06:31.460Z' as unknown as Date,
@@ -30,7 +32,7 @@ describe('pig', () => {
       updated_at: '2023-10-05T10:50:23.101Z' as unknown as Date,
       created_at: '2023-10-05T10:50:23.101Z' as unknown as Date
     },
-    pigs: [
+    periods: [
       {
         id: '6533f8fcf69468807254b754',
         budget: 40000,
@@ -106,6 +108,7 @@ describe('pig', () => {
 
       const DATA_CREATE = {
         style: null,
+        status: 'waiting' as status_enum,
         id: '6591259da7d876c10808f526',
         name: 'tạo bằng UI',
         updated_at: '2023-12-31T08:26:05.194Z' as unknown as Date,
@@ -205,13 +208,17 @@ describe('pig', () => {
 
   describe('DELETE /v1/piggies/:id', () => {
     it('should remove a pig and return it in the response', async () => {
-      prismaMock.pigs.delete.mockResolvedValue(pigData);
+      prismaMock.pigs.update.mockResolvedValue({
+        ...pigData,
+        status: 'deleted'
+      });
 
       const response = await supertest(app)
         .delete(`/v1/piggies/123`)
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(StatusCodes.OK);
+      expect(response.body.status).toBe('deleted');
     });
     it('should throw error if pig not found', async () => {
       const response = await supertest(app)

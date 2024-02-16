@@ -13,6 +13,14 @@ enum category_type_enum {
   income
 }
 
+enum status_enum {
+  waiting
+  running
+  completed
+  stopped
+  deleted
+}
+
 model categories {
   id           String             @id @default(uuid())
   code         String
@@ -52,14 +60,15 @@ model periods {
 }
 
 model pigs {
-  id         String    @id @default(uuid())
+  id         String      @id @default(uuid())
   name       String
   style      Json?
-  updated_at DateTime? @updatedAt
-  created_at DateTime? @default(now()) @db.Time
+  updated_at DateTime?   @updatedAt
+  created_at DateTime?   @default(now()) @db.Time
   periods    periods[]
   user_id    String
-  user       users?    @relation(fields: [user_id], references: [id])
+  user       users?      @relation(fields: [user_id], references: [id])
+  status     status_enum
 }
 
 model tokens {
