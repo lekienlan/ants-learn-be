@@ -47,7 +47,11 @@ export const create = catchAsync(
 
     if (!user) throw new ApiError(StatusCodes.NOT_FOUND, 'User not found');
 
-    const pig = await pigService.create({ ...req.body, user_id: user?.id });
+    const pig = await pigService.create({
+      ...req.body,
+      status: 'running',
+      user_id: user?.id
+    });
 
     res.status(StatusCodes.CREATED).send(pig);
   }
