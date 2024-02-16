@@ -7,7 +7,6 @@ const envVarsSchema = Joi.object()
       .required()
       .default('staging'),
     PORT: Joi.number().default(3000),
-    MONGODB_URL: Joi.string().required().description('Mongo DB url'),
     ACCESS_TOKEN_SECRET_KEY: Joi.string()
       .required()
       .description('JWT secret key'),
@@ -39,14 +38,6 @@ const configs = {
   env: envVars.NODE_ENV,
   port: envVars.PORT,
   url: envVars.URL,
-  mongoose: {
-    url: envVars.MONGODB_URL,
-    options: {
-      useCreateIndex: true,
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    }
-  },
   jwt: {
     accessSecretKey: envVars.ACCESS_TOKEN_SECRET_KEY,
     accessExpirationDays: envVars.JWT_ACCESS_EXPIRATION_DAYS,
