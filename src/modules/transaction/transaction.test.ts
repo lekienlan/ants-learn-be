@@ -1,3 +1,4 @@
+import type { status_enum, transaction_type_enum } from '@prisma/client';
 import app from 'app';
 import { StatusCodes } from 'http-status-codes';
 import { historyService } from 'modules/history';
@@ -9,6 +10,7 @@ import { token } from 'test/setup';
 const periodMockData = {
   id: '6533f8fcf69468807254b754',
   budget: 40000,
+  status: 'running' as status_enum,
   end_date: '2023-10-25T00:00:00.000Z' as unknown as Date,
   expense: -2730000,
   members: ['651e94ef813f47c9080f71b7'],
@@ -36,7 +38,7 @@ describe('transaction', () => {
     date: '2023-11-26T16:14:28.258Z' as unknown as Date,
     note: null,
     period_id: '65636ee25e81c86731cf906f',
-    type: 'budget',
+    type: 'budget' as transaction_type_enum,
     user_id: '651e94ef813f47c9080f71b7',
     category_id: null,
     updated_at: '2023-11-26T16:14:28.258Z' as unknown as Date,
@@ -54,7 +56,7 @@ describe('transaction', () => {
   describe('GET /v1/transactions', () => {
     it('should return list of transactions if user is ok', async () => {
       const fakeResp = {
-        totalAmount: 10000,
+        total_amount: 10000,
         limit: 10,
         page: 1,
         results: [transactionData],
@@ -102,6 +104,40 @@ describe('transaction', () => {
       expect(response.status).toBe(StatusCodes.NOT_FOUND);
     });
   });
+  describe('GET /v1/transactions/subtract-transaction-types', () => {
+    it('should return correct amount if data is ok', async () => {
+      const user = jest.spyOn(userService, 'findByAccessToken');
+      user.mockResolvedValue(userData);
+      prismaMock.$queryRawUnsafe.mockResolvedValue([{ total_amount: 190000 }]);
+
+      // Use supertest to send a request to the create endpoint
+      const response = await supertest(app)
+        .get('/v1/transactions/subtract-transaction-types')
+        .set('Authorization', `Bearer ${token}`)
+        .query({
+          type: 'income,budget'
+        });
+
+      // Assert the response status code and data
+      expect(response.status).toBe(StatusCodes.OK);
+      expect(response.body).toEqual({ total_amount: 190000 });
+    });
+    it('should throw error if type param is not correct', async () => {
+      const user = jest.spyOn(userService, 'findByAccessToken');
+      user.mockResolvedValue(userData);
+
+      // Use supertest to send a request to the create endpoint
+      const response = await supertest(app)
+        .get('/v1/transactions/subtract-transaction-types')
+        .set('Authorization', `Bearer ${token}`)
+        .query({
+          type: ['income', 'budget']
+        });
+
+      // Assert the response status code and data
+      expect(response.status).toBe(StatusCodes.BAD_REQUEST);
+    });
+  });
 
   describe('POST /v1/transactions', () => {
     it('should create new transaction if data is ok', async () => {
@@ -117,7 +153,8 @@ describe('transaction', () => {
         .post('/v1/transactions')
         .set('Authorization', `Bearer ${token}`)
         .send({
-          amount: -311000,
+          amount: 311000,
+          type: 'expense',
           date: '2023-11-26T16:14:28.258Z' as unknown as Date,
           period_id: '65636ee25e81c86731cf906f'
         });

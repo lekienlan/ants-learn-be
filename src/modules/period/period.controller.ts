@@ -40,12 +40,13 @@ export const create = catchAsync(
 
     const period = await periodService.create({
       ...req.body,
+      status: 'running',
       members: [user?.id, ...((req.body.members || []) as string[])],
       repeat: req.body.repeat ?? true,
       expense: 0
     });
 
-    transactionService.create({
+    await transactionService.create({
       period_id: period.id,
       amount: period.budget || 0,
       type: 'budget',

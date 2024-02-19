@@ -1,6 +1,7 @@
+import type { transaction_type_enum } from '@prisma/client';
 import prismaMock from 'test/prismaMock';
 
-import paginate, { paginateFilter } from './paginate';
+import paginate, { paginateFilter, paginateFilterSql } from './paginate';
 
 describe('paginateFilter', () => {
   it('should format filter with array', () => {
@@ -97,7 +98,7 @@ describe('paginate', () => {
     date: new Date('2023-10-21T00:00:00.000Z'),
     note: 'ăn cơm',
     period_id: '6533f8fcf69468807254b754',
-    type: 'expense',
+    type: 'expense' as transaction_type_enum,
     user_id: '651e94ef813f47c9080f71b7',
     category_id: '65256e69c8511c542ee97fa5',
     updated_at: new Date('2023-10-21T00:00:00.000Z'),
@@ -176,4 +177,42 @@ describe('paginate', () => {
       total_results: 2
     });
   });
+});
+
+describe('paginateFilterSql', () => {
+  it('should format filter with array', () => {
+    const filter = {
+      name: 'John,Doe',
+      age: [25, 30]
+    };
+
+    const formattedFilter = paginateFilterSql(filter);
+
+    expect(formattedFilter).toBe(
+      "name IN ('John','Doe') AND age BETWEEN 25 AND 30"
+    );
+  });
+
+  it('should format filter with empty array', () => {
+    const filter = {
+      name: '',
+      age: ''
+    };
+
+    const formattedFilter = paginateFilterSql(filter);
+
+    expect(formattedFilter).toBe('');
+  });
+
+  it('should format filter with comma', () => {
+    const filter = {
+      name: 'Lan,Phuong'
+    };
+
+    const formattedFilter = paginateFilterSql(filter);
+
+    expect(formattedFilter).toBe("name IN ('Lan','Phuong')");
+  });
+
+  // Add more test cases as needed
 });

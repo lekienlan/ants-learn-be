@@ -23,6 +23,14 @@ router
   );
 
 router
+  .route('/subtract-transaction-types')
+  .get(
+    auth,
+    validate(transactionValidation.subtractParams),
+    transactionController.subtractTransactionTypes
+  );
+
+router
   .route('/:id')
   .get(auth, transactionController.findOne)
   .put(

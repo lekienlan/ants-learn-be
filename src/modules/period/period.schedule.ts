@@ -3,6 +3,8 @@ import { CronJob } from 'cron';
 import { transactionService } from 'modules/transaction';
 import prisma from 'prisma';
 
+import { periodService } from '.';
+
 const scheduleTaskForPeriod = (period: periods) => {
   // Convert period.end_date to a cron pattern
   // Example: Assuming you want to run the job every day at the time specified by end_date
@@ -20,9 +22,13 @@ const scheduleTaskForPeriod = (period: periods) => {
           period_id: period.id
         });
 
-        await transactionService.create({
+        periodService.update(period.id, {
+          status: 'completed'
+        });
+
+        transactionService.create({
           type: 'income',
-          amount: period.budget + (expenseResp.totalAmount || 0),
+          amount: period.budget - (expenseResp.total_amount || 0),
           user_id: member
         });
       });

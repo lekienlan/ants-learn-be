@@ -3,6 +3,39 @@ import { convertStringToType } from 'utils';
 
 import type { PaginateOptions, QueryResults } from './paginate.interface';
 
+export const paginateFilterSql = (filter: Record<string, any>): string => {
+  const conditions: string[] = [];
+
+  Object.keys(filter).forEach((key) => {
+    if (!filter[key]) return;
+    // if filter is a 2 items array
+    if (Array.isArray(filter[key]) && filter[key].length === 2) {
+      const [gte, lte] = filter[key];
+
+      if (gte && lte) {
+        conditions.push(`${key} BETWEEN ${gte} AND ${lte}`);
+      } else if (gte) {
+        conditions.push(`${key} >= ${gte}`);
+      }
+      // Add other conditions as needed
+    } else {
+      conditions.push(
+        `${key} IN (${filter[key]
+          .split(',')
+          .map((value: any) => {
+            return `'${value}'`;
+          })
+          .join(',')})`
+      );
+    }
+  });
+
+  if (conditions.length > 0) {
+    return `${conditions.join(' AND ')}`;
+  }
+  return '';
+};
+
 export const paginateFilter = (filter: Record<string, any>) => {
   const formattedFilter = omit(filter, ['limit', 'sort_by', 'page']);
   Object.keys(formattedFilter).forEach((key) => {

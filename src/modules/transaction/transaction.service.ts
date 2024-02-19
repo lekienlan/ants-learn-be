@@ -2,6 +2,7 @@ import type { Prisma, transactions } from '@prisma/client';
 import { StatusCodes } from 'http-status-codes';
 import ApiError from 'middlewares/error/ApiError';
 import paginate from 'middlewares/paginate';
+import { paginateFilterSql } from 'middlewares/paginate/paginate';
 import type { PaginateOptions } from 'middlewares/paginate/paginate.interface';
 import { historyService } from 'modules/history';
 import { periodService } from 'modules/period';
@@ -24,7 +25,29 @@ export const findMany = async (
     where: params
   });
 
-  return { ...list, totalAmount: total._sum.amount };
+  return { ...list, total_amount: total?._sum?.amount };
+};
+
+export const subtractTransactionTypes = async (
+  params: PaginateOptions & PaginateOptions & Prisma.transactionsWhereInput
+) => {
+  const rawQuery = `
+  SELECT SUM(total_amount) AS total_amount
+FROM (
+SELECT *,
+  CASE
+    WHEN type = '${(params?.type as string)?.split(',')?.[1]}' THEN -amount
+    ELSE amount
+  END AS total_amount
+FROM transactions
+WHERE ${paginateFilterSql(params)}
+) AS subquery;
+`;
+
+  const total =
+    await prisma.$queryRawUnsafe<{ total_amount: number }[]>(rawQuery);
+
+  return { total_amount: Number(total?.[0]?.total_amount?.toString()) };
 };
 
 export const findOne = async (where: Prisma.transactionsWhereInput) => {

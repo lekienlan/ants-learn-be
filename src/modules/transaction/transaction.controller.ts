@@ -27,6 +27,22 @@ export const findMany = catchAsync(async (req: Request, res: Response) => {
 
   res.send(transactions);
 });
+export const subtractTransactionTypes = catchAsync(
+  async (req: Request, res: Response) => {
+    const accessToken = tokenService.getAccessTokenFromRequest(req);
+
+    const user = await userService.findByAccessToken(accessToken);
+
+    if (!user) throw new ApiError(StatusCodes.NOT_FOUND, 'User not found');
+
+    const transactions = await transactionService.subtractTransactionTypes({
+      user_id: user.id,
+      ...req.query
+    });
+
+    res.send(transactions);
+  }
+);
 
 export const findOne = catchAsync(
   async (req: Request<{ id: string }>, res: Response) => {
@@ -59,7 +75,7 @@ export const create = catchAsync(
       date,
       note,
       period_id,
-      type: type || (amount > 0 ? 'income' : 'expense')
+      type
     });
 
     res.status(StatusCodes.CREATED).send(transaction);

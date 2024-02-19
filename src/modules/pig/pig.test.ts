@@ -108,7 +108,7 @@ describe('pig', () => {
 
       const DATA_CREATE = {
         style: null,
-        status: 'waiting' as status_enum,
+        status: 'running' as status_enum,
         id: '6591259da7d876c10808f526',
         name: 'tạo bằng UI',
         updated_at: '2023-12-31T08:26:05.194Z' as unknown as Date,

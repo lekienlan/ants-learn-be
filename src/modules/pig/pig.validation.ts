@@ -23,6 +23,7 @@ export const updatePayload = basePayload.body.keys({
 
 export const params = {
   query: Joi.object().keys({
+    status: Joi.string(),
     ...joiPaginate
   })
 };

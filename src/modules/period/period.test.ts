@@ -1,3 +1,4 @@
+import type { status_enum, transaction_type_enum } from '@prisma/client';
 import app from 'app';
 import { StatusCodes } from 'http-status-codes';
 import supertest from 'supertest';
@@ -18,6 +19,7 @@ jest.mock('./period.schedule', () => ({
 describe('period', () => {
   const periodData = {
     id: '6533f8fcf69468807254b754',
+    status: 'running' as status_enum,
     budget: 40000,
     end_date: '2023-10-25T00:00:00.000Z' as unknown as Date,
     expense: -2730000,
@@ -36,7 +38,7 @@ describe('period', () => {
     date: '2023-10-21T00:00:00.000Z' as unknown as Date,
     note: 'ăn cơm',
     period_id: '6533f8fcf69468807254b754',
-    type: 'expense',
+    type: 'expense' as transaction_type_enum,
     user_id: '651e94ef813f47c9080f71b7',
     category_id: '65256e69c8511c542ee97fa5',
     updated_at: '2023-10-22T17:19:51.834Z' as unknown as Date,
