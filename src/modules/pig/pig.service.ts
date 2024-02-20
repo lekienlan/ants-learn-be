@@ -3,6 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import ApiError from 'middlewares/error/ApiError';
 import paginate from 'middlewares/paginate';
 import type { PaginateOptions } from 'middlewares/paginate/paginate.interface';
+import { periodService } from 'modules/period';
 import prisma from 'prisma';
 
 export const findMany = async (
@@ -71,6 +72,13 @@ export const remove = async ({ id }: { id: string }) => {
     where: { id },
     data: { status: 'deleted' }
   });
+  const period = await prisma.periods.findFirst({
+    where: { pig_id: id, status: { in: ['running'] } }
+  });
+
+  if (period) {
+    await periodService.remove({ id: period?.id });
+  }
 
   if (!pig) throw new ApiError(StatusCodes.NOT_FOUND, 'Pig not found');
 

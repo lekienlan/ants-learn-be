@@ -2,7 +2,10 @@ import type { Prisma, transactions } from '@prisma/client';
 import { StatusCodes } from 'http-status-codes';
 import ApiError from 'middlewares/error/ApiError';
 import paginate from 'middlewares/paginate';
-import { paginateFilterSql } from 'middlewares/paginate/paginate';
+import {
+  paginateFilter,
+  paginateFilterSql
+} from 'middlewares/paginate/paginate';
 import type { PaginateOptions } from 'middlewares/paginate/paginate.interface';
 import { historyService } from 'modules/history';
 import { periodService } from 'modules/period';
@@ -22,7 +25,7 @@ export const findMany = async (
     _sum: {
       amount: true
     },
-    where: params
+    where: paginateFilter(params)
   });
 
   return { ...list, total_amount: total?._sum?.amount };

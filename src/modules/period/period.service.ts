@@ -3,6 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import ApiError from 'middlewares/error/ApiError';
 import paginate from 'middlewares/paginate';
 import type { PaginateOptions } from 'middlewares/paginate/paginate.interface';
+import { transactionService } from 'modules/transaction';
 import prisma from 'prisma';
 
 import { periodSchedule } from '.';
@@ -50,9 +51,22 @@ export const update = async (
 };
 
 export const remove = async ({ id }: { id: string }) => {
-  const period = await prisma.periods.delete({ where: { id } });
-
+  const period = await prisma.periods.update({
+    where: { id },
+    data: { status: 'deleted' }
+  });
   if (!period) throw new ApiError(StatusCodes.NOT_FOUND, 'Period not found');
+
+  await Promise.all(
+    period.members.map(async (member) => {
+      await transactionService.create({
+        type: 'income',
+        amount: period.budget,
+        user_id: member
+      });
+    })
+  );
+  periodSchedule.cancelScheduledTaskForPeriod(id);
 
   return period;
 };

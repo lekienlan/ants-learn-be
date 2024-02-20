@@ -62,7 +62,7 @@ model periods {
   updated_at   DateTime?      @updatedAt
   created_at   DateTime?      @default(now()) @db.Time
   pig          pigs?          @relation(fields: [pig_id], references: [id])
-  pig_id       String?
+  pig_id       String
   status       status_enum
 }
 

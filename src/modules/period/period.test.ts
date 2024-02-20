@@ -13,7 +13,8 @@ import {
 
 jest.mock('./period.schedule', () => ({
   scheduleTaskForPeriod: jest.fn(),
-  restartPeriodScheduledTasks: jest.fn()
+  restartPeriodScheduledTasks: jest.fn(),
+  cancelScheduledTaskForPeriod: jest.fn()
 }));
 
 describe('period', () => {
@@ -213,13 +214,20 @@ describe('period', () => {
 
   describe('DELETE /v1/periods/:id', () => {
     it('should remove a period and return it in the response', async () => {
-      prismaMock.periods.delete.mockResolvedValue(periodData);
+      prismaMock.periods.update.mockResolvedValue({
+        ...periodData,
+        status: 'deleted'
+      });
+      prismaMock.transactions.create.mockResolvedValue(transactionData);
 
       const response = await supertest(app)
         .delete(`/v1/periods/123`)
         .set('Authorization', `Bearer ${token}`);
 
+      console.log(response);
       expect(response.status).toBe(StatusCodes.OK);
+      expect(prismaMock.transactions.create).toHaveBeenCalled();
+      expect(periodSchedule.cancelScheduledTaskForPeriod).toHaveBeenCalled();
     });
     it('should throw error if period not found', async () => {
       const response = await supertest(app)

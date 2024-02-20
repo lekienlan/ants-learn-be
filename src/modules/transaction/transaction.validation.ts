@@ -5,7 +5,7 @@ const amountSchema = Joi.number();
 const dateSchema = Joi.date();
 const noteSchema = Joi.string().max(50);
 const categoryIdSchema = Joi.string();
-const typeSchema = Joi.string().valid('income', 'expense', 'budget');
+const typeSchema = Joi.string();
 const periodIdSchema = Joi.string();
 
 export const createPayload = {
