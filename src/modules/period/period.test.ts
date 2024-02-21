@@ -224,7 +224,6 @@ describe('period', () => {
         .delete(`/v1/periods/123`)
         .set('Authorization', `Bearer ${token}`);
 
-      console.log(response);
       expect(response.status).toBe(StatusCodes.OK);
       expect(prismaMock.transactions.create).toHaveBeenCalled();
       expect(periodSchedule.cancelScheduledTaskForPeriod).toHaveBeenCalled();

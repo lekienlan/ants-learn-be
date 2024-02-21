@@ -37,6 +37,9 @@ export const findFirst = async ({ id }: { id: string }) => {
               type: 'expense'
             }
           }
+        },
+        orderBy: {
+          created_at: 'asc'
         }
       }
     }

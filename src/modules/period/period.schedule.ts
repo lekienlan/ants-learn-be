@@ -1,7 +1,7 @@
 import type { periods } from '@prisma/client';
 import { CronJob } from 'cron';
-import { pigService } from 'modules/pig';
 import { transactionService } from 'modules/transaction';
+import moment from 'moment';
 import prisma from 'prisma';
 
 import { periodService } from '.';
@@ -17,36 +17,55 @@ const scheduleTaskForPeriod = (period: periods) => {
   const job = new CronJob(
     cronPattern,
     async () => {
-      console.log('running cron job for period id: ', period?.id);
       period.members.forEach(async (member) => {
-        const expenseResp = await transactionService.findMany({
-          user_id: member,
-          type: 'expense',
-          period_id: period.id
-        });
-
         periodService.update(period.id, {
           status: 'completed'
         });
-
-        pigService.update(period?.pig_id, {
-          status: 'stopped'
-        });
-
-        transactionService.create({
-          type: 'income',
-          amount: period.budget - (expenseResp.total_amount || 0),
-          user_id: member
-        });
+        if (!period.repeat) {
+          const memberExpense = await transactionService.findMany({
+            user_id: member,
+            type: 'expense',
+            period_id: period.id
+          });
+          transactionService.create({
+            type: 'income',
+            amount: period.budget - (memberExpense.total_amount || 0),
+            user_id: member
+          });
+        }
       });
-      // Additional task logic here
+
+      const diff = moment(period.end_date).diff(
+        moment(period.start_date),
+        'minute'
+      );
+      const newEndDate = moment(period.end_date)
+        .add(diff, 'minute')
+        ?.toISOString();
+
+      const expenseTotal = await transactionService.findMany({
+        type: 'expense',
+        period_id: period.id
+      });
+
+      await periodService.create({
+        members: period?.members,
+        budget: period.budget - (expenseTotal?.total_amount || 0),
+        pig_id: period?.pig_id,
+        repeat: true,
+        expense: 0,
+        id: undefined,
+        status: 'running',
+        start_date: period.end_date,
+        end_date: newEndDate
+      });
     },
     null,
     true
   );
 
   job.start();
-  console.log('running cron job for period id: ', period?.id);
+  console.log('Running cron job for period id: ', period?.id);
   scheduledJobs[period.id] = job;
 };
 
