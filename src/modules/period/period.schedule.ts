@@ -17,11 +17,11 @@ const scheduleTaskForPeriod = (period: periods) => {
   const job = new CronJob(
     cronPattern,
     async () => {
-      period.members.forEach(async (member) => {
-        periodService.update(period.id, {
-          status: 'completed'
-        });
-        if (!period.repeat) {
+      periodService.update(period.id, {
+        status: 'completed'
+      });
+      if (!period.repeat) {
+        period.members.forEach(async (member) => {
           const memberExpense = await transactionService.findMany({
             user_id: member,
             type: 'expense',
@@ -32,8 +32,9 @@ const scheduleTaskForPeriod = (period: periods) => {
             amount: period.budget - (memberExpense.total_amount || 0),
             user_id: member
           });
-        }
-      });
+        });
+        return;
+      }
 
       const diff = moment(period.end_date).diff(
         moment(period.start_date),

@@ -2,15 +2,13 @@ import type { Prisma } from '@prisma/client';
 import type { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import ApiError from 'middlewares/error/ApiError';
-import { historyService } from 'modules/history';
 import { tokenService } from 'modules/token';
 import { transactionService } from 'modules/transaction';
 import { userService } from 'modules/user';
-import { Error } from 'mongoose';
 import type prisma from 'prisma';
 import catchAsync from 'utils/catchAsync';
 
-import { periodService } from '.';
+import { periodSchedule, periodService } from '.';
 
 export const findMany = catchAsync(async (req: Request, res: Response) => {
   const periods = await periodService.findMany(req.query);
@@ -42,7 +40,6 @@ export const create = catchAsync(
       ...req.body,
       status: 'running',
       members: [user?.id, ...((req.body.members || []) as string[])],
-      repeat: req.body.repeat ?? true,
       expense: 0
     });
 
@@ -70,34 +67,8 @@ export const update = catchAsync(
 
     if (!period) throw new ApiError(StatusCodes.NOT_FOUND, 'Period not found');
 
-    if (period.budget) {
-      const currentTransaction = await transactionService.findOne({
-        period_id: period?.id,
-        type: 'budget'
-      });
-
-      if (!currentTransaction) throw new Error('Transaction not found');
-
-      const updatedTransaction = await transactionService.update(
-        currentTransaction.id,
-        {
-          amount: period.budget * -1
-        }
-      );
-
-      await historyService.create({
-        transaction_id: updatedTransaction.id,
-        state: 'modified',
-        user_id: updatedTransaction.user_id,
-        data: {
-          amount: updatedTransaction.amount,
-          category_id: updatedTransaction.category_id,
-          currency: updatedTransaction.currency,
-          date: updatedTransaction.date,
-          note: updatedTransaction.note,
-          period_id: updatedTransaction.period_id
-        }
-      });
+    if (!period.repeat) {
+      periodSchedule.cancelScheduledTaskForPeriod(period.id);
     }
 
     res.send(period);

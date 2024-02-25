@@ -51,22 +51,25 @@ export const update = async (
 };
 
 export const remove = async ({ id }: { id: string }) => {
-  const period = await prisma.periods.update({
+  const period = await prisma.periods.findFirst({ where: { id } });
+  if (!period) throw new ApiError(StatusCodes.NOT_FOUND, 'Period not found');
+  if (period.status === 'running') {
+    await Promise.all(
+      period.members.map(async (member) => {
+        await transactionService.create({
+          type: 'income',
+          amount: period.budget,
+          user_id: member
+        });
+      })
+    );
+
+    periodSchedule.cancelScheduledTaskForPeriod(id);
+  }
+  const updatedPeriod = await prisma.periods.update({
     where: { id },
     data: { status: 'deleted' }
   });
-  if (!period) throw new ApiError(StatusCodes.NOT_FOUND, 'Period not found');
 
-  await Promise.all(
-    period.members.map(async (member) => {
-      await transactionService.create({
-        type: 'income',
-        amount: period.budget,
-        user_id: member
-      });
-    })
-  );
-  periodSchedule.cancelScheduledTaskForPeriod(id);
-
-  return period;
+  return updatedPeriod;
 };
