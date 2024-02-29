@@ -1,3 +1,4 @@
+import type { history_state_enum, status_enum } from '@prisma/client';
 import app from 'app';
 import { StatusCodes } from 'http-status-codes';
 import { tokenService } from 'modules/token';
@@ -15,13 +16,13 @@ describe('histories', () => {
       amount: -200000,
       category_id: null,
       currency: null,
-
+      status: 'active' as status_enum,
       date: null,
       note: null,
       period_id: '654d0696d19cdc3753bb2805'
     },
     id: '654d0699d19cdc3753bb2807',
-    state: 'modified',
+    state: 'modified' as history_state_enum,
     user_id: '651e94ef813f47c9080f71b7',
     transaction_id: '654d0697d19cdc3753bb2806',
     updated_at: '2023-11-09T16:19:37.059Z' as unknown as Date,

@@ -20,7 +20,7 @@ jest.mock('./period.schedule', () => ({
 describe('period', () => {
   const periodData = {
     id: '6533f8fcf69468807254b754',
-    status: 'running' as status_enum,
+    status: 'active' as status_enum,
     budget: 40000,
     end_date: '2023-10-25T00:00:00.000Z' as unknown as Date,
     expense: -2730000,
@@ -36,6 +36,7 @@ describe('period', () => {
     id: '653559bad21c4b196cf3a4c6',
     amount: -40000,
     currency: null,
+    status: 'active' as status_enum,
     date: '2023-10-21T00:00:00.000Z' as unknown as Date,
     note: 'ăn cơm',
     period_id: '6533f8fcf69468807254b754',
@@ -214,7 +215,7 @@ describe('period', () => {
     it('should remove a period and return it in the response', async () => {
       prismaMock.periods.findFirst.mockResolvedValue({
         ...periodData,
-        status: 'completed'
+        status: 'inactive'
       });
       prismaMock.periods.update.mockResolvedValue({
         ...periodData,
@@ -235,10 +236,10 @@ describe('period', () => {
       expect(response.body.message).toBe('Period not found');
       expect(response.status).toBe(StatusCodes.NOT_FOUND);
     });
-    it('should create income from budget if status is running', async () => {
+    it('should create income from budget if status is active', async () => {
       prismaMock.periods.findFirst.mockResolvedValue({
         ...periodData,
-        status: 'running'
+        status: 'active'
       });
       prismaMock.periods.update.mockResolvedValue({
         ...periodData,

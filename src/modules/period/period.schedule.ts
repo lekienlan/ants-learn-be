@@ -10,7 +10,7 @@ const scheduledJobs: Record<string, CronJob> = {};
 
 const runPeriodJob = async (period: periods) => {
   periodService.update(period.id, {
-    status: 'completed'
+    status: 'inactive'
   });
   if (!period.repeat) {
     period.members.forEach(async (member) => {
@@ -46,7 +46,7 @@ const runPeriodJob = async (period: periods) => {
     repeat: true,
     expense: 0,
     id: undefined,
-    status: 'running',
+    status: 'active',
     start_date: period.end_date,
     end_date: newEndDate
   });
@@ -57,6 +57,8 @@ const scheduleTaskForPeriod = (period: periods) => {
   // Example: Assuming you want to run the job every day at the time specified by end_date
   const endDate = new Date(period.end_date);
   const currentDate = new Date();
+
+  console.log(endDate <= currentDate, endDate, currentDate);
 
   // Check if the end date has already passed
   if (endDate <= currentDate) {
@@ -92,7 +94,7 @@ export const cancelScheduledTaskForPeriod = (period_id: string) => {
 
 const restartPeriodScheduledTasks = async () => {
   const periods = await prisma.periods.findMany({
-    where: { status: { in: ['running'] } }
+    where: { status: { in: ['active'] } }
   }); // Fetch all periods from the database
   periods?.forEach(scheduleTaskForPeriod);
 };

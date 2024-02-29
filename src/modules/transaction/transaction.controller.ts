@@ -2,7 +2,6 @@ import type { Prisma } from '@prisma/client';
 import type { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import ApiError from 'middlewares/error/ApiError';
-import { historyService } from 'modules/history';
 import { tokenService } from 'modules/token';
 import { userService } from 'modules/user';
 import type prisma from 'prisma';
@@ -102,20 +101,6 @@ export const update = catchAsync(
       type
     });
 
-    await historyService.create({
-      transaction_id: transaction.id,
-      state: 'modified',
-      user_id: transaction.user_id,
-      data: {
-        amount: transaction.amount,
-        category_id: transaction.category_id,
-        currency: transaction.currency,
-        date: transaction.date,
-        note: transaction.note,
-        period_id: transaction.period_id
-      }
-    });
-
     res.send(transaction);
   }
 );
@@ -124,20 +109,6 @@ export const remove = catchAsync(
   async (req: Request<{ id: string }>, res: Response) => {
     const transaction = await transactionService.remove({
       id: req.params.id
-    });
-
-    await historyService.create({
-      transaction_id: transaction.id,
-      state: 'deleted',
-      user_id: transaction.user_id,
-      data: {
-        amount: transaction.amount,
-        category_id: transaction.category_id,
-        currency: transaction.currency,
-        date: transaction.date,
-        note: transaction.note,
-        period_id: transaction.period_id
-      }
     });
 
     res.send(transaction);

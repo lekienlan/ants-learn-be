@@ -10,7 +10,7 @@ import { token } from 'test/setup';
 const periodMockData = {
   id: '6533f8fcf69468807254b754',
   budget: 40000,
-  status: 'running' as status_enum,
+  status: 'active' as status_enum,
   end_date: '2023-10-25T00:00:00.000Z' as unknown as Date,
   expense: -2730000,
   members: ['651e94ef813f47c9080f71b7'],
@@ -35,6 +35,7 @@ describe('transaction', () => {
     id: '65636ee45e81c86731cf9070',
     amount: -311000,
     currency: null,
+    status: 'active' as status_enum,
     date: '2023-11-26T16:14:28.258Z' as unknown as Date,
     note: null,
     period_id: '65636ee25e81c86731cf906f',
@@ -264,10 +265,25 @@ describe('transaction', () => {
   describe('DELETE /v1/transactions/:id', () => {
     it('should delete transaction if data is ok', async () => {
       prismaMock.transactions.delete.mockResolvedValue(transactionData);
+      const history = jest.spyOn(historyService, 'create');
 
       const response = await supertest(app)
         .delete('/v1/transactions/123')
         .set('Authorization', `Bearer ${token}`);
+
+      expect(history).toHaveBeenCalledWith({
+        data: {
+          amount: -311000,
+          category_id: null,
+          currency: null,
+          date: '2023-11-26T16:14:28.258Z',
+          note: null,
+          period_id: '65636ee25e81c86731cf906f'
+        },
+        state: 'deleted',
+        transaction_id: expect.anything(),
+        user_id: '651e94ef813f47c9080f71b7'
+      });
 
       expect(response.status).toEqual(StatusCodes.OK);
     });

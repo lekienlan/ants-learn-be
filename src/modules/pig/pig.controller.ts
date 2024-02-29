@@ -49,7 +49,7 @@ export const create = catchAsync(
 
     const pig = await pigService.create({
       ...req.body,
-      status: 'running',
+      status: 'active',
       user_id: user?.id
     });
 

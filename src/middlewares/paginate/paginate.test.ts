@@ -1,4 +1,4 @@
-import type { transaction_type_enum } from '@prisma/client';
+import type { status_enum, transaction_type_enum } from '@prisma/client';
 import prismaMock from 'test/prismaMock';
 
 import paginate, { paginateFilter, paginateFilterSql } from './paginate';
@@ -94,6 +94,7 @@ describe('paginate', () => {
   const fakeTransaction = {
     id: '653559bad21c4b196cf3a4c6',
     amount: -10000,
+    status: 'active' as status_enum,
     currency: null,
     date: new Date('2023-10-21T00:00:00.000Z'),
     note: 'ăn cơm',

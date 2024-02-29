@@ -76,7 +76,7 @@ export const remove = async ({ id }: { id: string }) => {
     data: { status: 'deleted' }
   });
   const period = await prisma.periods.findFirst({
-    where: { pig_id: id, status: { in: ['running'] } }
+    where: { pig_id: id, status: { in: ['active'] } }
   });
 
   if (period) {

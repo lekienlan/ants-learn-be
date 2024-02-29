@@ -53,7 +53,7 @@ export const update = async (
 export const remove = async ({ id }: { id: string }) => {
   const period = await prisma.periods.findFirst({ where: { id } });
   if (!period) throw new ApiError(StatusCodes.NOT_FOUND, 'Period not found');
-  if (period.status === 'running') {
+  if (period.status === 'active') {
     await Promise.all(
       period.members.map(async (member) => {
         await transactionService.create({

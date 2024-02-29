@@ -112,11 +112,38 @@ export const update = async (
   if (!transaction)
     throw new ApiError(StatusCodes.NOT_FOUND, 'Transaction not found');
 
+  historyService.create({
+    transaction_id: transaction.id,
+    state: 'modified',
+    user_id: transaction.user_id,
+    data: {
+      amount: transaction.amount,
+      category_id: transaction.category_id,
+      currency: transaction.currency,
+      date: transaction.date,
+      note: transaction.note,
+      period_id: transaction.period_id
+    }
+  });
+
   return transaction;
 };
 
 export const remove = async ({ id }: { id: string }) => {
   const transaction = await prisma.transactions.delete({ where: { id } });
+  historyService.create({
+    transaction_id: transaction.id,
+    state: 'deleted',
+    user_id: transaction.user_id,
+    data: {
+      amount: transaction.amount,
+      category_id: transaction.category_id,
+      currency: transaction.currency,
+      date: transaction.date,
+      note: transaction.note,
+      period_id: transaction.period_id
+    }
+  });
 
   if (!transaction)
     throw new ApiError(StatusCodes.NOT_FOUND, 'Transaction not found');

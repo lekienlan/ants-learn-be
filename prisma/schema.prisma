@@ -14,10 +14,8 @@ enum category_type_enum {
 }
 
 enum status_enum {
-  waiting
-  running
-  completed
-  stopped
+  active
+  inactive
   deleted
 }
 
@@ -25,6 +23,12 @@ enum transaction_type_enum {
   income
   budget
   expense
+}
+
+enum history_state_enum {
+  original
+  modified
+  deleted
 }
 
 model categories {
@@ -36,34 +40,35 @@ model categories {
   user_id      String?
   user         users?             @relation(fields: [user_id], references: [id])
   updated_at   DateTime?          @updatedAt
-  created_at   DateTime?          @default(now()) @db.Time
+  created_at   DateTime?          @default(now())
   transactions transactions[]
 }
 
 model histories {
-  id             String    @id @default(uuid())
+  id             String             @id @default(uuid())
   data           Json
-  state          String
+  state          history_state_enum
   user_id        String
-  transaction_id String
-  updated_at     DateTime? @updatedAt
-  created_at     DateTime? @default(now()) @db.Time
+  transaction_id String?
+  updated_at     DateTime?          @updatedAt
+  created_at     DateTime?          @default(now())
+  transactions   transactions?      @relation(fields: [transaction_id], references: [id])
 }
 
 model periods {
   id           String         @id @default(uuid())
   budget       Int
-  end_date     DateTime       @db.Time
+  end_date     DateTime
   expense      Int
   members      String[]
   repeat       Boolean
-  start_date   DateTime       @db.Time
+  start_date   DateTime
   transactions transactions[]
   updated_at   DateTime?      @updatedAt
-  created_at   DateTime?      @default(now()) @db.Time
+  created_at   DateTime?      @default(now())
   pig          pigs?          @relation(fields: [pig_id], references: [id])
   pig_id       String
-  status       status_enum
+  status       status_enum    @default(active)
 }
 
 model pigs {
@@ -71,21 +76,21 @@ model pigs {
   name       String
   style      Json?
   updated_at DateTime?   @updatedAt
-  created_at DateTime?   @default(now()) @db.Time
+  created_at DateTime?   @default(now())
   periods    periods[]
   user_id    String
   user       users?      @relation(fields: [user_id], references: [id])
-  status     status_enum
+  status     status_enum @default(active)
 }
 
 model tokens {
   id          String    @id @default(uuid())
   blacklisted Boolean
-  expires     DateTime  @db.Time
+  expires     DateTime
   token       String
   user_id     String
   updated_at  DateTime? @updatedAt
-  created_at  DateTime? @default(now()) @db.Time
+  created_at  DateTime? @default(now())
 
   @@index([token], map: "token_1")
 }
@@ -94,7 +99,7 @@ model transactions {
   id          String                @id @default(uuid())
   amount      Int
   currency    String?
-  date        DateTime?             @default(now()) @db.Time
+  date        DateTime?             @default(now())
   note        String?
   period_id   String?
   period      periods?              @relation(fields: [period_id], references: [id])
@@ -104,7 +109,9 @@ model transactions {
   category_id String?
   category    categories?           @relation(fields: [category_id], references: [id])
   updated_at  DateTime?             @updatedAt
-  created_at  DateTime?             @default(now()) @db.Time
+  created_at  DateTime?             @default(now())
+  histories   histories[]
+  status      status_enum           @default(active)
 }
 
 model users {
@@ -114,7 +121,7 @@ model users {
   last_name    String
   transactions transactions[]
   updated_at   DateTime?      @updatedAt
-  created_at   DateTime?      @default(now()) @db.Time
+  created_at   DateTime?      @default(now())
   pigs         pigs[]
   categories   categories[]
 }

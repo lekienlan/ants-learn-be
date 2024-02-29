@@ -5,7 +5,7 @@ import ws from 'configs/ws';
 
 const server = app.listen(configs.port, () => {
   logger.info(
-    `⚡️[server]: Server is running at http://localhost:${configs.port}`
+    `⚡️[server]: Server is active at http://localhost:${configs.port}`
   );
 });
 
