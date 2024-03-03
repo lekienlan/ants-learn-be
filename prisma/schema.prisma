@@ -59,7 +59,6 @@ model periods {
   id           String         @id @default(uuid())
   budget       Int
   end_date     DateTime
-  expense      Int
   members      String[]
   repeat       Boolean
   start_date   DateTime

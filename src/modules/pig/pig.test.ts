@@ -37,7 +37,6 @@ describe('pig', () => {
         id: '6533f8fcf69468807254b754',
         budget: 40000,
         end_date: '2023-10-25T00:00:00.000Z' as unknown as Date,
-        expense: -2730000,
         members: ['651e94ef813f47c9080f71b7'],
         repeat: true,
         start_date: '2023-10-21T00:00:00.000Z',

@@ -39,8 +39,7 @@ export const create = catchAsync(
     const period = await periodService.create({
       ...req.body,
       status: 'active',
-      members: [user?.id, ...((req.body.members || []) as string[])],
-      expense: 0
+      members: [user?.id, ...((req.body.members || []) as string[])]
     });
 
     await transactionService.create({

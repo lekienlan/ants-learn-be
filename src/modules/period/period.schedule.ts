@@ -44,7 +44,6 @@ const runPeriodJob = async (period: periods) => {
     budget: period.budget - (expenseTotal?.total_amount || 0),
     pig_id: period?.pig_id,
     repeat: true,
-    expense: 0,
     id: undefined,
     status: 'active',
     start_date: period.end_date,
@@ -61,7 +60,7 @@ const scheduleTaskForPeriod = (period: periods) => {
   console.log(endDate <= currentDate, endDate, currentDate);
 
   // Check if the end date has already passed
-  if (endDate <= currentDate) {
+  if (endDate <= currentDate && period.status === 'active') {
     // Run the job immediately
     console.log('Running overdue cron job for period id: ', period?.id);
     runPeriodJob(period);

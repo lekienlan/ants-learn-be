@@ -176,32 +176,6 @@ describe('transaction', () => {
         user_id: '651e94ef813f47c9080f71b7'
       });
     });
-
-    it('should update period expense', async () => {
-      const user = jest.spyOn(userService, 'findByAccessToken');
-
-      user.mockResolvedValue(userData);
-      prismaMock.periods.update.mockResolvedValue(periodMockData);
-      prismaMock.periods.findFirst.mockResolvedValue(periodMockData);
-
-      await supertest(app)
-        .post('/v1/transactions')
-        .set('Authorization', `Bearer ${token}`)
-        .send({
-          amount: -20000,
-          date: '2023-11-26T16:14:28.258Z' as unknown as Date,
-          period_id: '6533f8fcf69468807254b754',
-          type: 'expense'
-        });
-
-      expect(prismaMock.periods.findFirst).toHaveBeenCalledWith({
-        where: { id: '6533f8fcf69468807254b754' },
-        include: {
-          transactions: true
-        }
-      });
-      expect(prismaMock.periods.update).toHaveBeenCalled();
-    });
   });
   describe('GET /v1/transactions/:id', () => {
     it('should get transaction detail', async () => {
